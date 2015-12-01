@@ -27,17 +27,13 @@ class LtiResourcesTable extends Table
         parent::initialize($config);
 
         $this->table('lti_resources');
-        $this->displayField('id');
+        $this->displayField('lti_resource_link_title');
         $this->primaryKey('id');
 
         $this->addBehavior('Timestamp');
 
         $this->belongsTo('LtiKeys', [
             'foreignKey' => 'lti_key_id',
-            'joinType' => 'INNER'
-        ]);
-        $this->belongsTo('LtiResourceLinks', [
-            'foreignKey' => 'lti_resource_link_id',
             'joinType' => 'INNER'
         ]);
     }
@@ -78,7 +74,6 @@ class LtiResourcesTable extends Table
     public function buildRules(RulesChecker $rules)
     {
         $rules->add($rules->existsIn(['lti_key_id'], 'LtiKeys'));
-        $rules->add($rules->existsIn(['lti_resource_link_id'], 'LtiResourceLinks'));
         return $rules;
     }
 }

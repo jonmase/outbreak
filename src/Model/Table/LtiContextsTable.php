@@ -28,7 +28,7 @@ class LtiContextsTable extends Table
         parent::initialize($config);
 
         $this->table('lti_contexts');
-        $this->displayField('id');
+        $this->displayField('lti_context_title');
         $this->primaryKey('id');
 
         $this->addBehavior('Timestamp');
@@ -36,12 +36,6 @@ class LtiContextsTable extends Table
         $this->belongsTo('LtiKeys', [
             'foreignKey' => 'lti_key_id',
             'joinType' => 'INNER'
-        ]);
-        $this->belongsTo('LtiContexts', [
-            'foreignKey' => 'lti_context_id'
-        ]);
-        $this->hasMany('LtiContexts', [
-            'foreignKey' => 'lti_context_id'
         ]);
     }
 
@@ -76,7 +70,6 @@ class LtiContextsTable extends Table
     public function buildRules(RulesChecker $rules)
     {
         $rules->add($rules->existsIn(['lti_key_id'], 'LtiKeys'));
-        $rules->add($rules->existsIn(['lti_context_id'], 'LtiContexts'));
         return $rules;
     }
 }

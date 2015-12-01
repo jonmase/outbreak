@@ -10,7 +10,6 @@ use App\Controller\AppController;
  */
 class LtiUsersController extends AppController
 {
-
     /**
      * Index method
      *

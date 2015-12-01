@@ -29,7 +29,7 @@ class LtiUsersTable extends Table
         parent::initialize($config);
 
         $this->table('lti_users');
-        $this->displayField('id');
+        $this->displayField('lti_displayid');
         $this->primaryKey('id');
 
         $this->addBehavior('Timestamp');
@@ -38,14 +38,7 @@ class LtiUsersTable extends Table
             'foreignKey' => 'lti_key_id',
             'joinType' => 'INNER'
         ]);
-        $this->belongsTo('LtiUsers', [
-            'foreignKey' => 'lti_user_id',
-            'joinType' => 'INNER'
-        ]);
         $this->hasMany('Attempts', [
-            'foreignKey' => 'lti_user_id'
-        ]);
-        $this->hasMany('LtiUsers', [
             'foreignKey' => 'lti_user_id'
         ]);
     }
@@ -99,7 +92,6 @@ class LtiUsersTable extends Table
     public function buildRules(RulesChecker $rules)
     {
         $rules->add($rules->existsIn(['lti_key_id'], 'LtiKeys'));
-        $rules->add($rules->existsIn(['lti_user_id'], 'LtiUsers'));
         return $rules;
     }
 }

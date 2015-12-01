@@ -28,7 +28,7 @@ class LtiKeysTable extends Table
         parent::initialize($config);
 
         $this->table('lti_keys');
-        $this->displayField('id');
+        $this->displayField('oauth_consumer_key');
         $this->primaryKey('id');
 
         $this->addBehavior('Timestamp');
