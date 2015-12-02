@@ -10,7 +10,6 @@ use App\Controller\AppController;
  */
 class AttemptsController extends AppController
 {
-
     /**
      * Index method
      *
@@ -18,11 +17,17 @@ class AttemptsController extends AppController
      */
     public function index()
     {
+		$user = $this->request->session()->read('User');
+		$conditions = ['lti_user_id' => $user->id];
         $this->paginate = [
-            'contain' => ['LtiUsers']
+            'conditions' => $conditions
         ];
         $this->set('attempts', $this->paginate($this->Attempts));
-        $this->set('_serialize', ['attempts']);
+		//$attemptsQuery = $this->Attempts->find('all', ['conditions' => $conditions]);
+		//$attempts = $attemptsQuery->all();
+		//$this->set(compact('attempts'));
+        
+		//$this->set('_serialize', ['attempts']);
     }
 
     /**
@@ -32,14 +37,14 @@ class AttemptsController extends AppController
      * @return void
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
-    public function view($id = null)
+    /*public function view($id = null)
     {
         $attempt = $this->Attempts->get($id, [
             'contain' => ['LtiUsers', 'Schools', 'Assays', 'Notes', 'QuestionAnswers', 'QuestionScores', 'Reports', 'StandardAssays', 'TechniqueUsefulness']
         ]);
         $this->set('attempt', $attempt);
         $this->set('_serialize', ['attempt']);
-    }
+    }*/
 
     /**
      * Add method
@@ -47,6 +52,22 @@ class AttemptsController extends AppController
      * @return void Redirects on successful add, renders view otherwise.
      */
     public function add()
+    {
+		$user = $this->request->session()->read('User');
+        $attempt = $this->Attempts->newEntity();
+		$attempt->lti_user_id = $user->id;
+		//$attempt->time = 48;
+		//$attempt->money = 200;
+		//$attempt->happiness = 3;
+		
+		if ($this->Attempts->save($attempt)) {
+			$this->Flash->success(__('The attempt has been saved.'));
+			return $this->redirect(['action' => 'index']);
+		} else {
+			$this->Flash->error(__('The attempt could not be saved. Please, try again.'));
+		}
+    }
+    /* public function add()
     {
         $attempt = $this->Attempts->newEntity();
         if ($this->request->is('post')) {
@@ -62,7 +83,7 @@ class AttemptsController extends AppController
         $schools = $this->Attempts->Schools->find('list', ['limit' => 200]);
         $this->set(compact('attempt', 'ltiUsers', 'schools'));
         $this->set('_serialize', ['attempt']);
-    }
+    }*/
 
     /**
      * Edit method
@@ -71,7 +92,7 @@ class AttemptsController extends AppController
      * @return void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
-    public function edit($id = null)
+    /*public function edit($id = null)
     {
         $attempt = $this->Attempts->get($id, [
             'contain' => ['Schools']
@@ -89,7 +110,7 @@ class AttemptsController extends AppController
         $schools = $this->Attempts->Schools->find('list', ['limit' => 200]);
         $this->set(compact('attempt', 'ltiUsers', 'schools'));
         $this->set('_serialize', ['attempt']);
-    }
+    }*/
 
     /**
      * Delete method
@@ -98,7 +119,7 @@ class AttemptsController extends AppController
      * @return \Cake\Network\Response|null Redirects to index.
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
-    public function delete($id = null)
+    /*public function delete($id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
         $attempt = $this->Attempts->get($id);
@@ -108,5 +129,5 @@ class AttemptsController extends AppController
             $this->Flash->error(__('The attempt could not be deleted. Please, try again.'));
         }
         return $this->redirect(['action' => 'index']);
-    }
+    }*/
 }

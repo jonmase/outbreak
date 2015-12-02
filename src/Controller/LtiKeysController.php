@@ -10,12 +10,6 @@ use App\Controller\AppController;
  */
 class LtiKeysController extends AppController
 {
-    public function initialize()
-    {
-        parent::initialize();
-        $this->loadComponent('Flash');
-    }
-
 	//LTI Login
 	function login() {
 		if(isset($_REQUEST['lti_message_type']) && isset($_REQUEST['oauth_consumer_key'])) {	//Is this an LTI request

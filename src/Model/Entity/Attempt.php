@@ -49,4 +49,39 @@ class Attempt extends Entity
         '*' => true,
         'id' => false,
     ];
+	
+	 protected $_virtual = ['progress'];
+	
+	protected function _getProgress() {
+		if($this->_properties['research']) {
+			return "Completed"; 
+		}
+		if($this->_properties['report']) {
+			return "Report submitted"; 
+		}
+		if($this->_properties['hidentified'] && $this->_properties['nidentified']) {
+			return "Viral serotype identified"; 
+		}
+		if($this->_properties['lab']) {
+			return "Lab visited"; 
+		}
+		if($this->_properties['samples']) {
+			return "Samples collected"; 
+		}
+		if($this->_properties['questions']) {
+			return "Questions complete"; 
+		}
+		if($this->_properties['revision']) {
+			return "Revision complete"; 
+		}
+		if($this->_properties['alert']) {
+			return "Seen outbreak alert"; 
+		}
+		if($this->_properties['start']) {
+			return "Seen intro video"; 
+		}
+		else {
+			return "Not started"; 
+		}
+	}
 }
