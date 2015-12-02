@@ -1,0 +1,165 @@
+<div class="row">
+	<div class="col-xs-12 col-sm-12">
+		<page-title section="labCtrl.section"></page-title>
+		<p>In the lab, you can use the available techniques to perform assays on the samples you have collected in order to investigate the virus. You have a limited amount of time and money, so pick the assays you perform and the samples you include carefully, so you don't run out. You will be told when you have gathered enough information to determine the viral serotype that is causing the current epidemic.</p>
+		<page-menu items="labCtrl.subsections" on-click="labCtrl.setSubsection(subsectionId)"></page-menu>
+
+		<div>
+			<div ng-if="technique.infoOnly">
+				<technique-info technique="technique"></technique-info>
+			</div>
+
+			<div>
+				<uib-tabset id="lab-tabs">
+					<uib-tab heading="Assay" ng-repeat-start="(techniqueId, technique) in labCtrl.subsections" ng-show="labCtrl.currentTechniqueId === techniqueId" ng-if="!technique.infoOnly" active="labCtrl.activeTabs[techniqueId].assay">
+						<div>
+							<h4>{{technique.menu}} - Choose Samples</h4>
+							<p>Tick the boxes for samples that you wish to include in this assay, then click the button to perform the assay. Samples that are available, but that you have not collected, are shown but cannot be selected. To include these samples in the assay, you must first <a href="#samples" title="Collect more samples">collect them</a>.</p>
+						</div>
+						<div class="panel panel-default">
+							<div class="panel-body">
+								<div class="row">
+									<show-resources time="mainCtrl.resources.time" money="mainCtrl.resources.money" title="'Remaining Resources'" class="col-xs-6 col-sm-4 col-md-3"></show-resources>
+									<div class="col-xs-6 col-sm-4 col-md-3 col-sm-push-4 col-md-push-6">
+										<div class="icon-button pull-right" ng-class="{disabled: labCtrl.assays.temp.counts[techniqueId].total === 0}"><a href="" title="Perform Assay" ng-click="labCtrl.performAssay()"><i class="fa fa-flask"></i><br />Perform Assay</a></div>
+									</div>
+									<show-resources time="technique.time" money="technique.money * labCtrl.assays.temp.counts[techniqueId].total" cost="technique.money" title="'Assay Costs'" class="col-xs-6 col-sm-4 col-md-3 col-sm-pull-4 col-md-pull-3"></show-resources>
+									<div class="clearfix visible-sm-block hidden-lg"></div>
+									<show-resources time="mainCtrl.resources.time - technique.time" money="mainCtrl.resources.money - (technique.money * labCtrl.assays.temp.counts[techniqueId].total)" title="'Resources After Performing Assay'" class="col-xs-6 col-sm-4 col-md-3 col-md-pull-3"></show-resources>
+								</div>
+							</div>
+						</div>
+						<div class="clearfix"></div>
+						
+						<div class="row assays">
+							<!--div id="assays_standards" class="checkbox-container col-xs-12 col-lg-6"-->
+							<div id="assays_standards" class="col-xs-12 col-lg-6">
+								<div class="panel panel-default">
+									<div class="panel-heading">
+										<h5 class="panel-title">Standards (<all-or-none site-id="'standards'" on-click="labCtrl.selectAllOrNoneBySite(allOrNone, 'standards')"></all-or-none>)</h5>
+									</div>
+									<div class="panel-body">
+										<!--TODO: Change this into a directive to avoid repetition --> 
+										<table class="standards-table pull-left" style="margin-right: 40px;">
+											<tr ng-repeat="(standardId, standard) in labCtrl.standards | limitTo: 5">
+												<td>{{standard.name}}</td>
+												<td>
+													<div class="checkbox checkbox-primary">
+														<input type="checkbox" 
+															id="assays_standards_{{standard.id}}" 
+															ng-model="labCtrl.assays.all.standards[techniqueId][standardId]" ng-true-value="1" ng-false-value="0" 
+															ng-click="labCtrl.setAssayCount()" 
+															ng-disabled="labCtrl.assays.saved.standards[techniqueId][standardId] === 1" 
+															 />
+														<label></label>
+													</div>
+												</td>
+											</tr>
+										</table>
+										<table class="standards-table pull-left">
+											<tr ng-repeat="(standardId, standard) in labCtrl.standards | limitTo: 5 : 5">
+												<td>{{standard.name}}</td>
+												<td>
+													<div class="checkbox checkbox-primary">
+														<input type="checkbox" 
+															id="assays_standards_{{standard.id}}" 
+															ng-model="labCtrl.assays.all.standards[techniqueId][standardId + 5]" ng-true-value="1" ng-false-value="0" 
+															ng-click="labCtrl.setAssayCount()" 
+															ng-disabled="labCtrl.assays.saved.standards[techniqueId][standardId + 5] === 1" 
+															 />
+														<label></label>
+													</div>
+												</td>
+											</tr>
+										</table>
+									</div>
+								</div>
+							</div>
+							<div ng-repeat="(siteId, site) in labCtrl.samples.saved.samples">
+								<div class="col-xs-12 col-lg-6">
+									<div class="panel panel-default">
+										<div class="panel-heading">
+											<h5 class="panel-title">{{labCtrl.sites[siteId].name}} <span class="all-or-none">(<all-or-none site-id="siteId" on-click="labCtrl.selectAllOrNoneBySite(allOrNone, siteId)"></all-or-none>)</span></h5>
+										</div>
+										<div class="row panel-body">
+											<div ng-repeat="(schoolId, school) in site" class="col-sm-6 assays-schools">
+												<h6>{{labCtrl.schools[schoolId].name}}</h6>
+												<table class="table">
+													<thead>
+														<tr>
+															<th><!--Child--></th>
+															<th ng-repeat="(typeId, type) in labCtrl.types" ng-if="!labCtrl.schools[schoolId][type + 'Disabled']" ng-class="'assays-' + type">{{type.charAt(0).toUpperCase() + type.slice(1)}}<br /><span class="all-or-none">(<all-or-none site-id="siteId" school-id="schoolId" type-id="typeId" on-click="labCtrl.selectAllOrNoneByType(allOrNone, siteId, schoolId, typeId)"></all-or-none>)</span></th>
+														</tr>
+													</thead>
+													<tbody>
+														<tr ng-repeat="(childId, child) in labCtrl.schools[schoolId].children">
+															<th>{{child.name}}</th>
+															<td ng-repeat="(typeId, type) in labCtrl.types" ng-if="!labCtrl.schools[schoolId][type + 'Disabled']" ng-class="'assays-' + type">
+																<div class="checkbox checkbox-primary">
+																	<!-- Assay checkbox - ticked to add sample to assay
+																		ng-model - linked to assays.temp.samples array
+																		ng-click - update the assays.temp.count when checkbox is toggled on/off
+																		ng-disabled - disable if sample has not been taken or assay has already been performed with sample
+																		ng-checked - check if assay has already been performed with sample (will be disabled) -->
+																	<input type="checkbox" 
+																		id="assays_{{labCtrl.techniques[techniqueId].id}}_{{labCtrl.sites[siteId].id}}_{{labCtrl.schools[schoolId].id}}_{{labCtrl.schools[schoolId].children[childId].id}}_{{labCtrl.types[typeId]}}" 
+																		ng-model="labCtrl.assays.all.samples[techniqueId][siteId][schoolId][childId][typeId]" ng-true-value="1" ng-false-value="0" 
+																		ng-click="labCtrl.setAssayCount()"
+																		ng-disabled="labCtrl.samples.saved.samples[siteId][schoolId][childId][typeId] !== 1 || labCtrl.assays.saved.samples[techniqueId][siteId][schoolId][childId][typeId] === 1" 
+																		 />
+																	<label> </label>
+																</div>
+															</td>
+														</tr>
+													</tbody>
+												</table>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div ng-if="$even" class="clearfix"></div>
+
+							</div>
+						</div>
+					</uib-tab>
+					<uib-tab heading="Results" ng-repeat-end ng-show="labCtrl.currentTechniqueId === techniqueId" ng-if="!technique.infoOnly" active="labCtrl.activeTabs[techniqueId].results">
+						<h4>{{technique.menu}} - Results</h4>
+						
+						<div ng-if="labCtrl.assays.saved.counts[techniqueId].total === 0">
+							<!--TODO: Make assay tab clickable and return the user to that tab - see http://stackoverflow.com/questions/24157954/angularjs-ui-bootstrap-dynamically-select-among-static-tabs-not-working -->
+							No assays have been performed using this technique yet. Return to the <a href='' ng-click="labCtrl.setTab(techniqueId, 'assay')">Assay tab</a> to select samples and perform the assay.
+						</div>
+					
+						<div ng-if="labCtrl.assays.saved.counts[techniqueId].standards > 0" class="results-section">
+							<h5>Standards</h5>
+							<show-result technique="technique" samples="labCtrl.standards" samples-performed="labCtrl.assays.saved.standards[techniqueId]" type="false"></show-result>
+						</div>
+						
+						<div ng-repeat="(siteId, site) in labCtrl.sites" ng-if="labCtrl.assays.saved.counts[techniqueId].sites[siteId].total > 0" class="results-section">
+							<h5>{{labCtrl.sites[siteId].name}}</h5>
+							<div class="row">
+								<div ng-repeat="(schoolId, school) in  labCtrl.schools" ng-if="labCtrl.assays.saved.counts[techniqueId].sites[siteId].schools[schoolId].total > 0" class="col-xs-12 results-school-section" ng-class="{'col-md-6': technique.id === 'ha' || technique.id === 'pcrn' || technique.id === 'pfu'}">
+									<h6>{{labCtrl.schools[schoolId].name}}</h6>
+									<div ng-repeat="(typeId, type) in labCtrl.types" ng-if="labCtrl.assays.saved.counts[techniqueId].sites[siteId].schools[schoolId].types[typeId] > 0" class="results-type-section">
+										<p><strong>{{type.charAt(0).toUpperCase() + type.slice(1)}} Samples</strong></p>
+										<div>
+											<show-result technique="technique" samples="labCtrl.schools[schoolId].children" samples-performed="labCtrl.assays.saved.samples[techniqueId][siteId][schoolId]" type="typeId" type-ref="type.charAt(0)" site-ref="labCtrl.sites[siteId].resultId"></show-result>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</uib-tab>
+					<uib-tab heading="Info" active="labCtrl.activeTabs[labCtrl.currentTechniqueId].info">
+						<div class="row page-content">
+							<technique-video ng-show="labCtrl.currentTechniqueVideo !== null" video="labCtrl.currentTechniqueVideo"></technique-video>
+							<div class="col-md-6 col-xs-12 col-md-pull-6">
+								<technique-info technique="labCtrl.currentTechnique"></technique-info>
+							</div>
+						</div>
+					</uib-tab>
+				</uib-tabset>
+			</div>
+		</div>
+	</div>
+</div>

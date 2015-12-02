@@ -1,0 +1,16 @@
+<div id="icons">
+	<span><a href="#home" title="Home" ng-click="mainCtrl.checkLockOnClick('home')"><img ng-src="../../img/icons/white/home.svg" /></a></span>
+	<!--i class="fa fa-home fa-fw"></i-->
+	<span ng-repeat="(sectionId, section) in mainCtrl.sections" ng-class="{'highlighted': section.highlighted}"><a href="javascript: void(0)" ng-click="mainCtrl.checkLockOnClick(sectionId)" ng-class="{'locked': mainCtrl.locks[sectionId], 'active': currentSectionId === sectionId}" title="{{section.name}}"><span class="icon-text" ng-show="section.highlighted">{{section.name}} Unlocked!</span><span class="icon-image"><img ng-src="../../img/icons/white/{{section.icon}}.svg" ng-show="currentSectionId !== sectionId" /><img ng-src="../../img/icons/blue/{{section.icon}}.svg" ng-show="currentSectionId === sectionId" /></span></a></span>
+	<!--i class="fa fa-{{section.icon}} fa-fw"></i-->
+	<!--a ng-click="mainCtrl.showProgress = !mainCtrl.showProgress" href="" title="Show Progress"><i class="fa fa-tasks fa-fw"></i></a-->
+	<!--span class="visible-xs-inline">XS</span>
+	<span class="visible-sm-inline">SM</span>
+	<span class="visible-md-inline">MD</span>
+	<span class="visible-lg-inline">LG</span-->
+	<!--div class="pull-right">
+		<div class="inline" style="margin-right: 10px;"><i class="fa fa-clock-o fa-fw"></i> {{mainCtrl.resources.time}}</div>
+		<div class="inline"><i class="fa fa-money fa-fw"></i> {{mainCtrl.resources.money}}</div>
+	</div-->
+</div>
+<!--p>{{mainCtrl.sections}}</p-->

@@ -1,0 +1,41 @@
+<div class="row">
+	<div class="col-xs-12">
+		<page-title section="reportCtrl.section"></page-title>
+		<p>Please write your report (no more than 1000 words in total) clearly and succinctly, in a form that can be rapidly absorbed by both colleagues and non-specialist stakeholders. It should therefore be highly structured, using the headings below, providing your reasoning, observations and conclusions, and clear so that readers can easily find the information they need.
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-8">
+		<p class="no-margin"><strong>Date:</strong> {{reportCtrl.date | date:'d MMM yyyy'}}</p>
+		<div ng-repeat="(boxId, box) in reportCtrl.boxes">
+			<div class="report-box">
+				<h5>{{box.label}}</h5>
+				<div class="page-content" ng-bind-html="box.instructions | unsafe"></div>
+				<!--text-angular ng-model="reportCtrl.report[boxId]" id="report_{{boxId}}"></text-angular-->
+				<!--div ckeditor="editorOptions" ng-model="reportCtrl.report[boxId]" ng-class="{fixed: reportCtrl.submitted}"></div-->
+				<div ckeditor="editorOptions" ng-model="reportCtrl.report[boxId]"></div>
+			</div>
+			<!--div ng-if="boxId%2 === 1" class="clearfix"></div-->
+		</div>
+		<div class="align-center-full-width" style="margin-top: 10px;">
+			<div>
+				<button class="btn btn-primary" type="submit" ng-click="reportCtrl.save()" ng-disabled="reportCtrl.submitted">Save</button>
+				<button class="btn btn-success" type="submit" ng-click="reportCtrl.submit()" ng-disabled="reportCtrl.submitted">Submit</button>
+			</div>
+			<div><span ng-if="!reportCtrl.submitted">Last Saved</span><span ng-if="reportCtrl.submitted">Submitted</span>: {{reportCtrl.lastSaved | date: 'H:mm:ss on d MMM yyyy' }}</div>
+		</div>
+	</div>
+	
+	<div class="col-md-4" style="height: 100%">
+		<h4>
+			Notes
+		</h4>
+		<p ng-if="reportCtrl.allNotesEmpty">You have not made any notes yet. Notes you make in the Results section will be shown here.</p>
+		<uib-accordion ng-if="!reportCtrl.allNotesEmpty" close-others="false">
+			<uib-accordion-group ng-repeat="(techniqueId, technique) in reportCtrl.techniques" is-open="true" ng-show="reportCtrl.notes[technique.id] !== ''">
+				<uib-accordion-heading>{{technique.name}}</uib-accordion-heading>
+				<div ng-bind-html="reportCtrl.notes[technique.id] | lineBreaksFilter | unsafe"></div>
+			</uib-accordion-group>
+		</uib-accordion>
+	</div>
+</div>

@@ -1,0 +1,43 @@
+<h2 class="page-title">Viral Outbreak</h2>
+<p class="no-margin">Use the buttons below to navigate through the exercise. As you progress, more sections will become available. Your progress is saved automatically, and you don't have to finish in one go. The introductory video and the messages that you see throughout the exercise will always be available here on the home page.</p>
+<div class="row">
+	<div class="col-xs-12 col-md-6" id="home">
+		<div class="home-block" ng-repeat="(sectionId, section) in mainCtrl.sections" ng-class="{'locked': mainCtrl.locks[sectionId]}" ng-click="mainCtrl.checkLockOnClick(sectionId)" title="{{section.name}}">
+			<div class="home-block-content">
+				<div class="home-block-table">
+					<div class="home-block-table-cell">
+						<div class="home-block-icon">
+							<a href="javascript: void(0);">
+								<!--i class="fa fa-{{section.icon}}"></i><!--br />{{section.name}}-->
+								<!--img ng-src="styles/fonts/font-awesome/images/{{section.icon}}.svg" ng-class="{small: sectionId === 'report' || sectionId === 'samples', large: sectionId === 'results', xlarge: sectionId === 'research' }" /-->
+								<img ng-src="../../img/icons/white/{{section.icon}}.svg" ng-class="sectionId" />
+								<!--img ng-src="styles/fonts/font-awesome/images/{{section.icon}}.svg" /-->
+							</a>
+						</div>
+						<div class="home-block-caption">{{section.name}}</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-xs-12 col-md-6">
+		<div style="margin-top: 1.66%;">
+			<div class="video-container">
+				<iframe width="100%" ng-src="{{homeCtrl.introVideo}}" frameborder="0" allowfullscreen></iframe>
+			</div>
+		</div>
+		<div style="margin-top: 1.66%;" class="blue-tabs home-tabs">
+			<uib-tabset type="pills">
+				<uib-tab heading="Email from the Boss" active="true">
+					<outbreak-alert></outbreak-alert>
+				</uib-tab>
+				<uib-tab heading="Email from Irritating Pete" ng-if="mainCtrl.progress.lab">
+					<flu-alert swabs="homeCtrl.acuteSwabSamplesCollected"></flu-alert>
+				</uib-tab>
+				<uib-tab heading="Research Grant Award" ng-if="mainCtrl.progress.hidentified && mainCtrl.progress.nidentified">
+					<research-alert></research-alert>
+				</uib-tab>
+			</uib-tabset>
+		</div>
+	</div>
+</div>

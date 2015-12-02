@@ -1,0 +1,51 @@
+<div class="row">
+	<div class="col-xs-12 col-sm-12">
+		<page-title section="resultsCtrl.section"></page-title>
+		<p>In this section you can review the results of the assays you have performed. You will need to interpret the raw results, and you can write notes on key results and findings that you can refer to while writing your report.</p>
+		<page-menu items="resultsCtrl.subsections" on-click="resultsCtrl.setSubsection(subsectionId)"></page-menu>
+		<div class="row results-content">
+			<div ng-repeat="(techniqueId, technique) in resultsCtrl.subsections" ng-show="techniqueId === resultsCtrl.currentTechniqueId">
+				<h3 class="col-xs-12">{{technique.name}}</h3>
+				<div ng-show="technique.infoOnly" class="col-xs-12">
+					<div class="page-content" ng-bind-html="technique.content | unsafe"></div>
+				</div>
+				<div ng-show="!technique.infoOnly">
+					<div class="col-md-9 col-lg-8">
+						<div ng-if="technique.id === 'quickvue'">
+							<quickvue-results></quickvue-results>
+						</div>
+						
+						<div ng-if="resultsCtrl.assays.saved.counts[techniqueId].total === 0">
+							No assays performed using this technique. <a href="#lab">Return to the lab</a> to perform an assay.
+						</div>
+						
+						<div  ng-if="resultsCtrl.assays.saved.counts[techniqueId].standards > 0" class="results-section">
+							<h5>Standards</h5>
+							<show-result technique="technique" samples="resultsCtrl.standards" samples-performed="resultsCtrl.assays.saved.standards[techniqueId]" type="false"></show-result>
+						</div>
+						<div ng-repeat="(siteId, site) in resultsCtrl.sites" ng-if="resultsCtrl.assays.saved.counts[techniqueId].sites[siteId].total > 0" class="results-section">
+							<h5>{{resultsCtrl.sites[siteId].name}}</h5>
+							<div class="row">
+								<div ng-repeat="(schoolId, school) in  resultsCtrl.schools" ng-if="resultsCtrl.assays.saved.counts[techniqueId].sites[siteId].schools[schoolId].total > 0" class="col-xs-12 results-school-section" ng-class="{'col-md-6': technique.id === 'pfu', 'col-lg-6': technique.id === 'pcrn' || technique.id === 'ha'}">
+									<h6>{{resultsCtrl.schools[schoolId].name}}</h6>
+									<div ng-repeat="(typeId, type) in resultsCtrl.types" ng-if="resultsCtrl.assays.saved.counts[techniqueId].sites[siteId].schools[schoolId].types[typeId] > 0" class="results-type-section">
+										<p><strong>{{type.charAt(0).toUpperCase() + type.slice(1)}} Samples</strong></p>
+										<div>
+											<show-result technique="technique" samples="resultsCtrl.schools[schoolId].children" samples-performed="resultsCtrl.assays.saved.samples[techniqueId][siteId][schoolId]" type="typeId" type-ref="type.charAt(0)" site-ref="resultsCtrl.sites[siteId].resultId"></show-result>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="hidden-md hidden-lg col-xs-12 results-notes-static">
+						<notes-input model="resultsCtrl.notes[technique.id]"></notes-input>
+					</div>
+					<div class="hidden-xs hidden-sm col-md-3 col-lg-4 results-notes-affixed" bs-affix data-offset-top="177">
+						<notes-input model="resultsCtrl.notes[technique.id]"></notes-input>
+					</div>
+				</div>
+			<div>
+		</div>
+	</div>
+</div>

@@ -22,7 +22,7 @@
                 <td><?= h($attempt->modified) ?></td>
                 <td><?= h($attempt->progress) ?></td>
                 <td class="actions">
-                    <?= $this->Html->link(__('Resume'), ['action' => 'run', $attempt->id]) ?>
+                    <?= $this->Html->link(__('Resume'), ['action' => 'view', $attempt->id]) ?>
                     <!--?= //$this->Html->link(__('View'), ['action' => 'view', $attempt->id]) ?-->
                     <!--?= //$this->Html->link(__('Edit'), ['action' => 'edit', $attempt->id]) ?-->
                     <!--?= //$this->Form->postLink(__('Delete'), ['action' => 'delete', $attempt->id], ['confirm' => __('Are you sure you want to delete # {0}?', $attempt->id)]) ?-->

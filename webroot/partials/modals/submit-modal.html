@@ -1,0 +1,13 @@
+<div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal" aria-label="Cancel" ng-click="SubmitModalCtrl.cancel()"><span aria-hidden="true">&times;</span></button>
+	<h4 class="modal-title">Submit Report</h4>
+</div>
+<div class="modal-body">
+	<p>You are about to submit your report. Once submitted, you will no longer be able to make changes.</p>
+	<p>Select Submit to go ahead and submit your report, or Cancel if you want to make changes.</p>
+	<p>Remember that you can use the Save button to save your report and return to it later.</p>
+</div>
+<div class="modal-footer">
+	<button type="button" class="btn btn-default" ng-click="SubmitModalCtrl.cancel()">Cancel</button>
+	<button type="button" class="btn btn-primary" ng-click="SubmitModalCtrl.confirm()">Submit</button>
+</div>

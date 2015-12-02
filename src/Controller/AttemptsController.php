@@ -37,14 +37,17 @@ class AttemptsController extends AppController
      * @return void
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
-    /*public function view($id = null)
+    public function view($id = null)
     {
-        $attempt = $this->Attempts->get($id, [
+        /*$attempt = $this->Attempts->get($id, [
             'contain' => ['LtiUsers', 'Schools', 'Assays', 'Notes', 'QuestionAnswers', 'QuestionScores', 'Reports', 'StandardAssays', 'TechniqueUsefulness']
         ]);
         $this->set('attempt', $attempt);
-        $this->set('_serialize', ['attempt']);
-    }*/
+        $this->set('_serialize', ['attempt']);*/
+		
+		$this->viewBuilder()->layout('angular');
+		$this->set('title', 'Viral Outbreak');
+    }
 
     /**
      * Add method
@@ -62,7 +65,7 @@ class AttemptsController extends AppController
 		
 		if ($this->Attempts->save($attempt)) {
 			$this->Flash->success(__('The attempt has been saved.'));
-			return $this->redirect(['action' => 'index']);
+			return $this->redirect(['action' => 'view', $attempt->id]);
 		} else {
 			$this->Flash->error(__('The attempt could not be saved. Please, try again.'));
 		}

@@ -1,0 +1,14 @@
+<div ng-repeat="(siteId, site) in ShowSamplesCtrl.samples[status].samples" ng-if="ShowSamplesCtrl.samples[status].counts.sites[siteId] > 0" class="show-samples-container">
+	<h5>{{ShowSamplesCtrl.sites[siteId].name}}</h5>
+	<div class="row">
+		<div ng-repeat="(schoolId, school) in site" ng-if="ShowSamplesCtrl.samples[status].counts.schools[schoolId][siteId].total > 0" class="col-xs-12 col-sm-6">
+			<h6>{{ShowSamplesCtrl.schools[schoolId].name}}</h6>
+			<ul class="samples-list">
+				<li class="samples-list-item" ng-repeat="(childId, child) in school" ng-if="child[0] === 1 || child[1] === 1">
+					<span class="samples-list-child">{{ShowSamplesCtrl.schools[schoolId].children[childId].name}}</span> 
+					<div class="samples-list-samples"><span ng-repeat="(typeId, type) in child track by $index" ng-if="type === 1" class="label" ng-class="{'label-primary': status === 'temp', 'label-success': status === 'saved'}">{{ShowSamplesCtrl.types[typeId]}}</span></div>
+				</li>
+			</ul>
+		</div>
+	</div>
+</div>

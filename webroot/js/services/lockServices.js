@@ -1,0 +1,78 @@
+(function() {
+	angular.module('flu')
+		.factory('lockFactory', lockFactory);
+	
+	lockFactory.$inject = ['$location', 'sectionsConstant', 'progressFactory'];
+	
+	//Locks factory - deals with setting and checking the locks on sections
+	//NO API requirements
+	function lockFactory($location, sectionsConstant, progressFactory) {
+		//Variables
+		var locks = {};
+		var sections = sectionsConstant();
+		var progress = progressFactory.getProgress();
+		
+		//Exposed Methods
+		var factory = {
+			checkLock: checkLock,
+			checkLockOnClick: checkLockOnClick,
+			getLock: getLock,
+			setComplete: setComplete,
+			setLocks: setLocks,
+			setProgressAndLocks: setProgressAndLocks,
+		}
+		return factory;
+		
+		//Methods
+		function checkLock(sectionId) {
+			if(getLock(sectionId)) {	//If sections is locked...
+				$location.path("/home");	//Redirect home
+				return false;
+			}
+			return true;
+		}
+		
+		function checkLockOnClick(sectionId) {
+			if(getLock(sectionId)) {	//If section is locked
+				//alert("This section is locked");	//Alert the user that the section is locked
+				return false;	//Do nothing
+			}
+			else {
+				$location.path("/" + sectionId);	//Send them to the section
+				return true;
+			}
+		}
+
+		function getLock(sectionId) {
+			return locks[sectionId];
+		}
+		
+		function setComplete(sectionId) {
+			return setProgressAndLocks(sectionId, 1);	//Set the progress for this section to complete
+		}
+
+		function setLocks() {
+			var oldLocks = angular.copy(locks);
+			for(var sectionId in sections) {
+				locks[sectionId] = 0;
+				for(var prerequisite = 0;  prerequisite < sections[sectionId].prerequisites.length; prerequisite++) {
+					if(progress[sections[sectionId].prerequisites[prerequisite]] === 0) {
+						locks[sectionId] = 1;
+						break;
+					}
+				}
+				if(oldLocks[sectionId] && !locks[sectionId]) {
+					//Highlight the newly unlocked section(s)
+					//alert("unlocked section: " + sections[sectionId].name);
+				}
+			}
+			return locks;
+		}
+
+		function setProgressAndLocks(sectionId, completed) {
+			progressFactory.setProgress(sectionId, completed);
+			//progress[sectionId] = completed;
+			return setLocks();
+		}
+	}
+})();

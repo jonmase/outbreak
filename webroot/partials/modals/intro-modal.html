@@ -1,0 +1,16 @@
+<div class="modal-header">
+	<h4 class="modal-title">Introduction</h4>
+</div>
+<div class="modal-body">
+	<p>Watch this brief introductory video, explaining what you have to do. When you are ready, click Start.</p> 
+	<div style="margin-bottom: 10px;">
+		<div class="video-container">
+			<iframe width="100%" ng-src="{{IntroModalCtrl.introVideo}}" frameborder="0" allowfullscreen></iframe>
+		</div>
+		<!--div id="introModalPlayer" ng-init="IntroModalCtrl.loadVideo()">Loading video player...</div-->
+	</div>
+	<info-on-home type="'video'"></info-on-home>
+</div>
+<div class="modal-footer">
+	<button type="button" class="btn btn-primary" ng-click="IntroModalCtrl.start()">Start</button>
+</div>

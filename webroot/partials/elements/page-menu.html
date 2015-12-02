@@ -1,0 +1,13 @@
+<!--ul class="page-menu">
+	<li ng-repeat="(itemId, item) in items" ng-click="click({ subsectionId: itemId })" ng-class="{clickable: !item.disabled}">{{item.menu}}</li>
+</ul-->
+<!--div class="page-menu">
+	<div ng-repeat="(itemId, item) in items" ng-click="click({ subsectionId: itemId })" class="page-menu-cell" style="width: {{100/items.length}}%;" ng-class="{clickable: !item.disabled}">{{item.menu}}</div>
+</div-->
+
+<div class="blue-tabs menu-tabs">
+	<uib-tabset type="pills">
+		<uib-tab ng-repeat="(itemId, item) in items" heading="{{item.menu}}" ng-click="click({ subsectionId: itemId })" disable="item.disabled" active="item.active">
+		</uib-tab>
+	</uib-tabset>
+</div>

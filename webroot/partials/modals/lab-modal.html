@@ -1,0 +1,55 @@
+<div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal" aria-label="Cancel" ng-click="LabModalCtrl.cancel()"><span aria-hidden="true">&times;</span></button>
+	<h4 class="modal-title">Perform Assay - {{LabModalCtrl.technique.name}}</h4>
+</div>
+<div class="modal-body">
+	<p>The samples you have selected for this assay are shown below. If you wish to go ahead and perform this assay, please select Confirm to continue.</p>
+	<p>Alternatively, please select Cancel and you can add or remove samples before performing the assay. You can test further samples later, but this will cost you more time.</p>
+	
+	<div class="alert alert-danger no-margin" role="alert" 
+		ng-if="(LabModalCtrl.resources.time - LabModalCtrl.technique.time) <= 0 || (LabModalCtrl.resources.money - (LabModalCtrl.technique.money * LabModalCtrl.assays.temp.counts[LabModalCtrl.currentTechniqueId].total)) <= 0">If you perform this assay, you will run out of 
+		<!--Note: keep these spans on same line otherwise there will be an unwanted space before the comma if only 'time' is shown-->
+		<span ng-if="(LabModalCtrl.resources.time - LabModalCtrl.technique.time) <= 0">time</span><span ng-if="(LabModalCtrl.resources.time - LabModalCtrl.technique.time) <= 0 && (LabModalCtrl.resources.money - (LabModalCtrl.technique.money * LabModalCtrl.assays.temp.counts[LabModalCtrl.currentTechniqueId].total)) <= 0"> and </span><span ng-if="(LabModalCtrl.resources.money - (LabModalCtrl.technique.money * LabModalCtrl.assays.temp.counts[LabModalCtrl.currentTechniqueId].total)) <= 0">money</span>,
+		and will have to beg for more before you can perform further assays.
+	</div>
+
+	<div class="row"> 
+		<show-resources time="LabModalCtrl.resources.time" money="LabModalCtrl.resources.money" title="'Remaining Resources'" class="col-xs-6 col-sm-4"></show-resources>
+		<show-resources time="LabModalCtrl.technique.time" money="LabModalCtrl.technique.money * LabModalCtrl.assays.temp.counts[LabModalCtrl.currentTechniqueId].total" cost="LabModalCtrl.currentTechnique.money" title="'Assay Costs'" class="col-xs-6 col-sm-4"></show-resources>
+		<show-resources time="LabModalCtrl.resources.time - LabModalCtrl.technique.time" money="LabModalCtrl.resources.money - (LabModalCtrl.technique.money * LabModalCtrl.assays.temp.counts[LabModalCtrl.currentTechniqueId].total)" title="'Resources After Performing Assay'" class="col-xs-6 col-sm-4"></show-resources>
+
+	
+		<!--div class="col-xs-6"><assay-costs technique="LabModalCtrl.technique" count="LabModalCtrl.assays.temp.counts[LabModalCtrl.currentTechniqueId].total"></assay-costs></div>
+		<div class="col-xs-6">
+			<h5>Resources After Performing Assay</h5>
+			<p><strong>Time:</strong> {{LabModalCtrl.resources.time - LabModalCtrl.technique.time}} hours</p>
+			<p><strong>Money:</strong> £{{LabModalCtrl.resources.money - (LabModalCtrl.technique.money * LabModalCtrl.assays.temp.counts[LabModalCtrl.currentTechniqueId].total)}}</p>
+		</div-->
+	</div>
+	<div ng-if="LabModalCtrl.assays.temp.counts[LabModalCtrl.currentTechniqueId].standards > 0" class="lab-modal-selected">
+		<h5>Standards</h5>
+		<span ng-repeat="(standardId, standard) in LabModalCtrl.assays.temp.standards[LabModalCtrl.currentTechniqueId] track by $index" ng-if="standard == 1" class="label label-primary">{{LabModalCtrl.standards[standardId].name}}</span>
+	</div>
+	<div class="clearfix"></div>
+	<div ng-repeat="(siteId, site) in LabModalCtrl.sites" ng-if="LabModalCtrl.assays.temp.counts[LabModalCtrl.currentTechniqueId].sites[siteId].total > 0" class="lab-modal-selected lab-modal-sites row">
+		<h5 class="col-xs-12">{{site.name}} Samples</h5>
+		<div class="clearfix"></div>
+		<div ng-repeat="(schoolId, school) in LabModalCtrl.schools" ng-if="LabModalCtrl.assays.temp.counts[LabModalCtrl.currentTechniqueId].sites[siteId].schools[schoolId].total > 0" class="col-md-6">
+			<h6>{{school.name}}</h6>
+			<table>
+				<tbody>
+					<tr ng-repeat="(childId, child) in LabModalCtrl.schools[schoolId].children track by $index" 
+						ng-if="LabModalCtrl.assays.temp.counts[LabModalCtrl.currentTechniqueId].sites[siteId].schools[schoolId].children[childId] > 0">
+						<td>{{child.name}}: </td>
+						<td ng-repeat="(typeId, type) in LabModalCtrl.assays.temp.samples[LabModalCtrl.currentTechniqueId][siteId][schoolId][childId] track by $index" ng-if="type == 1"><span class="label label-primary">{{LabModalCtrl.types[typeId]}}</span></td>
+					</tr>
+				</tbody>	
+			</table>
+		</div>
+		<div class="clearfix"></div>
+	</div>
+</div>
+<div class="modal-footer">
+	<button type="button" class="btn btn-default" ng-click="LabModalCtrl.cancel()">Cancel</button>
+	<button type="button" class="btn btn-primary" ng-click="LabModalCtrl.confirm()">Confirm</button>
+</div>
