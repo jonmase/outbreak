@@ -47,7 +47,6 @@
 			//Bindable Members - methods
 			vm.setSubsection = setSubsection;
 			vm.setUsefulTechnique = setUsefulTechnique;
-			vm.setRevisionComplete = setRevisionComplete;
 			vm.setVideoTab = setVideoTab;
 			vm.complete = complete;	//Dev only, so don't have to click all of the buttons
 			
@@ -64,10 +63,6 @@
 			lockFactory.setComplete('revision');
 		}
 		
-		function setRevisionComplete() {
-			techniqueFactory.setRevisionComplete()
-		};
-
 		function setSubsection(techniqueId) {
 			techniqueFactory.setCurrentTechniqueId(sectionId, techniqueId);
 			vm.currentTechniqueId = techniqueId;
@@ -92,8 +87,19 @@
 		};
 		
 		function setUsefulTechnique(techniqueCode) {
-			techniqueFactory.setUsefulTechnique(techniqueCode, vm.techniquesUseful[techniqueCode]);
-			vm.setRevisionComplete();	//Set the completion status of the revision section
+			vm.usefulDisabled = true;
+			
+			var usefulPromise = techniqueFactory.setUsefulTechnique(techniqueCode, vm.techniquesUseful[techniqueCode]);
+			var completePromise = techniqueFactory.setRevisionComplete();
+			$q.all([usefulPromise, completePromise]).then(
+				function(result) {
+					console.log(result);
+					vm.usefulDisabled = false;
+				}, 
+				function(reason) {
+					console.log("Error: " + reason);
+				}
+			);
 		};
 		
 		function setVideoTab(url) {

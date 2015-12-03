@@ -36,9 +36,9 @@
 											ng-change - calls setUsefulTechnique method
 											ng-disabled - disables inputs if user has been to the lab -->
 										<input type="radio" name="{{technique.code}}" id="{{technique.code}}_useful_{{option.value}}" 
-										ng-model="techniquesCtrl.techniquesUseful[technique.code]" value="{{option.value}}"
-										ng-change="techniquesCtrl.setUsefulTechnique(technique.code)" 
-										ng-disabled="mainCtrl.progress['lab']" /> 
+										ng-model="techniquesCtrl.techniquesUseful[technique.id]" value="{{option.value}}"
+										ng-change="techniquesCtrl.setUsefulTechnique(technique.id)" 
+										ng-disabled="techniquesCtrl.usefulDisabled || mainCtrl.progress['lab']" /> 
 										<label for="{{technique.code}}_useful_{{option.value}}">{{option.label}}</label>
 									</div>
 								</div>

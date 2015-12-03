@@ -11,8 +11,6 @@ use App\Controller\AppController;
 class AttemptsController extends AppController
 {
 	public function getProgress($attemptId) {
-		//$this->autoRender = false;
-
 		if($this->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
 			$progress = $this->Attempts->get($attemptId, ['fields' => ['start', 'alert', 'revision', 'questions', 'samples', 'lab', 'hidentified', 'nidentified', 'report', 'research']]);
 			$this->set(compact('progress'));
@@ -24,9 +22,38 @@ class AttemptsController extends AppController
 		}
 	}
 	
+	public function setProgress() {
+		if($this->request->is('post')) {
+			//pr($this->request->data);
+			$attemptId = $this->request->data['attemptId'];
+			$sectionId = $this->request->data['sectionId'];
+			$completed = $this->request->data['completed'];
+			
+			if($this->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
+				$attempt = $this->Attempts->get($attemptId);
+				$attempt->$sectionId = $completed;
+				//pr($attempt);
+				//exit;
+				if ($this->Attempts->save($attempt)) {
+					$this->set('message', 'success');
+				} else {
+					$this->set('message', 'save failed');
+				}
+				//$this->Attempts->save($attempt);
+				//pr($attempt);
+			}
+			else {
+				$this->set('message', 'denied');
+			}
+		}
+		else {
+			$this->set('message', 'not post');
+		}
+		$this->viewBuilder()->layout('ajax');
+		$this->render('/Element/ajaxmessage');
+	}
+	
 	public function getResources($attemptId) {
-		//$this->autoRender = false;
-
 		if($this->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
 			$resources = $this->Attempts->get($attemptId, ['fields' => ['money', 'time']]);
 			$this->set(compact('resources'));

@@ -195,17 +195,25 @@
 			var sectionId = 'revision';
 			for(var techniqueId = 0; techniqueId < revisionTechniques.length; techniqueId++) {
 				//if(techniques[techniqueId].level <= vm.levelThreshold) {
-					if(!revisionTechniques[techniqueId].infoOnly && typeof(usefulTechniques[techniqueId]) === "undefined" || usefulTechniques[techniqueId] === null) {
-						lockFactory.setProgressAndLocks(sectionId, 0);	//Set the progress for this section to incomplete (should already be so)
-						return false; //Exit the check, don't need to do anything more
+					if(!revisionTechniques[techniqueId].infoOnly && typeof(usefulTechniques[revisionTechniques[techniqueId].id]) === "undefined" || usefulTechniques[revisionTechniques[techniqueId].id] === null) {
+						//lockFactory.setProgressAndLocks(sectionId, 0);	//Set the progress for this section to incomplete (unnecessary, will already be so)
+						return true; //Exit the check, don't need to do anything more
 					}
 				//}
 			}
-			lockFactory.setComplete(sectionId);	//Set the progress for this section to complete
+			return lockFactory.setComplete(sectionId);	//Set the progress for this section to complete
 		};
 		
-		function setUsefulTechnique(techniqueId, value) { 
+		function setUsefulTechnique(techniqueId, usefulness) { 
 			//API: save useful technique update to DB
+			var deferred = $q.defer();
+			var Useful = $resource('../../techniqueUsefulness/edit', {});
+			Useful.save({}, {attemptId: ATTEMPT_ID, techniqueId: techniqueId, usefulness: usefulness}, function(result) {
+				deferred.resolve('Technique Usefulness saved');
+				deferred.reject('Technique Usefulness not saved');
+			});
+			return deferred.promise;
+			
 		}
 	}
 })();

@@ -30,17 +30,12 @@
 			resetResources: resetResources,
 			setProgress: setProgress,
 			subtractResources: subtractResources,
-			updateProgress: updateProgress,
 		}
 		return factory;
 		
 		//Methods
 		function checkProgress(sectionId) { 
 			return progress[sectionId]; 
-		}
-		
-		function updateProgress(newprogress) { 
-			progress = newprogress;
 		}
 		
 		function getProgress() { 
@@ -54,8 +49,8 @@
 		function loadProgress() { 
 			//API: Get user's progress from DB
 			var deferred = $q.defer();
-			var Progress = $resource('../getProgress/:attemptId.json', {attemptId: '@id'});
-			Progress.get({attemptId: ATTEMPT_ID}, function(result) {
+			var ProgressCall = $resource('../getProgress/:attemptId.json', {attemptId: '@id'});
+			ProgressCall.get({attemptId: ATTEMPT_ID}, function(result) {
 				progress = result.progress;
 				deferred.resolve('Progress loaded');
 				deferred.reject('Progress not loaded');
@@ -87,7 +82,7 @@
 				report: 0,	//Submitted the report
 				research: 0,	//Visited research page > Unlock Finish
 			};*/
-			return progress;
+			//return progress;
 		}
 		
 		function loadResources() { 
@@ -124,7 +119,14 @@
 		function setProgress(sectionId, completed) {
 			progress[sectionId] = completed;
 			//API: Update user's progress in DB. Just set the changed value?
-			return progress;
+			var deferred = $q.defer();
+			var ProgressCall = $resource('../setProgress', {});
+			ProgressCall.save({}, {attemptId: ATTEMPT_ID, sectionId: sectionId, completed: completed}, function(result) {
+				deferred.resolve('Progress saved');
+				deferred.reject('Progress not saved');
+			});
+			return deferred.promise;
+			//return progress;
 		}
 		
 		function subtractResources(money, time) {

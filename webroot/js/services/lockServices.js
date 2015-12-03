@@ -74,9 +74,11 @@
 		}
 
 		function setProgressAndLocks(sectionId, completed) {
-			progressFactory.setProgress(sectionId, completed);
+			var progressPromise = progressFactory.setProgress(sectionId, completed);
+			setLocks();
+			return progressPromise;
 			//progress[sectionId] = completed;
-			return setLocks();
+			//return setLocks();
 		}
 	}
 })();
