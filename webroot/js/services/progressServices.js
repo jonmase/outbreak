@@ -17,15 +17,16 @@
 		var startingTime = 48;
 		var progress = {};
 		//progress = readProgress();
-		var resources = readResources();
+		var resources = {};
+		//var resources = readResources();
 
 		//Exposed Methods
 		var factory = {
 			checkProgress: checkProgress,
 			getProgress: getProgress,
 			getResources: getResources,
-			readProgress: readProgress,
-			readResources: readResources,
+			loadProgress: loadProgress,
+			loadResources: loadResources,
 			resetResources: resetResources,
 			setProgress: setProgress,
 			subtractResources: subtractResources,
@@ -50,14 +51,14 @@
 			return resources; 
 		}	
 
-		function readProgress() { 
+		function loadProgress() { 
 			//API: Get user's progress from DB
 			var deferred = $q.defer();
 			var Progress = $resource('../getProgress/:attemptId.json', {attemptId: '@id'});
 			Progress.get({attemptId: ATTEMPT_ID}, function(result) {
 				progress = result.progress;
 				deferred.resolve('Progress loaded');
-				deferred.reject('Progress not returned');
+				deferred.reject('Progress not loaded');
 			});
 			return deferred.promise;
 		
@@ -89,14 +90,14 @@
 			return progress;
 		}
 		
-		function readResources() { 
+		function loadResources() { 
 			//API: Get user's resources from DB
 			var deferred = $q.defer();
 			var Resources = $resource('../getResources/:attemptId.json', {attemptId: '@id'});
 			Resources.get({attemptId: ATTEMPT_ID}, function(result) {
 				resources = result.resources;
 				deferred.resolve('Resources loaded');
-				deferred.reject('Resources not returned');
+				deferred.reject('Resources not loaded');
 			});
 			return deferred.promise;
 

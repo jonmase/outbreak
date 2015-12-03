@@ -2,6 +2,7 @@
 namespace App\Controller;
 
 use App\Controller\AppController;
+use Cake\Event\Event;
 
 /**
  * ResearchTechniques Controller
@@ -10,6 +11,20 @@ use App\Controller\AppController;
  */
 class ResearchTechniquesController extends AppController
 {
+	public function beforeFilter(Event $event) {
+        parent::beforeFilter($event);
+		$this->Auth->allow('load');
+	}
+	
+	public function load() {
+		//$this->autoRender = false;
+		$query = $this->ResearchTechniques->find('all');
+		//$techniquesQuery = $this->Techniques->find('all');
+		$techniques = $query->all();
+		$this->set(compact('techniques'));
+		$this->set('_serialize', ['techniques']);
+		//pr($techniques->toArray());
+	}
 
     /**
      * Index method

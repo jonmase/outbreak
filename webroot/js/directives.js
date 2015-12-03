@@ -1,6 +1,7 @@
 (function() {
 	angular.module('flu.directives', [])
 		.directive('iconBar', iconBar)
+		.directive('loader', loader)
 		.directive('pageTitle', pageTitle)
 		.directive('pageMenu', pageMenu)
 		.directive('outbreakAlert', outbreakAlert)
@@ -23,6 +24,13 @@
 		return {
 			restrict: "E", //type of directive - E = Element (i.e. new HTML element), or A = Attribute (i.e. for behaviours)
 			templateUrl: "../../partials/elements/icon-bar.html",
+		};
+	}
+
+	function loader() {
+		return {
+			restrict: "E", //type of directive - E = Element (i.e. new HTML element), or A = Attribute (i.e. for behaviours)
+			templateUrl: "../../partials/elements/loader.html",
 		};
 	}
 

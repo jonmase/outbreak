@@ -6,14 +6,14 @@
 	
 	function MainController($scope, $location, sectionsConstant, progressFactory, lockFactory, mediaFactory, $q) {
 		var vm = this;
-		$scope.loading = true;
+		vm.loading = true;
 		
 		//Bindable Members
 		vm.sections = sectionsConstant();
 
 		//Actions
-		var progressPromise = progressFactory.readProgress();
-		var resourcePromise = progressFactory.readResources();
+		var progressPromise = progressFactory.loadProgress();
+		var resourcePromise = progressFactory.loadResources();
 		$q.all([progressPromise, resourcePromise]).then(
 			function(result) {
 				console.log(result);
@@ -22,7 +22,7 @@
 				vm.resources = progressFactory.getResources();
 				vm.locks = lockFactory.setLocks();
 				vm.checkLockOnClick = checkLockOnClick;
-				$scope.loading = false;
+				vm.loading = false;
 			}, 
 			function(reason) {
 				console.log("Error: " + reason);

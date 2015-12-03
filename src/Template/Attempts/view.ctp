@@ -4,10 +4,10 @@
 <?= $this->Html->css('influenza.css', ['block' => true]) ?>
 <div ng-controller="MainController as mainCtrl" style="width: 100%; height: 100%">
 	<!--bootstrap-modal></bootstrap-modal-->
-	<div ng-show="loading">
+	<div ng-show="mainCtrl.loading">
 		<i class="fa fa-5x fa-circle-o-notch fa-spin"></i>
 	</div>
-	<div id="content" class="container-fluid" ng-hide="loading">
+	<div id="content" class="container-fluid" ng-hide="mainCtrl.loading">
 		<div id="icon-bar">
 			<icon-bar ng-show="currentSectionId !== 'home'"></icon-bar>
 		</div>

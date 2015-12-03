@@ -2,9 +2,9 @@
 	angular.module('flu.techniques', [])
 		.controller('TechniquesController', TechniquesController);
 
-	TechniquesController.$inject = ['$scope', '$sce', '$location', '$uibModal', 'sectionFactory', 'progressFactory', 'lockFactory', 'mediaFactory', 'modalFactory', 'techniqueFactory'];
+	TechniquesController.$inject = ['$scope', '$sce', '$location', '$uibModal', 'sectionFactory', 'progressFactory', 'lockFactory', 'mediaFactory', 'modalFactory', 'techniqueFactory', '$q'];
 	
-	function TechniquesController($scope, $sce, $location, $uibModal, sectionFactory, progressFactory, lockFactory, mediaFactory, modalFactory, techniqueFactory) {
+	function TechniquesController($scope, $sce, $location, $uibModal, sectionFactory, progressFactory, lockFactory, mediaFactory, modalFactory, techniqueFactory, $q) {
 		var vm = this;
 		var sectionId = $location.path().substring(1);	//Work out the section ID from the path
 
@@ -12,31 +12,53 @@
 		if(!lockFactory.checkLock(sectionId)) {	
 			return false;
 		}
+		vm.loading = true;
 		$scope.$parent.currentSectionId = sectionId;	//Make sure the section ID is set correctly in Main Controller
-
-		//Bindable Members - values
 		vm.section = sectionFactory.getSection(sectionId);	//Get the section details
-		vm.subsections = techniqueFactory.getTechniques(sectionId);
-		vm.currentTechniqueId = techniqueFactory.getCurrentTechniqueId(sectionId);
-		if(sectionId === 'revision') {
-			//Pass techniques useful to view for revision page
-			vm.techniquesUseful = techniqueFactory.getUsefulTechniques();
+
+		if(!techniqueFactory.getLoadingStarted()) {
+			techniqueFactory.setLoadingStarted();
+			var techniquesPromise = techniqueFactory.loadTechniques();
+			var researchTechniquesPromise = techniqueFactory.loadResearchTechniques();
+			var usefulPromise = techniqueFactory.loadUsefulTechniques();
+			$q.all([techniquesPromise, researchTechniquesPromise, usefulPromise]).then(
+				function(result) {
+					console.log(result);
+					setup();
+				}, 
+				function(reason) {
+					console.log("Error: " + reason);
+				}
+			);
 		}
-		
-		//Bindable Members - methods
-		vm.setSubsection = setSubsection;
-		vm.setUsefulTechnique = setUsefulTechnique;
-		vm.setRevisionComplete = setRevisionComplete;
-		vm.setVideoTab = setVideoTab;
-		vm.complete = complete;	//Dev only, so don't have to click all of the buttons
-		
-		//Actions
-		vm.setSubsection(vm.currentTechniqueId);
-		if(sectionId === 'research') {	//For research section, only show research techniques
-			lockFactory.setComplete(sectionId);
+		else {
+			setup();
 		}
 
 		//Functions
+		function setup() {
+			vm.subsections = techniqueFactory.getTechniques(sectionId);
+			vm.currentTechniqueId = techniqueFactory.getCurrentTechniqueId(sectionId);
+			if(sectionId === 'revision') {
+				//Pass techniques useful to view for revision page
+				vm.techniquesUseful = techniqueFactory.getUsefulTechniques();
+			}
+			
+			//Bindable Members - methods
+			vm.setSubsection = setSubsection;
+			vm.setUsefulTechnique = setUsefulTechnique;
+			vm.setRevisionComplete = setRevisionComplete;
+			vm.setVideoTab = setVideoTab;
+			vm.complete = complete;	//Dev only, so don't have to click all of the buttons
+			
+			//Actions
+			vm.setSubsection(vm.currentTechniqueId);
+			if(sectionId === 'research') {	//For research section, only show research techniques
+				lockFactory.setComplete(sectionId);
+			}
+			vm.loading = false;
+		}
+		
 		//Dev only: set section to complete
 		function complete() {
 			lockFactory.setComplete('revision');
@@ -69,8 +91,8 @@
 			}*/
 		};
 		
-		function setUsefulTechnique(techniqueId) {
-			techniqueFactory.setUsefulTechnique(techniqueId, vm.techniquesUseful[techniqueId]);
+		function setUsefulTechnique(techniqueCode) {
+			techniqueFactory.setUsefulTechnique(techniqueCode, vm.techniquesUseful[techniqueCode]);
 			vm.setRevisionComplete();	//Set the completion status of the revision section
 		};
 		

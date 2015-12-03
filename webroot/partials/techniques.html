@@ -3,48 +3,51 @@
 		<page-title section="techniquesCtrl.section"></page-title>
 		<p ng-if="currentSectionId === 'revision'">Use the information in this section to revise the techniques that will be available for you to analyse the samples and identify the virus. For each technique, indicate whether you think it will be useful in your investigations. Once you have done this, you will be able to move on to the next section.</p>
 		<p ng-if="currentSectionId === 'research'">In this section you will find some additional information on other techniques that can be used to investiage viruses. There are also two (addictive!) simulators that allow you to have a go at controlling an epidemic and study herd immunity.</p>
-		<page-menu items="techniquesCtrl.subsections" on-click="techniquesCtrl.setSubsection(subsectionId)"></page-menu>
-		<div>
-			<!--h3 class="no-top-margin">{{techniquesCtrl.currentTechnique.name}}</h3-->
-			<!-- Technique Info -->
-			<div class="row page-content" id="info">
-				<!--div class="col-md-6 col-xs-12 col-md-push-6" ng-show="techniquesCtrl.currentTechniqueVideo !== null">
-					<div class="video-container">
-						<iframe width="100%" ng-src="{{techniquesCtrl.currentTechniqueVideo}}" frameborder="0" allowfullscreen></iframe>
-					</div>
-				</div-->
-				<!--h4 class="col-xs-12 visible-xs-block visible-sm-block">{{technique.name}}</h4-->
-				<h4 class="col-xs-12 hidden-md hidden-lg" ng-repeat="(techniqueId, technique) in techniquesCtrl.subsections" ng-show="techniquesCtrl.currentTechniqueId === techniqueId">{{technique.name}}</h4>
+		<loader ng-show="techniquesCtrl.loading"></loader>
+		<div ng-hide="techniquesCtrl.loading">
+			<page-menu items="techniquesCtrl.subsections" on-click="techniquesCtrl.setSubsection(subsectionId)"></page-menu>
+			<div>
+				<!--h3 class="no-top-margin">{{techniquesCtrl.currentTechnique.name}}</h3-->
+				<!-- Technique Info -->
+				<div class="row page-content" id="info">
+					<!--div class="col-md-6 col-xs-12 col-md-push-6" ng-show="techniquesCtrl.currentTechniqueVideo !== null">
+						<div class="video-container">
+							<iframe width="100%" ng-src="{{techniquesCtrl.currentTechniqueVideo}}" frameborder="0" allowfullscreen></iframe>
+						</div>
+					</div-->
+					<!--h4 class="col-xs-12 visible-xs-block visible-sm-block">{{technique.name}}</h4-->
+					<h4 class="col-xs-12 hidden-md hidden-lg" ng-repeat="(techniqueId, technique) in techniquesCtrl.subsections" ng-show="techniquesCtrl.currentTechniqueId === techniqueId">{{technique.name}}</h4>
 
-				<technique-video ng-show="techniquesCtrl.currentTechniqueVideo !== null" video="techniquesCtrl.currentTechniqueVideo" part="techniquesCtrl.currentVideoPart" on-select="techniquesCtrl.setVideoTab(url)"></technique-video>
-				<!--div class="revision-content" ng-repeat="(techniqueId, technique) in techniques | subobjectFilter: { type: typeThreshold}" ng-include="'pages/techniques/' + techniqueId + '.html'" ng-show="techniqueId === techniquesCtrl.currentTechniqueId"></div-->
-				<div ng-repeat="(techniqueId, technique) in techniquesCtrl.subsections" ng-show="techniquesCtrl.currentTechniqueId === techniqueId">
-					<!--technique-costs ng-if="currentSectionId === 'revision'" technique="techniquesCtrl.currentTechnique"></technique-costs-->
-					<!--h4>{{techniquesCtrl.currentTechnique.name}}</h4>
-					<div ng-bind-html="techniquesCtrl.currentTechnique.content | unsafe"></div-->
-					<h4 class="col-xs-12 hidden-xs hidden-sm" ng-class="{'col-md-6': technique.video !== null, 'col-md-pull-6': technique.video !== null}">{{technique.name}}</h4>
-					<div class="col-xs-12" ng-class="{'col-md-6': technique.video !== null, 'col-md-pull-6': technique.video !== null}">
-						<technique-info technique="technique"></technique-info>
-						<div ng-if="currentSectionId === 'revision' && !technique.infoOnly" class="panel panel-default useful-techniques">
-							<div class="panel-heading">Will this technique be useful in your investigations?</div>
-							<div class="panel-body">
-								<div ng-repeat="option in [{ value: 1, label: 'Yes'}, { value: 0, label: 'No'}] " class="radio radio-primary">
-									<!-- Is technique useful radios
-										ng-model - linked to techniquesUseful array
-										ng-change - calls setUsefulTechnique method
-										ng-disabled - disables inputs if user has been to the lab -->
-									<input type="radio" name="{{technique.id}}" id="{{technique.id}}_useful_{{option.value}}" 
-									ng-model="techniquesCtrl.techniquesUseful[techniqueId]" value="{{option.value}}"
-									ng-change="techniquesCtrl.setUsefulTechnique(techniqueId)" 
-									ng-disabled="mainCtrl.progress['lab']" /> 
-									<label for="{{technique.id}}_useful_{{option.value}}">{{option.label}}</label>
+					<technique-video ng-show="techniquesCtrl.currentTechniqueVideo !== null" video="techniquesCtrl.currentTechniqueVideo" part="techniquesCtrl.currentVideoPart" on-select="techniquesCtrl.setVideoTab(url)"></technique-video>
+					<!--div class="revision-content" ng-repeat="(techniqueId, technique) in techniques | subobjectFilter: { type: typeThreshold}" ng-include="'pages/techniques/' + techniqueId + '.html'" ng-show="techniqueId === techniquesCtrl.currentTechniqueId"></div-->
+					<div ng-repeat="(techniqueId, technique) in techniquesCtrl.subsections" ng-show="techniquesCtrl.currentTechniqueId === techniqueId">
+						<!--technique-costs ng-if="currentSectionId === 'revision'" technique="techniquesCtrl.currentTechnique"></technique-costs-->
+						<!--h4>{{techniquesCtrl.currentTechnique.name}}</h4>
+						<div ng-bind-html="techniquesCtrl.currentTechnique.content | unsafe"></div-->
+						<h4 class="col-xs-12 hidden-xs hidden-sm" ng-class="{'col-md-6': technique.video !== null, 'col-md-pull-6': technique.video !== null}">{{technique.name}}</h4>
+						<div class="col-xs-12" ng-class="{'col-md-6': technique.video !== null, 'col-md-pull-6': technique.video !== null}">
+							<technique-info technique="technique"></technique-info>
+							<div ng-if="currentSectionId === 'revision' && !technique.infoOnly" class="panel panel-default useful-techniques">
+								<div class="panel-heading">Will this technique be useful in your investigations?</div>
+								<div class="panel-body">
+									<div ng-repeat="option in [{ value: 1, label: 'Yes'}, { value: 0, label: 'No'}] " class="radio radio-primary">
+										<!-- Is technique useful radios
+											ng-model - linked to techniquesUseful array
+											ng-change - calls setUsefulTechnique method
+											ng-disabled - disables inputs if user has been to the lab -->
+										<input type="radio" name="{{technique.code}}" id="{{technique.code}}_useful_{{option.value}}" 
+										ng-model="techniquesCtrl.techniquesUseful[technique.code]" value="{{option.value}}"
+										ng-change="techniquesCtrl.setUsefulTechnique(technique.code)" 
+										ng-disabled="mainCtrl.progress['lab']" /> 
+										<label for="{{technique.code}}_useful_{{option.value}}">{{option.label}}</label>
+									</div>
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
+			<!--button type="button" class="btn btn-danger pull-right" ng-click="techniquesCtrl.complete()" ng-if="currentSectionId === 'revision'">Mark section complete</button-->
 		</div>
-		<!--button type="button" class="btn btn-danger pull-right" ng-click="techniquesCtrl.complete()" ng-if="currentSectionId === 'revision'">Mark section complete</button-->
 	</div>
 </div>
