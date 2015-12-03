@@ -10,15 +10,44 @@ use App\Controller\AppController;
  */
 class AttemptsController extends AppController
 {
-    /**
+	public function getProgress($attemptId) {
+		//$this->autoRender = false;
+
+		if($this->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
+			$progress = $this->Attempts->get($attemptId, ['fields' => ['start', 'alert', 'revision', 'questions', 'samples', 'lab', 'hidentified', 'nidentified', 'report', 'research']]);
+			$this->set(compact('progress'));
+			$this->set('_serialize', ['progress']);
+			//pr($attempt);
+		}
+		else {
+			pr('denied');
+		}
+	}
+	
+	public function getResources($attemptId) {
+		//$this->autoRender = false;
+
+		if($this->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
+			$resources = $this->Attempts->get($attemptId, ['fields' => ['money', 'time']]);
+			$this->set(compact('resources'));
+			$this->set('_serialize', ['resources']);
+			//pr($attempt);
+		}
+		else {
+			pr('denied');
+		}
+	}
+	
+	
+	/**
      * Index method
      *
      * @return void
      */
     public function index()
     {
-		$user = $this->request->session()->read('User');
-		$conditions = ['lti_user_id' => $user->id];
+		$user = $this->Auth->user();
+		$conditions = ['lti_user_id' => $user['id']];
         $this->paginate = [
             'conditions' => $conditions
         ];
@@ -39,12 +68,16 @@ class AttemptsController extends AppController
      */
     public function view($id = null)
     {
+		if(!$id) {
+            return $this->redirect(['action' => 'index']);
+		}
         /*$attempt = $this->Attempts->get($id, [
             'contain' => ['LtiUsers', 'Schools', 'Assays', 'Notes', 'QuestionAnswers', 'QuestionScores', 'Reports', 'StandardAssays', 'TechniqueUsefulness']
         ]);
         $this->set('attempt', $attempt);
         $this->set('_serialize', ['attempt']);*/
 		
+        $this->set('attemptId', $id);
 		$this->viewBuilder()->layout('angular');
 		$this->set('title', 'Viral Outbreak');
     }

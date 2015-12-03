@@ -10,7 +10,6 @@
 		//Variables
 		var locks = {};
 		var sections = sectionsConstant();
-		var progress = progressFactory.getProgress();
 		
 		//Exposed Methods
 		var factory = {
@@ -52,14 +51,19 @@
 		}
 
 		function setLocks() {
+			var progress = progressFactory.getProgress();
 			var oldLocks = angular.copy(locks);
 			for(var sectionId in sections) {
-				locks[sectionId] = 0;
+				locks[sectionId] = 1;
+				var incompletePrerequisites = 0;
 				for(var prerequisite = 0;  prerequisite < sections[sectionId].prerequisites.length; prerequisite++) {
-					if(progress[sections[sectionId].prerequisites[prerequisite]] === 0) {
-						locks[sectionId] = 1;
+					if(!progress[sections[sectionId].prerequisites[prerequisite]]) {
+						incompletePrerequisites = 1;
 						break;
 					}
+				}
+				if(!incompletePrerequisites) {
+					locks[sectionId] = 0;
 				}
 				if(oldLocks[sectionId] && !locks[sectionId]) {
 					//Highlight the newly unlocked section(s)

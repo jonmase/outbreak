@@ -1,14 +1,22 @@
 (function() {
 	angular.module('flu')
-		.factory('progressFactory', progressFactory)
-		
-	progressFactory.$inject = ['moneyCutoff', 'timeCutoff'];
+		/*.factory('Progress', ['$resource',
+		  function($resource){
+			return $resource('../getProgress/:attemptId.json', {}, {
+			  //query: {method:'GET', params:{phoneId:'phones'}, isArray:true}
+			});
+		  }])*/
+		.factory('progressFactory', progressFactory);
 
-	function progressFactory(moneyCutoff, timeCutoff) {
+		
+	progressFactory.$inject = ['moneyCutoff', 'timeCutoff', '$http', '$resource', '$q'];
+
+	function progressFactory(moneyCutoff, timeCutoff, $http, $resource, $q) {
 		//Variables
 		var startingMoney = 200;
 		var startingTime = 48;
-		var progress = readProgress();
+		var progress = {};
+		//progress = readProgress();
 		var resources = readResources();
 
 		//Exposed Methods
@@ -16,15 +24,22 @@
 			checkProgress: checkProgress,
 			getProgress: getProgress,
 			getResources: getResources,
+			readProgress: readProgress,
+			readResources: readResources,
 			resetResources: resetResources,
 			setProgress: setProgress,
 			subtractResources: subtractResources,
+			updateProgress: updateProgress,
 		}
 		return factory;
 		
 		//Methods
 		function checkProgress(sectionId) { 
 			return progress[sectionId]; 
+		}
+		
+		function updateProgress(newprogress) { 
+			progress = newprogress;
 		}
 		
 		function getProgress() { 
@@ -37,6 +52,15 @@
 
 		function readProgress() { 
 			//API: Get user's progress from DB
+			var deferred = $q.defer();
+			var Progress = $resource('../getProgress/:attemptId.json', {attemptId: '@id'});
+			Progress.get({attemptId: ATTEMPT_ID}, function(result) {
+				progress = result.progress;
+				deferred.resolve('Progress loaded');
+				deferred.reject('Progress not returned');
+			});
+			return deferred.promise;
+		
 			/*
 			Checkpoints
 			1. First page load > show video
@@ -50,7 +74,7 @@
 			9. Submit Report > Research available
 			10. Research visited > Finish Button
 			*/
-			var progress = {
+			/*var progress = {
 				start: 1,	//Clicked start button after intro video > Show Alert
 				alert: 1,	//Seen initial alert > Unlock Revision
 				revision: 1,	//Looked at revision materials and ticked whether or not they are useful > Unlock Questions
@@ -61,17 +85,26 @@
 				nidentified: 0,	//Identified N in the lab > Unlock Report and research (if H also identified)
 				report: 0,	//Submitted the report
 				research: 0,	//Visited research page > Unlock Finish
-			};
-			return progress; 
+			};*/
+			return progress;
 		}
 		
 		function readResources() { 
 			//API: Get user's resources from DB
-			var resources = {
+			var deferred = $q.defer();
+			var Resources = $resource('../getResources/:attemptId.json', {attemptId: '@id'});
+			Resources.get({attemptId: ATTEMPT_ID}, function(result) {
+				resources = result.resources;
+				deferred.resolve('Resources loaded');
+				deferred.reject('Resources not returned');
+			});
+			return deferred.promise;
+
+			/*var resources = {
 				money: startingMoney,
 				time: startingTime,
-			};
-			return resources; 
+			};*/
+			//return resources; 
 		}
 		
 		//Reset the user's resources to the initial values (e.g. if they beg for more)

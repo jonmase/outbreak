@@ -2,28 +2,38 @@
 	angular.module('flu')
 		.controller('MainController', MainController);
 
-	MainController.$inject = ['$scope', '$location', 'sectionsConstant', 'progressFactory', 'lockFactory', 'mediaFactory'];
+	MainController.$inject = ['$scope', '$location', 'sectionsConstant', 'progressFactory', 'lockFactory', 'mediaFactory', '$q'];
 	
-	function MainController($scope, $location, sectionsConstant, progressFactory, lockFactory, mediaFactory) {
+	function MainController($scope, $location, sectionsConstant, progressFactory, lockFactory, mediaFactory, $q) {
 		var vm = this;
-		$scope.currentSectionId = getSectionFromPath();
+		$scope.loading = true;
 		
 		//Bindable Members
-		vm.resources = progressFactory.getResources();
 		vm.sections = sectionsConstant();
-		vm.progress = progressFactory.getProgress();
-		vm.locks = lockFactory.setLocks();
-		vm.showProgress = false;
-		
-		vm.checkLockOnClick = checkLockOnClick;
+
+		//Actions
+		var progressPromise = progressFactory.readProgress();
+		var resourcePromise = progressFactory.readResources();
+		$q.all([progressPromise, resourcePromise]).then(
+			function(result) {
+				console.log(result);
+				$scope.currentSectionId = getSectionFromPath();
+				vm.progress = progressFactory.getProgress();
+				vm.resources = progressFactory.getResources();
+				vm.locks = lockFactory.setLocks();
+				vm.checkLockOnClick = checkLockOnClick;
+				$scope.loading = false;
+			}, 
+			function(reason) {
+				console.log("Error: " + reason);
+			}
+		);
 		
 		function checkLockOnClick(sectionId) {
 			if(lockFactory.checkLockOnClick(sectionId)) {
-				//alert("section changed");
 				$scope.currentSectionId = getSectionFromPath();
 			}
 		}
-		//vm.modal = modalFactory.getModal();
 		
 		function getSectionFromPath() {
 			var sectionId = $location.path().substring(1);

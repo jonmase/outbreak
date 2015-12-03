@@ -2,9 +2,12 @@
 <?= $this->Html->css('fonts/font-awesome/css/font-awesome.min.css', ['block' => true]) ?>
 <?= $this->Html->css('awesome-bootstrap-checkbox.css', ['block' => true]) ?>
 <?= $this->Html->css('influenza.css', ['block' => true]) ?>
-<div ng-controller="MainController as mainCtrl">
+<div ng-controller="MainController as mainCtrl" style="width: 100%; height: 100%">
 	<!--bootstrap-modal></bootstrap-modal-->
-	<div id="content" class="container-fluid">
+	<div ng-show="loading">
+		<i class="fa fa-5x fa-circle-o-notch fa-spin"></i>
+	</div>
+	<div id="content" class="container-fluid" ng-hide="loading">
 		<div id="icon-bar">
 			<icon-bar ng-show="currentSectionId !== 'home'"></icon-bar>
 		</div>
@@ -17,6 +20,7 @@
 <?= $this->Html->script('lib/angular.min.js', ['block' => true]) ?>
 <?= $this->Html->script('lib/angular-route.min.js', ['block' => true]) ?>
 <?= $this->Html->script('lib/angular-sanitize.min.js', ['block' => true]) ?>
+<?= $this->Html->script('lib/angular-resource.min.js', ['block' => true]) ?>
 <?= $this->Html->script('lib/ui-bootstrap-tpls-0.14.3.js', ['block' => true]) ?>
 <?= $this->Html->script('lib/ckeditor/ckeditor.js', ['block' => true]) ?>
 <?= $this->Html->script('lib/ng-ckeditor.js', ['block' => true]) ?>
@@ -26,6 +30,7 @@
 <?= $this->Html->script('lib/angular-strap-affix.js', ['block' => true]) ?>
 <?= $this->Html->script('lib/jwplayer/jwplayer.js', ['block' => true]) ?>
 <?= $this->Html->scriptBlock('jwplayer.key="jLpIu2sJ6Lc3h8UrTWBJam+8S/2elr+HB4I8QQ==";', ['block' => true]) ?>
+<?= $this->Html->scriptBlock('var ATTEMPT_ID = ' . $attemptId . ';', ['block' => true]) ?>
 <?= $this->Html->script('controllers/techniquesController.js', ['block' => true]) ?>
 <?= $this->Html->script('controllers/fluAlertModalController.js', ['block' => true]) ?>
 <?= $this->Html->script('services/techniqueServices.js', ['block' => true]) ?>

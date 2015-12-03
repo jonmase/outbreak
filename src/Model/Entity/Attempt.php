@@ -50,8 +50,6 @@ class Attempt extends Entity
         'id' => false,
     ];
 	
-	 protected $_virtual = ['progress'];
-	
 	protected function _getProgress() {
 		if($this->_properties['research']) {
 			return "Completed"; 

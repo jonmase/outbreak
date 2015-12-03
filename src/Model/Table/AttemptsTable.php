@@ -163,4 +163,9 @@ class AttemptsTable extends Table
         $rules->add($rules->existsIn(['lti_user_id'], 'LtiUsers'));
         return $rules;
     }
+	
+	public function checkUserAttempt($userId, $attemptId) {
+		$attempt = $this->get($attemptId, ['fields' => ['id', 'lti_user_id']]);
+		return $attempt->lti_user_id === $userId;
+	}
 }

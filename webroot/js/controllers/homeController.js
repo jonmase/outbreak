@@ -16,12 +16,12 @@
 		//mediaFactory.loadJWPlayer('homePlayer', mediaFactory.getIntroVideo());
 		
 		//If user has not 'started' (i.e. clicked start after the intro video), show the intro video
-		if(!progressFactory.checkProgress('start')) {
+		/*if(!progressFactory.checkProgress('start')) {
 			$uibModal.open(modalFactory.getIntroModalOptions());
 		}
 		else if(!progressFactory.checkProgress('alert')) {
 			$uibModal.open(modalFactory.getOutbreakAlertModalOptions());
-		}
+		}*/
 	
 		function areAcuteSwabSamplesCollected() {
 			return sampleFactory.getAcuteSwabSamplesCollected();
