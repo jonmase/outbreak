@@ -30,17 +30,22 @@
 							<div ng-if="currentSectionId === 'revision' && !technique.infoOnly" class="panel panel-default useful-techniques">
 								<div class="panel-heading">Will this technique be useful in your investigations?</div>
 								<div class="panel-body">
-									<div ng-repeat="option in [{ value: 1, label: 'Yes'}, { value: 0, label: 'No'}] " class="radio radio-primary">
-										<!-- Is technique useful radios
-											ng-model - linked to techniquesUseful array
-											ng-change - calls setUsefulTechnique method
-											ng-disabled - disables inputs if user has been to the lab -->
-										<input type="radio" name="{{technique.code}}" id="{{technique.code}}_useful_{{option.value}}" 
-										ng-model="techniquesCtrl.techniquesUseful[technique.id]" value="{{option.value}}"
-										ng-change="techniquesCtrl.setUsefulTechnique(technique.id)" 
-										ng-disabled="techniquesCtrl.usefulDisabled || mainCtrl.progress['lab']" /> 
-										<label for="{{technique.code}}_useful_{{option.value}}">{{option.label}}</label>
+									<div class="pull-right" style="margin-top: 24px; opacity: 0.7" ng-show="techniquesCtrl.usefulDisabled">
+										<loader></loader> Saving Response
 									</div>
+									<div>
+										<div ng-repeat="option in [{ value: 1, label: 'Yes'}, { value: 0, label: 'No'}] " class="radio radio-primary">
+											<!-- Is technique useful radios
+												ng-model - linked to techniquesUseful array
+												ng-change - calls setUsefulTechnique method
+												ng-disabled - disables inputs if user has been to the lab -->
+											<input type="radio" name="{{technique.code}}" id="{{technique.code}}_useful_{{option.value}}" 
+											ng-model="techniquesCtrl.techniquesUseful[technique.id]" value="{{option.value}}"
+											ng-change="techniquesCtrl.setUsefulTechnique(technique.id)" 
+											ng-disabled="techniquesCtrl.usefulDisabled || mainCtrl.progress['lab']" /> 
+											<label for="{{technique.code}}_useful_{{option.value}}">{{option.label}}</label>
+										</div>
+									<div>
 								</div>
 							</div>
 						</div>

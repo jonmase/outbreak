@@ -2,9 +2,9 @@
 	angular.module('flu')
 		.controller('MainController', MainController);
 
-	MainController.$inject = ['$scope', '$location', 'sectionsConstant', 'progressFactory', 'lockFactory', 'mediaFactory', '$q'];
+	MainController.$inject = ['$scope', '$location', '$uibModal', 'sectionsConstant', 'progressFactory', 'lockFactory', 'mediaFactory', 'modalFactory', '$q'];
 	
-	function MainController($scope, $location, sectionsConstant, progressFactory, lockFactory, mediaFactory, $q) {
+	function MainController($scope, $location, $uibModal, sectionsConstant, progressFactory, lockFactory, mediaFactory, modalFactory, $q) {
 		var vm = this;
 		vm.loading = true;
 		
@@ -23,6 +23,14 @@
 				vm.locks = lockFactory.setLocks();
 				vm.checkLockOnClick = checkLockOnClick;
 				vm.loading = false;
+				
+				//If user has not 'started' (i.e. clicked start after the intro video), show the intro video
+				if(!progressFactory.checkProgress('start')) {
+					$uibModal.open(modalFactory.getIntroModalOptions());
+				}
+				else if(!progressFactory.checkProgress('alert')) {
+					$uibModal.open(modalFactory.getOutbreakAlertModalOptions());
+				}
 			}, 
 			function(reason) {
 				console.log("Error: " + reason);
