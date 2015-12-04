@@ -18,7 +18,7 @@ class ResearchTechniquesController extends AppController
 	
 	public function load() {
 		//$this->autoRender = false;
-		$query = $this->ResearchTechniques->find('all');
+		$query = $this->ResearchTechniques->find('all', ['order' => ['ResearchTechniques.order' => 'ASC']]);
 		//$techniquesQuery = $this->Techniques->find('all');
 		$techniques = $query->all();
 		$this->set(compact('techniques'));

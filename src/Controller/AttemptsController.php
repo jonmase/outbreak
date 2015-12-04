@@ -10,8 +10,8 @@ use App\Controller\AppController;
  */
 class AttemptsController extends AppController
 {
-	public function getProgress($attemptId) {
-		if($this->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
+	public function loadProgress($attemptId = null) {
+		if($attemptId && $this->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
 			$progress = $this->Attempts->get($attemptId, ['fields' => ['start', 'alert', 'revision', 'questions', 'samples', 'lab', 'hidentified', 'nidentified', 'report', 'research']]);
 			$this->set(compact('progress'));
 			$this->set('_serialize', ['progress']);
@@ -22,39 +22,39 @@ class AttemptsController extends AppController
 		}
 	}
 	
-	public function setProgress() {
+	public function saveProgress() {
 		if($this->request->is('post')) {
 			//pr($this->request->data);
 			$attemptId = $this->request->data['attemptId'];
 			$sectionId = $this->request->data['sectionId'];
 			$completed = $this->request->data['completed'];
 			
-			if($this->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
+			if($attemptId && $sectionId && $this->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
 				$attempt = $this->Attempts->get($attemptId);
 				$attempt->$sectionId = $completed;
 				//pr($attempt);
 				//exit;
 				if ($this->Attempts->save($attempt)) {
-					$this->set('message', 'success');
+					$this->set('message', 'Progress save succeeded');
 				} else {
-					$this->set('message', 'save failed');
+					$this->set('message', 'Progress save failed');
 				}
 				//$this->Attempts->save($attempt);
 				//pr($attempt);
 			}
 			else {
-				$this->set('message', 'denied');
+				$this->set('message', 'Progress save denied');
 			}
 		}
 		else {
-			$this->set('message', 'not post');
+			$this->set('message', 'Progress save not POST');
 		}
 		$this->viewBuilder()->layout('ajax');
 		$this->render('/Element/ajaxmessage');
 	}
 	
-	public function getResources($attemptId) {
-		if($this->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
+	public function loadResources($attemptId = null) {
+		if($attemptId && $this->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
 			$resources = $this->Attempts->get($attemptId, ['fields' => ['money', 'time']]);
 			$this->set(compact('resources'));
 			$this->set('_serialize', ['resources']);

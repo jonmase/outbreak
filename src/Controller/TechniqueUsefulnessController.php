@@ -10,8 +10,8 @@ use App\Controller\AppController;
  */
 class TechniqueUsefulnessController extends AppController
 {
-	public function load($attemptId) {
-		if($this->TechniqueUsefulness->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
+	public function load($attemptId = null) {
+		if($attemptId && $this->TechniqueUsefulness->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
 			$usefulQuery = $this->TechniqueUsefulness->find('list', ['conditions' => ['attempt_id' => $attemptId], 'order' => ['technique_id' => 'ASC'], 'keyField' => 'technique_id', 'valueField' => 'useful']);
 			$usefulness = $usefulQuery->toArray();
 			
@@ -39,14 +39,14 @@ class TechniqueUsefulnessController extends AppController
 		}
 	}
 	
-	public function edit() {
+	public function save() {
 		if($this->request->is('post')) {
 			//pr($this->request->data);
 			$attemptId = $this->request->data['attemptId'];
 			$techniqueId = $this->request->data['techniqueId'];
 			$usefulness = $this->request->data['usefulness'];
 			
-			if($this->TechniqueUsefulness->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
+			if($attemptId && $techniqueId && $this->TechniqueUsefulness->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
 				$usefulQuery = $this->TechniqueUsefulness->find('all', ['conditions' => ['attempt_id' => $attemptId, 'technique_id' => $techniqueId]]);
 				$useful = $usefulQuery->first();
 				if(empty($useful)) {
@@ -58,17 +58,20 @@ class TechniqueUsefulnessController extends AppController
 				$useful->useful = $usefulness;
 
 				if ($this->TechniqueUsefulness->save($useful)) {
-					$this->set('message', 'success');
+					$this->set('message', 'Useful techniques save succeeded');
 				} else {
-					$this->set('message', 'save failed');
+					$this->set('message', 'Useful techniques save failed');
 				}
-				$this->viewBuilder()->layout('ajax');
-				$this->render('/Element/ajaxmessage');
 			}
 			else {
-				pr('denied');
+				$this->set('message', 'Useful techniques save denied');
 			}
 		}
+		else {
+			$this->set('message', 'Useful techniques save not POST');
+		}
+		$this->viewBuilder()->layout('ajax');
+		$this->render('/Element/ajaxmessage');
 	}
     /**
      * Index method

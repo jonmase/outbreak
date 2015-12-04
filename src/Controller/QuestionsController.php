@@ -2,6 +2,7 @@
 namespace App\Controller;
 
 use App\Controller\AppController;
+use Cake\Event\Event;
 
 /**
  * Questions Controller
@@ -10,17 +11,32 @@ use App\Controller\AppController;
  */
 class QuestionsController extends AppController
 {
+	public function beforeFilter(Event $event) {
+        parent::beforeFilter($event);
+		$this->Auth->allow('load');
+	}
+	
+	public function load() {
+		$query = $this->Questions->find('all', [
+			'order' => ['Questions.order' => 'ASC'],
+			'contain' => ['QuestionStems' => ['QuestionOptions'], 'QuestionOptions'],
+		]);
+		$questions = $query->all();
+		$this->set(compact('questions'));
+		$this->set('_serialize', ['questions']);
+		//pr($questions->toArray());
+	}
 
     /**
      * Index method
      *
      * @return void
      */
-    public function index()
+    /*public function index()
     {
         $this->set('questions', $this->paginate($this->Questions));
         $this->set('_serialize', ['questions']);
-    }
+    }*/
 
     /**
      * View method
@@ -29,21 +45,21 @@ class QuestionsController extends AppController
      * @return void
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
-    public function view($id = null)
+    /*public function view($id = null)
     {
         $question = $this->Questions->get($id, [
             'contain' => ['QuestionOptions', 'QuestionScores', 'QuestionStems']
         ]);
         $this->set('question', $question);
         $this->set('_serialize', ['question']);
-    }
+    }*/
 
     /**
      * Add method
      *
      * @return void Redirects on successful add, renders view otherwise.
      */
-    public function add()
+    /*public function add()
     {
         $question = $this->Questions->newEntity();
         if ($this->request->is('post')) {
@@ -57,7 +73,7 @@ class QuestionsController extends AppController
         }
         $this->set(compact('question'));
         $this->set('_serialize', ['question']);
-    }
+    }*/
 
     /**
      * Edit method
@@ -66,7 +82,7 @@ class QuestionsController extends AppController
      * @return void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
-    public function edit($id = null)
+    /*public function edit($id = null)
     {
         $question = $this->Questions->get($id, [
             'contain' => []
@@ -82,7 +98,7 @@ class QuestionsController extends AppController
         }
         $this->set(compact('question'));
         $this->set('_serialize', ['question']);
-    }
+    }*/
 
     /**
      * Delete method
@@ -91,7 +107,7 @@ class QuestionsController extends AppController
      * @return \Cake\Network\Response|null Redirects to index.
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
-    public function delete($id = null)
+    /*public function delete($id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
         $question = $this->Questions->get($id);
@@ -101,5 +117,5 @@ class QuestionsController extends AppController
             $this->Flash->error(__('The question could not be deleted. Please, try again.'));
         }
         return $this->redirect(['action' => 'index']);
-    }
+    }*/
 }

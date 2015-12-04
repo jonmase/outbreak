@@ -207,10 +207,11 @@
 		function setUsefulTechnique(techniqueId, usefulness) { 
 			//API: save useful technique update to DB
 			var deferred = $q.defer();
-			var Useful = $resource('../../techniqueUsefulness/edit', {});
+			var Useful = $resource('../../techniqueUsefulness/save', {});
 			Useful.save({}, {attemptId: ATTEMPT_ID, techniqueId: techniqueId, usefulness: usefulness}, function(result) {
-				deferred.resolve('Technique Usefulness saved');
-				deferred.reject('Technique Usefulness not saved');
+				var message = result.message;
+				deferred.resolve(message);
+				deferred.reject("Error: " + message);
 			});
 			return deferred.promise;
 			

@@ -34,14 +34,16 @@ class QuestionsTable extends Table
         $this->addBehavior('Timestamp');
 
         $this->hasMany('QuestionOptions', [
-            'foreignKey' => 'question_id'
+            'foreignKey' => 'question_id',
+			'sort' => ['QuestionOptions.order' => 'ASC'],
         ]);
         $this->hasMany('QuestionScores', [
             'foreignKey' => 'question_id'
         ]);
         $this->hasMany('QuestionStems', [
-            'foreignKey' => 'question_id'
-        ]);
+            'foreignKey' => 'question_id',
+ 			'sort' => ['QuestionStems.order' => 'ASC'],
+       ]);
     }
 
     /**

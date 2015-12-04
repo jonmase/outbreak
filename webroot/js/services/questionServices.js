@@ -2,16 +2,20 @@
 	angular.module('flu.questions')
 		.factory('questionFactory', questionFactory);
 		
-	questionFactory.$inject = ['lockFactory'];
+	questionFactory.$inject = ['lockFactory', '$resource', '$q'];
 
-	function questionFactory(lockFactory) {
+	function questionFactory(lockFactory, $resource, $q) {
 		//Variables
-		var questions = readQuestions();
-		var responses = readResponses();
-		setAnswered();	//Set whether each question has been answered
+		//var questions = readQuestions();
+		var questions = [];
+		//var responses = readResponses();
+		var responses = [];
+		//setAnswered();	//Set whether each question has been answered
 		//var notAnswered = setNotAnswered();
 		var currentQuestionId = 0;
 		var romans = ["(i) ", "(ii) ", "(iii) ", "(iv) ", "(v) ", "(vi) ", "(vii) ", "(viii) ", "(ix) ", "(x) ", "(xi) ", "(xii) ", "(xiii) ", "(xiv) ", "(xv) "];
+		var loadingStarted = false;
+		var saving = [];
 		
 		//Exposed Methods
 		var factory = {
@@ -20,44 +24,75 @@
 			clearAnswers: clearAnswers,
 			getResponses: getResponses,
 			getCurrentQuestionId: getCurrentQuestionId,
+			getLoadingStarted: getLoadingStarted,
 			//getNotAnswered: getNotAnswered,
 			getQuestions: getQuestions,
 			getRoman: getRoman,
 			getRomans: getRomans,
+			getSaving: getSaving,
+			loadQuestions: loadQuestions,
+			loadResponses: loadResponses,
+			setAnswered: setAnswered,
 			setCurrentQuestionId: setCurrentQuestionId,
+			setLoadingStarted: setLoadingStarted,
 		}
 		return factory;
 
 		//Methods
 		//note that readQuestions is out of order at the end, because it is so long
 		
-		function checkAllAnswered(questionId) {
-			responses.answered[questionId] = setAnsweredByQuestion(questionId)
+		function checkAllAnswered(questionIndex) {
+			responses.answered[questions[questionIndex].id] = setAnsweredByQuestion(questionIndex)
 		}
 
-		function checkAnswers(questionId) {
-			responses.answered[questionId] = setAnsweredByQuestion(questionId);
-			if(!responses.answered[questionId]) {	//If there are any unanswered questions...
+		function checkAnswers(questionIndex) {
+			var questionDBId = questions[questionIndex].id;
+			responses.answered[questionDBId] = setAnsweredByQuestion(questionIndex);
+			if(!responses.answered[questionDBId]) {	//If there are any unanswered questions...
 				//var notAnsweredMessage = "Please attempt all question parts before checking your answers."; 
 			}
 			else {
-				responses.scores[questionId] = setScoreByQuestion(questionId);
-				setQuestionsComplete();
+				//API: Save responses (answers, score) to DB
+				saving[questionIndex] = true;
+				var score = setScoreByQuestion(questionIndex);
+				//var deferred = $q.defer();
+				var QuestionsCall = $resource('../../question_answers/save', {});
+				QuestionsCall.save({}, {attemptId: ATTEMPT_ID, questionId: questionDBId, answers: responses.answers[questionDBId], score: score}, function(result) {
+					var message = result.message;
+					if(result.message === "success") {
+						responses.scores[questionDBId] = score;
+						setQuestionsComplete();
+						saving[questionIndex] = false;
+					}
+					else {
+						//Deal with error
+					}
+					
+					//deferred.resolve(message);
+					//deferred.reject('Error: ' + message);
+				});
+				//return deferred.promise;
+
 			}
-			//API: Save responses (answers, score) to DB
 		}
 
-		function clearAnswers(questionId) {
-			if(responses.scores[questionId] === null) {	//If question has not been answered...
-				for(var s = 0; s < questions[questionId].stems.length; s++) {
-					responses.answers[questionId][s] = null;
+		function clearAnswers(questionIndex) {
+			var questionDBId = questions[questionIndex].id;
+			if(responses.scores[questionDBId] === null) {	//If question has not been answered...
+				var stems = questions[questionIndex].question_stems;
+				for(var s = 0; s < stems.length; s++) {
+					responses.answers[questionDBId][stems[s].id] = null;
 				}
 			}
-			responses.answered[questionId] = setAnsweredByQuestion(questionId);
+			responses.answered[questionDBId] = setAnsweredByQuestion(questionIndex);
 		}
 
 		function getCurrentQuestionId() { 
 			return currentQuestionId; 
+		}
+		
+		function getLoadingStarted() { 
+			return loadingStarted;
 		}
 		
 		function getNotAnswered() { 
@@ -80,7 +115,33 @@
 			return romans;
 		}
 
-		function readAnswers() {
+		function getSaving() {
+			return saving;
+		}
+
+		function loadQuestions() {
+			var deferred = $q.defer();
+			var QuestionsCall = $resource('../../questions/load.json', {});
+			QuestionsCall.get({}, function(result) {
+				questions = result.questions;
+				deferred.resolve('Questions loaded');
+				deferred.reject('Questions not loaded');
+			});
+			return deferred.promise;
+		}
+		
+		function loadResponses() {
+			var deferred = $q.defer();
+			var ResponsesCall = $resource('../../question_answers/load/:attemptId.json', {attemptId: '@id'});
+			ResponsesCall.get({attemptId: ATTEMPT_ID}, function(result) {
+				responses = result.responses;
+				deferred.resolve('Responses loaded');
+				deferred.reject('Responses not loaded');
+			});
+			return deferred.promise;
+		}
+		
+		/*function readAnswers() {
 			//API: Get these from the DB
 			var answers = [];
 			for(var q = 0; q < questions.length; q++) {
@@ -110,29 +171,42 @@
 				scores[q] = null;
 			}
 			return scores;
-		}
+		}*/
 		
 		function setAnswered() {
 			responses.answered = [];
 			for(var q = 0; q < questions.length; q++) {
-				responses.answered[q] = setAnsweredByQuestion(q);
+				responses.answered[questions[q].id] = setAnsweredByQuestion(q);
 			}
 			//return answered;
 		}
 		
-		function setAnsweredByQuestion(questionId) {
+		function setAnsweredByQuestion(questionIndex) {
 			var answered = true;
-			for(var s = 0; s < questions[questionId].stems.length; s++) {
-				if(responses.answers[questionId][s] === null) {
-					answered = false;
-					break;
+			
+			//If there are no answers at all for this question, then it is unanswered
+			if(!responses.answers[questions[questionIndex].id]) {
+				answered = false;
+			} 
+			else {
+				//If there is no answer for any of the stems, then the question is unanswered
+				for(var s = 0; s < questions[questionIndex].question_stems.length; s++) {
+					var stemId = questions[questionIndex].question_stems[s].id;
+					if(!responses.answers[questions[questionIndex].id][stemId]) {
+						answered = false;
+						break;
+					}
 				}
 			}
 			return answered;
 		}
 		
-		function setCurrentQuestionId(questionId) { 
-			currentQuestionId = questionId; 
+		function setCurrentQuestionId(questionIndex) { 
+			currentQuestionId = questionIndex; 
+		}
+		
+		function setLoadingStarted() { 
+			loadingStarted = true;
 		}
 		
 		function setQuestionsComplete() {
@@ -145,21 +219,19 @@
 			lockFactory.setComplete('questions');
 		}
 
-		function setScoreByQuestion(questionId) {
+		function setScoreByQuestion(questionIndex) {
 			var score = 0;
-			for(var s = 0; s < questions[questionId].stems.length; s++) {
-				if(responses.answers[questionId][s] === questions[questionId].stems[s].answer) {
+			for(var s = 0; s < questions[questionIndex].question_stems.length; s++) {
+				var stem = questions[questionIndex].question_stems[s];
+				if(responses.answers[questions[questionIndex].id][stem.id] === stem.question_option.id) {
 					score++;
 				}
 			}
 			return score;
 		}
 		
-		function readQuestions() {
+		/*function readQuestions() {
 			//API: Get these from the DB?
-			/*for(question in questions) {
-				questions[question].questionText = create_question(question);
-			}*/
 			var questions = [
 				{
 					background: 'Are the following statements concerning neuraminidase true or false?',
@@ -296,7 +368,7 @@
 							feedback: 'The viral HA protein is the major viral surface protein and the only protein on the surface of the virion required to initiate haemagglutination. Adding antibodies to a different viral protein, even NA, has no effect on the response.',
 							answer: 1,	//False
 						},*/
-						{
+						/*{
 							text: 'Haemagglutination is recognised by the formation of a \'shield\' in the base of a microtitre plate',
 							feedback: 'A \'button\' on the bottom of the microtitre plate results when  red blood cells sediment under gravity into a dense pellet. Haemagglutination is the cross-linking of multiple red blood cells via the HA proteins on virions; once cross-linked the red blood cells can\'t settle to the bottom of the plate as freely and get stuck on the sides, thereby appearing as a diffuse \'shield\'.',
 							answer: 0,	//True
@@ -457,7 +529,7 @@
 				},
 			];
 			return questions;
-		}
+		}*/
 	}
 	
 		/*function readChecked() {

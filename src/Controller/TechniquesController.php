@@ -17,9 +17,7 @@ class TechniquesController extends AppController
 	}
 	
 	public function load() {
-		//$this->autoRender = false;
 		$query = $this->Techniques->find('all', ['order' => ['Techniques.order' => 'ASC']]);
-		//$techniquesQuery = $this->Techniques->find('all');
 		$techniques = $query->all();
 		$this->set(compact('techniques'));
 		$this->set('_serialize', ['techniques']);

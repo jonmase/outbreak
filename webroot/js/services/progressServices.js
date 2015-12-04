@@ -49,7 +49,7 @@
 		function loadProgress() { 
 			//API: Get user's progress from DB
 			var deferred = $q.defer();
-			var ProgressCall = $resource('../getProgress/:attemptId.json', {attemptId: '@id'});
+			var ProgressCall = $resource('../loadProgress/:attemptId.json', {attemptId: '@id'});
 			ProgressCall.get({attemptId: ATTEMPT_ID}, function(result) {
 				progress = result.progress;
 				deferred.resolve('Progress loaded');
@@ -88,7 +88,7 @@
 		function loadResources() { 
 			//API: Get user's resources from DB
 			var deferred = $q.defer();
-			var Resources = $resource('../getResources/:attemptId.json', {attemptId: '@id'});
+			var Resources = $resource('../loadResources/:attemptId.json', {attemptId: '@id'});
 			Resources.get({attemptId: ATTEMPT_ID}, function(result) {
 				resources = result.resources;
 				deferred.resolve('Resources loaded');
@@ -119,13 +119,14 @@
 		function setProgress(sectionId, completed) {
 			progress[sectionId] = completed;
 			//API: Update user's progress in DB. Just set the changed value?
-			var deferred = $q.defer();
-			var ProgressCall = $resource('../setProgress', {});
+			//var deferred = $q.defer();
+			var ProgressCall = $resource('../saveProgress', {});
 			ProgressCall.save({}, {attemptId: ATTEMPT_ID, sectionId: sectionId, completed: completed}, function(result) {
-				deferred.resolve('Progress saved');
-				deferred.reject('Progress not saved');
+				console.log(result.message);
+				//deferred.resolve('Progress saved');
+				//deferred.reject('Progress not saved');
 			});
-			return deferred.promise;
+			//return deferred.promise;
 			//return progress;
 		}
 		
