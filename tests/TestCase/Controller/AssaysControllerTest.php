@@ -22,11 +22,9 @@ class AssaysControllerTest extends IntegrationTestCase
         'app.lti_keys',
         'app.lti_contexts',
         'app.lti_resources',
-        'app.lti_resource_links',
         'app.notes',
         'app.techniques',
         'app.standard_assays',
-        'app.standards',
         'app.technique_results',
         'app.technique_usefulness',
         'app.question_answers',
@@ -39,9 +37,11 @@ class AssaysControllerTest extends IntegrationTestCase
         'app.reports_sections',
         'app.schools',
         'app.children',
-        'app.attempts_schools',
+        'app.samples',
         'app.sites',
-        'app.sample_stages'
+        'app.sample_stages',
+        'app.attempts_schools',
+        'app.standards'
     ];
 
     /**

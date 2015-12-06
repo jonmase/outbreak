@@ -12,10 +12,8 @@ use Cake\Validation\Validator;
  *
  * @property \Cake\ORM\Association\BelongsTo $Attempts
  * @property \Cake\ORM\Association\BelongsTo $Techniques
- * @property \Cake\ORM\Association\BelongsTo $Sites
- * @property \Cake\ORM\Association\BelongsTo $Schools
- * @property \Cake\ORM\Association\BelongsTo $Children
- * @property \Cake\ORM\Association\BelongsTo $SampleStages
+ * @property \Cake\ORM\Association\BelongsTo $Samples
+ * @property \Cake\ORM\Association\BelongsTo $Standards
  */
 class AssaysTable extends Table
 {
@@ -44,20 +42,12 @@ class AssaysTable extends Table
             'foreignKey' => 'technique_id',
             'joinType' => 'INNER'
         ]);
-        $this->belongsTo('Sites', [
-            'foreignKey' => 'site_id',
+        $this->belongsTo('Samples', [
+            'foreignKey' => 'sample_id',
             'joinType' => 'INNER'
         ]);
-        $this->belongsTo('Schools', [
-            'foreignKey' => 'school_id',
-            'joinType' => 'INNER'
-        ]);
-        $this->belongsTo('Children', [
-            'foreignKey' => 'child_id',
-            'joinType' => 'INNER'
-        ]);
-        $this->belongsTo('SampleStages', [
-            'foreignKey' => 'sample_stage_id',
+        $this->belongsTo('Standards', [
+            'foreignKey' => 'standard_id',
             'joinType' => 'INNER'
         ]);
     }
@@ -93,10 +83,8 @@ class AssaysTable extends Table
     {
         $rules->add($rules->existsIn(['attempt_id'], 'Attempts'));
         $rules->add($rules->existsIn(['technique_id'], 'Techniques'));
-        $rules->add($rules->existsIn(['site_id'], 'Sites'));
-        $rules->add($rules->existsIn(['school_id'], 'Schools'));
-        $rules->add($rules->existsIn(['child_id'], 'Children'));
-        $rules->add($rules->existsIn(['sample_stage_id'], 'SampleStages'));
+        $rules->add($rules->existsIn(['sample_id'], 'Samples'));
+        $rules->add($rules->existsIn(['standard_id'], 'Standards'));
         return $rules;
     }
 }

@@ -18,7 +18,31 @@ class StandardsTableTest extends TestCase
      */
     public $fixtures = [
         'app.standards',
-        'app.standard_assays'
+        'app.assays',
+        'app.attempts',
+        'app.lti_users',
+        'app.lti_keys',
+        'app.lti_contexts',
+        'app.lti_resources',
+        'app.notes',
+        'app.techniques',
+        'app.standard_assays',
+        'app.technique_results',
+        'app.technique_usefulness',
+        'app.question_answers',
+        'app.question_stems',
+        'app.questions',
+        'app.question_options',
+        'app.question_scores',
+        'app.reports',
+        'app.sections',
+        'app.reports_sections',
+        'app.schools',
+        'app.children',
+        'app.samples',
+        'app.sites',
+        'app.sample_stages',
+        'app.attempts_schools'
     ];
 
     /**

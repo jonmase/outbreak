@@ -11,9 +11,10 @@ use Cake\ORM\Entity;
  * @property string $menu
  * @property string $name
  * @property string $resultId
+ * @property int $order
  * @property \Cake\I18n\Time $created
  * @property \Cake\I18n\Time $modified
- * @property \App\Model\Entity\Assay[] $assays
+ * @property \App\Model\Entity\Sample[] $samples
  */
 class Site extends Entity
 {

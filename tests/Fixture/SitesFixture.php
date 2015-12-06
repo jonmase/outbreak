@@ -22,6 +22,7 @@ class SitesFixture extends TestFixture
         'menu' => ['type' => 'string', 'length' => 255, 'null' => false, 'default' => null, 'comment' => '', 'precision' => null, 'fixed' => null],
         'name' => ['type' => 'string', 'length' => 255, 'null' => true, 'default' => null, 'comment' => '', 'precision' => null, 'fixed' => null],
         'resultId' => ['type' => 'string', 'length' => 255, 'null' => false, 'default' => null, 'comment' => '', 'precision' => null, 'fixed' => null],
+        'order' => ['type' => 'integer', 'length' => 11, 'unsigned' => false, 'null' => true, 'default' => null, 'comment' => '', 'precision' => null, 'autoIncrement' => null],
         'created' => ['type' => 'datetime', 'length' => null, 'null' => true, 'default' => null, 'comment' => '', 'precision' => null],
         'modified' => ['type' => 'datetime', 'length' => null, 'null' => true, 'default' => null, 'comment' => '', 'precision' => null],
         '_constraints' => [
@@ -46,8 +47,9 @@ class SitesFixture extends TestFixture
             'menu' => 'Lorem ipsum dolor sit amet',
             'name' => 'Lorem ipsum dolor sit amet',
             'resultId' => 'Lorem ipsum dolor sit amet',
-            'created' => '2015-11-30 17:12:32',
-            'modified' => '2015-11-30 17:12:32'
+            'order' => 1,
+            'created' => '2015-12-04 16:36:55',
+            'modified' => '2015-12-04 16:36:55'
         ],
     ];
 }

@@ -58,7 +58,7 @@ class AttemptsTable extends Table
         $this->hasMany('Reports', [
             'foreignKey' => 'attempt_id'
         ]);
-        $this->hasMany('StandardAssays', [
+        $this->hasMany('Samples', [
             'foreignKey' => 'attempt_id'
         ]);
         $this->hasMany('TechniqueUsefulness', [

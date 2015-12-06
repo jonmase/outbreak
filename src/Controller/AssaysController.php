@@ -19,7 +19,7 @@ class AssaysController extends AppController
     public function index()
     {
         $this->paginate = [
-            'contain' => ['Attempts', 'Techniques', 'Sites', 'Schools', 'Children', 'SampleStages']
+            'contain' => ['Attempts', 'Techniques', 'Samples', 'Standards']
         ];
         $this->set('assays', $this->paginate($this->Assays));
         $this->set('_serialize', ['assays']);
@@ -35,7 +35,7 @@ class AssaysController extends AppController
     public function view($id = null)
     {
         $assay = $this->Assays->get($id, [
-            'contain' => ['Attempts', 'Techniques', 'Sites', 'Schools', 'Children', 'SampleStages']
+            'contain' => ['Attempts', 'Techniques', 'Samples', 'Standards']
         ]);
         $this->set('assay', $assay);
         $this->set('_serialize', ['assay']);
@@ -60,11 +60,9 @@ class AssaysController extends AppController
         }
         $attempts = $this->Assays->Attempts->find('list', ['limit' => 200]);
         $techniques = $this->Assays->Techniques->find('list', ['limit' => 200]);
-        $sites = $this->Assays->Sites->find('list', ['limit' => 200]);
-        $schools = $this->Assays->Schools->find('list', ['limit' => 200]);
-        $children = $this->Assays->Children->find('list', ['limit' => 200]);
-        $sampleStages = $this->Assays->SampleStages->find('list', ['limit' => 200]);
-        $this->set(compact('assay', 'attempts', 'techniques', 'sites', 'schools', 'children', 'sampleStages'));
+        $samples = $this->Assays->Samples->find('list', ['limit' => 200]);
+        $standards = $this->Assays->Standards->find('list', ['limit' => 200]);
+        $this->set(compact('assay', 'attempts', 'techniques', 'samples', 'standards'));
         $this->set('_serialize', ['assay']);
     }
 
@@ -91,11 +89,9 @@ class AssaysController extends AppController
         }
         $attempts = $this->Assays->Attempts->find('list', ['limit' => 200]);
         $techniques = $this->Assays->Techniques->find('list', ['limit' => 200]);
-        $sites = $this->Assays->Sites->find('list', ['limit' => 200]);
-        $schools = $this->Assays->Schools->find('list', ['limit' => 200]);
-        $children = $this->Assays->Children->find('list', ['limit' => 200]);
-        $sampleStages = $this->Assays->SampleStages->find('list', ['limit' => 200]);
-        $this->set(compact('assay', 'attempts', 'techniques', 'sites', 'schools', 'children', 'sampleStages'));
+        $samples = $this->Assays->Samples->find('list', ['limit' => 200]);
+        $standards = $this->Assays->Standards->find('list', ['limit' => 200]);
+        $this->set(compact('assay', 'attempts', 'techniques', 'samples', 'standards'));
         $this->set('_serialize', ['assay']);
     }
 

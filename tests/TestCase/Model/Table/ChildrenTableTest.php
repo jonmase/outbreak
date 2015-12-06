@@ -19,19 +19,7 @@ class ChildrenTableTest extends TestCase
     public $fixtures = [
         'app.children',
         'app.schools',
-        'app.assays',
-        'app.attempts',
-        'app.lti_users',
-        'app.notes',
-        'app.question_answers',
-        'app.question_scores',
-        'app.reports',
-        'app.standard_assays',
-        'app.technique_usefulness',
-        'app.attempts_schools',
-        'app.techniques',
-        'app.sites',
-        'app.sample_stages'
+        'app.samples'
     ];
 
     /**

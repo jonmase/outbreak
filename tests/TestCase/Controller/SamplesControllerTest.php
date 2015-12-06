@@ -1,13 +1,13 @@
 <?php
 namespace App\Test\TestCase\Controller;
 
-use App\Controller\StandardAssaysController;
+use App\Controller\SamplesController;
 use Cake\TestSuite\IntegrationTestCase;
 
 /**
- * App\Controller\StandardAssaysController Test Case
+ * App\Controller\SamplesController Test Case
  */
-class StandardAssaysControllerTest extends IntegrationTestCase
+class SamplesControllerTest extends IntegrationTestCase
 {
 
     /**
@@ -16,23 +16,19 @@ class StandardAssaysControllerTest extends IntegrationTestCase
      * @var array
      */
     public $fixtures = [
-        'app.standard_assays',
+        'app.samples',
         'app.attempts',
         'app.lti_users',
         'app.lti_keys',
         'app.lti_contexts',
         'app.lti_resources',
-        'app.lti_resource_links',
         'app.assays',
         'app.techniques',
         'app.notes',
+        'app.standard_assays',
         'app.technique_results',
         'app.technique_usefulness',
-        'app.sites',
-        'app.schools',
-        'app.children',
-        'app.attempts_schools',
-        'app.sample_stages',
+        'app.standards',
         'app.question_answers',
         'app.question_stems',
         'app.questions',
@@ -41,7 +37,11 @@ class StandardAssaysControllerTest extends IntegrationTestCase
         'app.reports',
         'app.sections',
         'app.reports_sections',
-        'app.standards'
+        'app.schools',
+        'app.children',
+        'app.attempts_schools',
+        'app.sites',
+        'app.sample_stages'
     ];
 
     /**

@@ -32,7 +32,7 @@ class SitesController extends AppController
     public function view($id = null)
     {
         $site = $this->Sites->get($id, [
-            'contain' => ['Assays']
+            'contain' => ['Samples']
         ]);
         $this->set('site', $site);
         $this->set('_serialize', ['site']);

@@ -93,6 +93,9 @@ th, td {
 .clear-right {
 	clear: right;
 }
+.saving {
+	opacity: 0.7
+}
 
 /* Icon line styles */
 #icons {

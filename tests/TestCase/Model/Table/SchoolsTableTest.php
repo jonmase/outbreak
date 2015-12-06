@@ -18,15 +18,20 @@ class SchoolsTableTest extends TestCase
      */
     public $fixtures = [
         'app.schools',
-        'app.assays',
+        'app.children',
+        'app.samples',
         'app.attempts',
         'app.lti_users',
         'app.lti_keys',
         'app.lti_contexts',
         'app.lti_resources',
-        'app.lti_resource_links',
-        'app.notes',
+        'app.assays',
         'app.techniques',
+        'app.notes',
+        'app.standard_assays',
+        'app.technique_results',
+        'app.technique_usefulness',
+        'app.standards',
         'app.question_answers',
         'app.question_stems',
         'app.questions',
@@ -35,11 +40,8 @@ class SchoolsTableTest extends TestCase
         'app.reports',
         'app.sections',
         'app.reports_sections',
-        'app.standard_assays',
-        'app.technique_usefulness',
         'app.attempts_schools',
         'app.sites',
-        'app.children',
         'app.sample_stages'
     ];
 

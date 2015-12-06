@@ -1,14 +1,14 @@
 <?php
 namespace App\Test\TestCase\Model\Table;
 
-use App\Model\Table\StandardAssaysTable;
+use App\Model\Table\SamplesTable;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
 /**
- * App\Model\Table\StandardAssaysTable Test Case
+ * App\Model\Table\SamplesTable Test Case
  */
-class StandardAssaysTableTest extends TestCase
+class SamplesTableTest extends TestCase
 {
 
     /**
@@ -17,21 +17,19 @@ class StandardAssaysTableTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'app.standard_assays',
+        'app.samples',
         'app.attempts',
         'app.lti_users',
         'app.lti_keys',
         'app.lti_contexts',
         'app.lti_resources',
-        'app.lti_resource_links',
         'app.assays',
         'app.techniques',
-        'app.sites',
-        'app.schools',
-        'app.children',
-        'app.attempts_schools',
-        'app.sample_stages',
         'app.notes',
+        'app.standard_assays',
+        'app.technique_results',
+        'app.technique_usefulness',
+        'app.standards',
         'app.question_answers',
         'app.question_stems',
         'app.questions',
@@ -40,8 +38,11 @@ class StandardAssaysTableTest extends TestCase
         'app.reports',
         'app.sections',
         'app.reports_sections',
-        'app.technique_usefulness',
-        'app.standards'
+        'app.schools',
+        'app.attempts_schools',
+        'app.sites',
+        'app.children',
+        'app.sample_stages'
     ];
 
     /**
@@ -52,8 +53,8 @@ class StandardAssaysTableTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $config = TableRegistry::exists('StandardAssays') ? [] : ['className' => 'App\Model\Table\StandardAssaysTable'];
-        $this->StandardAssays = TableRegistry::get('StandardAssays', $config);
+        $config = TableRegistry::exists('Samples') ? [] : ['className' => 'App\Model\Table\SamplesTable'];
+        $this->Samples = TableRegistry::get('Samples', $config);
     }
 
     /**
@@ -63,7 +64,7 @@ class StandardAssaysTableTest extends TestCase
      */
     public function tearDown()
     {
-        unset($this->StandardAssays);
+        unset($this->Samples);
 
         parent::tearDown();
     }

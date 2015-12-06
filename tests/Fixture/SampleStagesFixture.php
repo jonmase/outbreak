@@ -19,6 +19,7 @@ class SampleStagesFixture extends TestFixture
     public $fields = [
         'id' => ['type' => 'integer', 'length' => 11, 'unsigned' => false, 'null' => false, 'default' => null, 'comment' => '', 'autoIncrement' => true, 'precision' => null],
         'stage' => ['type' => 'string', 'length' => 255, 'null' => false, 'default' => null, 'comment' => '', 'precision' => null, 'fixed' => null],
+        'order' => ['type' => 'integer', 'length' => 11, 'unsigned' => false, 'null' => true, 'default' => null, 'comment' => '', 'precision' => null, 'autoIncrement' => null],
         'created' => ['type' => 'datetime', 'length' => null, 'null' => true, 'default' => null, 'comment' => '', 'precision' => null],
         'modified' => ['type' => 'datetime', 'length' => null, 'null' => true, 'default' => null, 'comment' => '', 'precision' => null],
         '_constraints' => [
@@ -40,8 +41,9 @@ class SampleStagesFixture extends TestFixture
         [
             'id' => 1,
             'stage' => 'Lorem ipsum dolor sit amet',
-            'created' => '2015-11-30 17:12:17',
-            'modified' => '2015-11-30 17:12:17'
+            'order' => 1,
+            'created' => '2015-12-04 16:36:30',
+            'modified' => '2015-12-04 16:36:30'
         ],
     ];
 }

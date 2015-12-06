@@ -20,6 +20,7 @@ class StandardsFixture extends TestFixture
         'id' => ['type' => 'integer', 'length' => 11, 'unsigned' => false, 'null' => false, 'default' => null, 'comment' => '', 'autoIncrement' => true, 'precision' => null],
         'code' => ['type' => 'string', 'length' => 255, 'null' => false, 'default' => null, 'comment' => '', 'precision' => null, 'fixed' => null],
         'name' => ['type' => 'string', 'length' => 255, 'null' => false, 'default' => null, 'comment' => '', 'precision' => null, 'fixed' => null],
+        'order' => ['type' => 'integer', 'length' => 11, 'unsigned' => false, 'null' => true, 'default' => null, 'comment' => '', 'precision' => null, 'autoIncrement' => null],
         'created' => ['type' => 'datetime', 'length' => null, 'null' => true, 'default' => null, 'comment' => '', 'precision' => null],
         'modified' => ['type' => 'datetime', 'length' => null, 'null' => true, 'default' => null, 'comment' => '', 'precision' => null],
         '_constraints' => [
@@ -42,8 +43,9 @@ class StandardsFixture extends TestFixture
             'id' => 1,
             'code' => 'Lorem ipsum dolor sit amet',
             'name' => 'Lorem ipsum dolor sit amet',
-            'created' => '2015-11-30 17:12:39',
-            'modified' => '2015-11-30 17:12:39'
+            'order' => 1,
+            'created' => '2015-12-04 16:37:02',
+            'modified' => '2015-12-04 16:37:02'
         ],
     ];
 }

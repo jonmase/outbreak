@@ -12,10 +12,11 @@ use Cake\ORM\Entity;
  * @property string $details
  * @property bool $acute
  * @property bool $convalescent
+ * @property int $order
  * @property \Cake\I18n\Time $created
  * @property \Cake\I18n\Time $modified
- * @property \App\Model\Entity\Assay[] $assays
  * @property \App\Model\Entity\Child[] $children
+ * @property \App\Model\Entity\Sample[] $samples
  * @property \App\Model\Entity\Attempt[] $attempts
  */
 class School extends Entity

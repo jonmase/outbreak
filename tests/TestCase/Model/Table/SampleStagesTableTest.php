@@ -18,29 +18,7 @@ class SampleStagesTableTest extends TestCase
      */
     public $fixtures = [
         'app.sample_stages',
-        'app.assays',
-        'app.attempts',
-        'app.lti_users',
-        'app.lti_keys',
-        'app.lti_contexts',
-        'app.lti_resources',
-        'app.lti_resource_links',
-        'app.notes',
-        'app.techniques',
-        'app.question_answers',
-        'app.question_stems',
-        'app.questions',
-        'app.question_options',
-        'app.question_scores',
-        'app.reports',
-        'app.sections',
-        'app.reports_sections',
-        'app.standard_assays',
-        'app.technique_usefulness',
-        'app.schools',
-        'app.attempts_schools',
-        'app.sites',
-        'app.children'
+        'app.samples'
     ];
 
     /**

@@ -17,23 +17,17 @@ class StandardsControllerTest extends IntegrationTestCase
      */
     public $fixtures = [
         'app.standards',
-        'app.standard_assays',
+        'app.assays',
         'app.attempts',
         'app.lti_users',
         'app.lti_keys',
         'app.lti_contexts',
         'app.lti_resources',
-        'app.lti_resource_links',
-        'app.assays',
-        'app.techniques',
         'app.notes',
+        'app.techniques',
+        'app.standard_assays',
         'app.technique_results',
         'app.technique_usefulness',
-        'app.sites',
-        'app.schools',
-        'app.children',
-        'app.attempts_schools',
-        'app.sample_stages',
         'app.question_answers',
         'app.question_stems',
         'app.questions',
@@ -41,7 +35,13 @@ class StandardsControllerTest extends IntegrationTestCase
         'app.question_scores',
         'app.reports',
         'app.sections',
-        'app.reports_sections'
+        'app.reports_sections',
+        'app.schools',
+        'app.children',
+        'app.samples',
+        'app.sites',
+        'app.sample_stages',
+        'app.attempts_schools'
     ];
 
     /**

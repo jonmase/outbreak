@@ -32,7 +32,7 @@ class SchoolsController extends AppController
     public function view($id = null)
     {
         $school = $this->Schools->get($id, [
-            'contain' => ['Attempts', 'Assays', 'Children']
+            'contain' => ['Attempts', 'Children', 'Samples']
         ]);
         $this->set('school', $school);
         $this->set('_serialize', ['school']);

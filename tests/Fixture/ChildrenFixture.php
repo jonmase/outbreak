@@ -28,6 +28,7 @@ class ChildrenFixture extends TestFixture
         'code' => ['type' => 'string', 'length' => 45, 'null' => true, 'default' => null, 'comment' => '', 'precision' => null, 'fixed' => null],
         'name' => ['type' => 'string', 'length' => 45, 'null' => true, 'default' => null, 'comment' => '', 'precision' => null, 'fixed' => null],
         'school_id' => ['type' => 'integer', 'length' => 11, 'unsigned' => false, 'null' => false, 'default' => null, 'comment' => '', 'precision' => null, 'autoIncrement' => null],
+        'order' => ['type' => 'integer', 'length' => 11, 'unsigned' => false, 'null' => true, 'default' => null, 'comment' => '', 'precision' => null, 'autoIncrement' => null],
         'created' => ['type' => 'datetime', 'length' => null, 'null' => true, 'default' => null, 'comment' => '', 'precision' => null],
         'modified' => ['type' => 'datetime', 'length' => null, 'null' => true, 'default' => null, 'comment' => '', 'precision' => null],
         '_indexes' => [
@@ -55,8 +56,9 @@ class ChildrenFixture extends TestFixture
             'code' => 'Lorem ipsum dolor sit amet',
             'name' => 'Lorem ipsum dolor sit amet',
             'school_id' => 1,
-            'created' => '2015-11-30 17:10:39',
-            'modified' => '2015-11-30 17:10:39'
+            'order' => 1,
+            'created' => '2015-12-04 16:36:06',
+            'modified' => '2015-12-04 16:36:06'
         ],
     ];
 }

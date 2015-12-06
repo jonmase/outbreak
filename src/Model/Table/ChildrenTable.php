@@ -11,7 +11,7 @@ use Cake\Validation\Validator;
  * Children Model
  *
  * @property \Cake\ORM\Association\BelongsTo $Schools
- * @property \Cake\ORM\Association\HasMany $Assays
+ * @property \Cake\ORM\Association\HasMany $Samples
  */
 class ChildrenTable extends Table
 {
@@ -36,7 +36,7 @@ class ChildrenTable extends Table
             'foreignKey' => 'school_id',
             'joinType' => 'INNER'
         ]);
-        $this->hasMany('Assays', [
+        $this->hasMany('Samples', [
             'foreignKey' => 'child_id'
         ]);
     }
@@ -58,6 +58,10 @@ class ChildrenTable extends Table
 
         $validator
             ->allowEmpty('name');
+
+        $validator
+            ->add('order', 'valid', ['rule' => 'numeric'])
+            ->allowEmpty('order');
 
         return $validator;
     }

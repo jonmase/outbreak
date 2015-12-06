@@ -10,7 +10,7 @@ use Cake\Validation\Validator;
 /**
  * SampleStages Model
  *
- * @property \Cake\ORM\Association\HasMany $Assays
+ * @property \Cake\ORM\Association\HasMany $Samples
  */
 class SampleStagesTable extends Table
 {
@@ -31,7 +31,7 @@ class SampleStagesTable extends Table
 
         $this->addBehavior('Timestamp');
 
-        $this->hasMany('Assays', [
+        $this->hasMany('Samples', [
             'foreignKey' => 'sample_stage_id'
         ]);
     }
@@ -51,6 +51,10 @@ class SampleStagesTable extends Table
         $validator
             ->requirePresence('stage', 'create')
             ->notEmpty('stage');
+
+        $validator
+            ->add('order', 'valid', ['rule' => 'numeric'])
+            ->allowEmpty('order');
 
         return $validator;
     }

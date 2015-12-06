@@ -10,7 +10,7 @@ use Cake\Validation\Validator;
 /**
  * Standards Model
  *
- * @property \Cake\ORM\Association\HasMany $StandardAssays
+ * @property \Cake\ORM\Association\HasMany $Assays
  */
 class StandardsTable extends Table
 {
@@ -31,7 +31,7 @@ class StandardsTable extends Table
 
         $this->addBehavior('Timestamp');
 
-        $this->hasMany('StandardAssays', [
+        $this->hasMany('Assays', [
             'foreignKey' => 'standard_id'
         ]);
     }
@@ -55,6 +55,10 @@ class StandardsTable extends Table
         $validator
             ->requirePresence('name', 'create')
             ->notEmpty('name');
+
+        $validator
+            ->add('order', 'valid', ['rule' => 'numeric'])
+            ->allowEmpty('order');
 
         return $validator;
     }

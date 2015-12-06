@@ -32,7 +32,7 @@ class StandardsController extends AppController
     public function view($id = null)
     {
         $standard = $this->Standards->get($id, [
-            'contain' => ['StandardAssays']
+            'contain' => ['Assays']
         ]);
         $this->set('standard', $standard);
         $this->set('_serialize', ['standard']);

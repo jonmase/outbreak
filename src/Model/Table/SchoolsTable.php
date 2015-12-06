@@ -10,8 +10,8 @@ use Cake\Validation\Validator;
 /**
  * Schools Model
  *
- * @property \Cake\ORM\Association\HasMany $Assays
  * @property \Cake\ORM\Association\HasMany $Children
+ * @property \Cake\ORM\Association\HasMany $Samples
  * @property \Cake\ORM\Association\BelongsToMany $Attempts
  */
 class SchoolsTable extends Table
@@ -33,10 +33,10 @@ class SchoolsTable extends Table
 
         $this->addBehavior('Timestamp');
 
-        $this->hasMany('Assays', [
+        $this->hasMany('Children', [
             'foreignKey' => 'school_id'
         ]);
-        $this->hasMany('Children', [
+        $this->hasMany('Samples', [
             'foreignKey' => 'school_id'
         ]);
         $this->belongsToMany('Attempts', [
@@ -78,6 +78,10 @@ class SchoolsTable extends Table
             ->add('convalescent', 'valid', ['rule' => 'boolean'])
             ->requirePresence('convalescent', 'create')
             ->notEmpty('convalescent');
+
+        $validator
+            ->add('order', 'valid', ['rule' => 'numeric'])
+            ->allowEmpty('order');
 
         return $validator;
     }

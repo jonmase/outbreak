@@ -1,20 +1,23 @@
 <?php
 namespace App\Model\Table;
 
-use App\Model\Entity\StandardAssay;
+use App\Model\Entity\Sample;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
 
 /**
- * StandardAssays Model
+ * Samples Model
  *
  * @property \Cake\ORM\Association\BelongsTo $Attempts
- * @property \Cake\ORM\Association\BelongsTo $Techniques
- * @property \Cake\ORM\Association\BelongsTo $Standards
+ * @property \Cake\ORM\Association\BelongsTo $Sites
+ * @property \Cake\ORM\Association\BelongsTo $Schools
+ * @property \Cake\ORM\Association\BelongsTo $Children
+ * @property \Cake\ORM\Association\BelongsTo $SampleStages
+ * @property \Cake\ORM\Association\HasMany $Assays
  */
-class StandardAssaysTable extends Table
+class SamplesTable extends Table
 {
 
     /**
@@ -27,7 +30,7 @@ class StandardAssaysTable extends Table
     {
         parent::initialize($config);
 
-        $this->table('standard_assays');
+        $this->table('samples');
         $this->displayField('id');
         $this->primaryKey('id');
 
@@ -37,13 +40,24 @@ class StandardAssaysTable extends Table
             'foreignKey' => 'attempt_id',
             'joinType' => 'INNER'
         ]);
-        $this->belongsTo('Techniques', [
-            'foreignKey' => 'technique_id',
+        $this->belongsTo('Sites', [
+            'foreignKey' => 'site_id',
             'joinType' => 'INNER'
         ]);
-        $this->belongsTo('Standards', [
-            'foreignKey' => 'standard_id',
+        $this->belongsTo('Schools', [
+            'foreignKey' => 'school_id',
             'joinType' => 'INNER'
+        ]);
+        $this->belongsTo('Children', [
+            'foreignKey' => 'child_id',
+            'joinType' => 'INNER'
+        ]);
+        $this->belongsTo('SampleStages', [
+            'foreignKey' => 'sample_stage_id',
+            'joinType' => 'INNER'
+        ]);
+        $this->hasMany('Assays', [
+            'foreignKey' => 'sample_id'
         ]);
     }
 
@@ -59,6 +73,11 @@ class StandardAssaysTable extends Table
             ->add('id', 'valid', ['rule' => 'numeric'])
             ->allowEmpty('id', 'create');
 
+        $validator
+            ->add('before_submit', 'valid', ['rule' => 'boolean'])
+            ->requirePresence('before_submit', 'create')
+            ->notEmpty('before_submit');
+
         return $validator;
     }
 
@@ -72,8 +91,10 @@ class StandardAssaysTable extends Table
     public function buildRules(RulesChecker $rules)
     {
         $rules->add($rules->existsIn(['attempt_id'], 'Attempts'));
-        $rules->add($rules->existsIn(['technique_id'], 'Techniques'));
-        $rules->add($rules->existsIn(['standard_id'], 'Standards'));
+        $rules->add($rules->existsIn(['site_id'], 'Sites'));
+        $rules->add($rules->existsIn(['school_id'], 'Schools'));
+        $rules->add($rules->existsIn(['child_id'], 'Children'));
+        $rules->add($rules->existsIn(['sample_stage_id'], 'SampleStages'));
         return $rules;
     }
 }

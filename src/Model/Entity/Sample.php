@@ -4,19 +4,25 @@ namespace App\Model\Entity;
 use Cake\ORM\Entity;
 
 /**
- * StandardAssay Entity.
+ * Sample Entity.
  *
  * @property int $id
  * @property int $attempt_id
  * @property \App\Model\Entity\Attempt $attempt
- * @property int $technique_id
- * @property \App\Model\Entity\Technique $technique
- * @property int $standard_id
- * @property \App\Model\Entity\Standard $standard
+ * @property int $site_id
+ * @property \App\Model\Entity\Site $site
+ * @property int $school_id
+ * @property \App\Model\Entity\School $school
+ * @property int $child_id
+ * @property \App\Model\Entity\Child $child
+ * @property int $sample_stage_id
+ * @property \App\Model\Entity\SampleStage $sample_stage
+ * @property bool $before_submit
  * @property \Cake\I18n\Time $created
  * @property \Cake\I18n\Time $modified
+ * @property \App\Model\Entity\Assay[] $assays
  */
-class StandardAssay extends Entity
+class Sample extends Entity
 {
 
     /**
