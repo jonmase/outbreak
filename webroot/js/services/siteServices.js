@@ -2,24 +2,28 @@
 	angular.module('flu.samples')
 		.factory('siteFactory', siteFactory)
 		
-	function siteFactory() {
+	siteFactory.$inject = ['$resource', '$q'];
+
+	function siteFactory($resource, $q) {
 		//Variables
-		var sites = readSites();
-		var currentSiteId = 0;
+		//var sites = readSites();
+		var sites = [];
+		var currentSiteIndex = 0;
 		
 		//Exposed Methods
 		var factory = {
-			getCurrentSiteId: getCurrentSiteId,
+			getCurrentSiteIndex: getCurrentSiteIndex,
 			getSites: getSites,
 			getSiteIds: getSiteIds,
-			setCurrentSiteId: setCurrentSiteId,
+			loadSites: loadSites,
+			setCurrentSiteIndex: setCurrentSiteIndex,
 		};
 		return factory;
 		
 		//Methods
 
-		function getCurrentSiteId() { 
-			return currentSiteId; 
+		function getCurrentSiteIndex() { 
+			return currentSiteIndex; 
 		}
 		
 		function getSites() { 
@@ -28,13 +32,24 @@
 		
 		function getSiteIds() {
 			var siteIds = {};
-			for(var site = 0; site < sites.length; site++) {
-				siteIds[sites[site].id] = site;
+			for(var siteIndex = 0; siteIndex < sites.length; siteIndex++) {
+				siteIds[sites[siteIndex].code] = sites[siteIndex].id;
 			}
 			return siteIds;
 		}
 		
-		function readSites() {
+		function loadSites() {
+			var deferred = $q.defer();
+			var SitesCall = $resource('../../sites/load.json', {});
+			SitesCall.get({}, function(result) {
+				sites = result.sites;
+				deferred.resolve('Sites loaded');
+				deferred.reject('Sites not loaded');
+			});
+			return deferred.promise;
+		}
+		
+		/*function readSites() {
 			//API: get the sites from the DB? [constant]
 			var sites = [
 				{
@@ -61,19 +76,19 @@
 					name: 'Cerebrospinal Fluid (CSF)',
 					//info: '<p>Some info about CSF</p>',
 				},
-				/*{
-					id: 'urine',
-					resultId: 'u',
-					menu: 'Urine',
-					name: 'Urine',
-					info: '<p>Some info about Urine</p>',
-				},*/
+				//{
+				//	id: 'urine',
+				//	resultId: 'u',
+				//	menu: 'Urine',
+				//	name: 'Urine',
+				//	info: '<p>Some info about Urine</p>',
+				//},
 			];
 			return sites;
-		}
+		}*/
 		
-		function setCurrentSiteId(siteId) { 
-			currentSiteId = siteId; 
+		function setCurrentSiteIndex(siteIndex) { 
+			currentSiteIndex = siteIndex; 
 		}
 	}
 })();

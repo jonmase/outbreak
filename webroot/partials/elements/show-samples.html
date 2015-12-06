@@ -6,7 +6,7 @@
 			<ul class="samples-list">
 				<li class="samples-list-item" ng-repeat="(childId, child) in school" ng-if="child[0] === 1 || child[1] === 1">
 					<span class="samples-list-child">{{ShowSamplesCtrl.schools[schoolId].children[childId].name}}</span> 
-					<div class="samples-list-samples"><span ng-repeat="(typeId, type) in child track by $index" ng-if="type === 1" class="label" ng-class="{'label-primary': status === 'temp', 'label-success': status === 'saved'}">{{ShowSamplesCtrl.types[typeId]}}</span></div>
+					<div class="samples-list-samples"><span ng-repeat="(typeId, type) in child track by $index" ng-if="type === 1" class="label" ng-class="{'label-primary': status === 'temp', 'label-success': status === 'saved'}">{{ShowSamplesCtrl.types[typeId].stage}}</span></div>
 				</li>
 			</ul>
 		</div>

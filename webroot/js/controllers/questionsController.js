@@ -16,14 +16,12 @@
 		$scope.$parent.currentSectionId = sectionId;	//Make sure the section ID is set correctly in Main Controller
 		vm.section = sectionFactory.getSection(sectionId);	//Get the section details
 
-		//Bindable Members - values
-
-		if(!questionFactory.getLoadingStarted()) {
-			questionFactory.setLoadingStarted();
+		if(!questionFactory.getLoaded()) {
 			var questionsPromise = questionFactory.loadQuestions();
 			var responsesPromise = questionFactory.loadResponses();
 			$q.all([questionsPromise, responsesPromise]).then(
 				function(result) {
+					questionFactory.setLoaded();
 					console.log(result);
 					setup();
 				}, 
@@ -38,7 +36,7 @@
 		
 		function setup() {
 			vm.subsections = questionFactory.getQuestions();
-			vm.currentQuestionId = questionFactory.getCurrentQuestionId();
+			vm.currentQuestionIndex = questionFactory.getCurrentQuestionIndex();
 			vm.romans = questionFactory.getRomans();
 			questionFactory.setAnswered();	//Set whether each question has been answered
 			vm.responses = questionFactory.getResponses();
@@ -54,7 +52,7 @@
 			vm.change = change;
 			
 			//Actions on arrival
-			vm.setSubsection(vm.currentQuestionId);	//Set the subsection
+			vm.setSubsection(vm.currentQuestionIndex);	//Set the subsection
 			//For Development, set to complete as soon as you go to the questions page
 			//Note that this still gets called even if user is redirected home by checkLock - doesn't really matter, as won't just unlock page on first visit.
 			//lockFactory.setComplete(sectionId);	//Set the progress for this section to complete
@@ -79,7 +77,7 @@
 		}
 		
 		function change(changeBy) {
-			var newQuestionId = vm.currentQuestionId + changeBy;
+			var newQuestionId = vm.currentQuestionIndex + changeBy;
 			vm.subsections[newQuestionId].active = true;
 			document.body.scrollTop = 0;
 			setSubsection(newQuestionId);
@@ -87,7 +85,7 @@
 		
 		function setSubsection(questionIndex) {
 			questionFactory.setCurrentQuestionId(questionIndex);
-			vm.currentQuestionId = questionIndex;
+			vm.currentQuestionIndex = questionIndex;
 			vm.currentQuestion = vm.subsections[questionIndex];
 		};
 	}

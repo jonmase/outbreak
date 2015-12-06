@@ -58,7 +58,20 @@ class AttemptsController extends AppController
 			$resources = $this->Attempts->get($attemptId, ['fields' => ['money', 'time']]);
 			$this->set(compact('resources'));
 			$this->set('_serialize', ['resources']);
-			//pr($attempt);
+			//pr($resources);
+		}
+		else {
+			pr('denied');
+		}
+	}
+	
+	public function loadHappiness($attemptId = null) {
+		if($attemptId && $this->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
+			$attemptHappiness = $this->Attempts->get($attemptId, ['fields' => ['happiness']]);
+			$happiness = $attemptHappiness['happiness'];
+			$this->set(compact('happiness'));
+			$this->set('_serialize', ['happiness']);
+			//pr($happiness);
 		}
 		else {
 			pr('denied');

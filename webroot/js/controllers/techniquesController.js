@@ -16,8 +16,8 @@
 		$scope.$parent.currentSectionId = sectionId;	//Make sure the section ID is set correctly in Main Controller
 		vm.section = sectionFactory.getSection(sectionId);	//Get the section details
 
-		if(!techniqueFactory.getLoadingStarted()) {
-			techniqueFactory.setLoadingStarted();
+		if(!techniqueFactory.getLoaded()) {
+			techniqueFactory.setLoaded();
 			var techniquesPromise = techniqueFactory.loadTechniques();
 			var researchTechniquesPromise = techniqueFactory.loadResearchTechniques();
 			var usefulPromise = techniqueFactory.loadUsefulTechniques();
@@ -38,7 +38,7 @@
 		//Functions
 		function setup() {
 			vm.subsections = techniqueFactory.getTechniques(sectionId);
-			vm.currentTechniqueId = techniqueFactory.getCurrentTechniqueId(sectionId);
+			vm.currentTechniqueIndex = techniqueFactory.getCurrentTechniqueIndex(sectionId);
 			if(sectionId === 'revision') {
 				//Pass techniques useful to view for revision page
 				vm.techniquesUseful = techniqueFactory.getUsefulTechniques();
@@ -51,7 +51,7 @@
 			vm.complete = complete;	//Dev only, so don't have to click all of the buttons
 			
 			//Actions
-			vm.setSubsection(vm.currentTechniqueId);
+			vm.setSubsection(vm.currentTechniqueIndex);
 			if(sectionId === 'research') {	//For research section, only show research techniques
 				lockFactory.setComplete(sectionId);
 			}
@@ -63,12 +63,12 @@
 			lockFactory.setComplete('revision');
 		}
 		
-		function setSubsection(techniqueId) {
-			techniqueFactory.setCurrentTechniqueId(sectionId, techniqueId);
-			vm.currentTechniqueId = techniqueId;
+		function setSubsection(techniqueIndex) {
+			techniqueFactory.setCurrentTechniqueIndex(sectionId, techniqueIndex);
+			vm.currentTechniqueIndex = techniqueIndex;
 			
 			//Youtube videos - need to allow the URL
-			var video = vm.subsections[techniqueId].video;
+			var video = vm.subsections[techniqueIndex].video;
 			if(angular.isObject(video)) {	//If multiple videos, the URL is allowed when the tab is changed using setVideoTab function below
 				vm.currentTechniqueVideo = video;	//Set currentTechniqueVideo to the video object
 			}

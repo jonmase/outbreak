@@ -33,17 +33,21 @@ class SchoolsTable extends Table
 
         $this->addBehavior('Timestamp');
 
-        $this->hasMany('Children', [
+        $this->hasMany('AttemptsSchools', [
             'foreignKey' => 'school_id'
+        ]);
+        $this->hasMany('Children', [
+            'foreignKey' => 'school_id',
+ 			'sort' => ['Children.order' => 'ASC'],
         ]);
         $this->hasMany('Samples', [
             'foreignKey' => 'school_id'
         ]);
-        $this->belongsToMany('Attempts', [
+        /*$this->belongsToMany('Attempts', [
             'foreignKey' => 'school_id',
             'targetForeignKey' => 'attempt_id',
             'joinTable' => 'attempts_schools'
-        ]);
+        ]);*/
     }
 
     /**

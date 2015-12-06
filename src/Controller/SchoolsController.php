@@ -2,6 +2,7 @@
 namespace App\Controller;
 
 use App\Controller\AppController;
+use Cake\Event\Event;
 
 /**
  * Schools Controller
@@ -10,13 +11,53 @@ use App\Controller\AppController;
  */
 class SchoolsController extends AppController
 {
+	public function beforeFilter(Event $event) {
+        parent::beforeFilter($event);
+		$this->Auth->allow('load');
+	}
+	
+	public function load($attemptId = null) {
+		$contain = array('Children');
+		//If there is an attemptId, get school-related info for this attempt
+		if($attemptId && $this->Schools->AttemptsSchools->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
+			//$contain[] = 'AttemptsSchools';
+			$contain['AttemptsSchools'] = function ($q) use ($attemptId) {
+			   return $q
+					->select(['id', 'attempt_id', 'school_id', 'acuteDisabled'])
+					->where(['AttemptsSchools.attempt_id' => $attemptId]);
+			};
+		}
+
+		$query = $this->Schools->find('all', [
+			'order' => ['Schools.order' => 'ASC'],
+			'contain' => $contain,
+		]);
+		$schools = $query->all();
+		//pr($schools->toArray());
+		
+		foreach($schools as $school) {
+			if(!empty($school->attempts_schools)) {
+				$school->acuteDisabled = $school->attempts_schools[0]->acuteDisabled;
+			}
+			else {
+				$school->acuteDisabled = false;
+			}
+			if(isset($school->attempts_schools)) {
+				unset($school->attempts_schools);
+			}
+		}
+		
+		$this->set(compact('schools'));
+		$this->set('_serialize', ['schools']);
+		//pr($sites->toArray());
+	}
 
     /**
      * Index method
      *
      * @return void
      */
-    public function index()
+    /*public function index()
     {
         $this->set('schools', $this->paginate($this->Schools));
         $this->set('_serialize', ['schools']);
@@ -29,7 +70,7 @@ class SchoolsController extends AppController
      * @return void
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
-    public function view($id = null)
+    /*public function view($id = null)
     {
         $school = $this->Schools->get($id, [
             'contain' => ['Attempts', 'Children', 'Samples']
@@ -43,7 +84,7 @@ class SchoolsController extends AppController
      *
      * @return void Redirects on successful add, renders view otherwise.
      */
-    public function add()
+    /*public function add()
     {
         $school = $this->Schools->newEntity();
         if ($this->request->is('post')) {
@@ -67,7 +108,7 @@ class SchoolsController extends AppController
      * @return void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
-    public function edit($id = null)
+    /*public function edit($id = null)
     {
         $school = $this->Schools->get($id, [
             'contain' => ['Attempts']
@@ -93,7 +134,7 @@ class SchoolsController extends AppController
      * @return \Cake\Network\Response|null Redirects to index.
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
-    public function delete($id = null)
+    /*public function delete($id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
         $school = $this->Schools->get($id);
@@ -103,5 +144,5 @@ class SchoolsController extends AppController
             $this->Flash->error(__('The school could not be deleted. Please, try again.'));
         }
         return $this->redirect(['action' => 'index']);
-    }
+    }*/
 }

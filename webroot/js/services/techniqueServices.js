@@ -12,36 +12,36 @@
 		var researchTechniques = [];
 		var revisionTechniques = [];
 		var usefulTechniques = [];
-		var currentRevisionTechniqueId = 0;
-		var currentResearchTechniqueId = 0;
-		var loadingStarted = false;
+		var currentRevisionTechniqueIndex = 0;
+		var currentResearchTechniqueIndex = 0;
+		var loaded = false;
 			
 		//Exposed Methods
 		var factory = {
-			getCurrentTechniqueId: getCurrentTechniqueId,
+			getCurrentTechniqueIndex: getCurrentTechniqueIndex,
 			getFluExtra: getFluExtra,
 			getLabTechnique: getLabTechnique,
-			getLoadingStarted: getLoadingStarted,
+			getLoaded: getLoaded,
 			getTechniques: getTechniques,
 			getUsefulTechniques: getUsefulTechniques,
 			loadTechniques: loadTechniques,
 			loadResearchTechniques: loadResearchTechniques,
 			loadUsefulTechniques: loadUsefulTechniques,
 			readTechniques: readTechniques,
-			setCurrentTechniqueId: setCurrentTechniqueId,
-			setLoadingStarted: setLoadingStarted,
+			setCurrentTechniqueIndex: setCurrentTechniqueIndex,
+			setLoaded: setLoaded,
 			setRevisionComplete: setRevisionComplete,
 			setUsefulTechnique: setUsefulTechnique,
 		}
 		return factory;
 		
 		//Methods
-		function getCurrentTechniqueId(sectionId) { 
+		function getCurrentTechniqueIndex(sectionId) { 
 			if(sectionId === 'research') {
-				return currentResearchTechniqueId;
+				return currentResearchTechniqueIndex;
 			}
 			else if(sectionId === 'revision') {
-				return currentRevisionTechniqueId;
+				return currentRevisionTechniqueIndex;
 			}
 		}
 		
@@ -49,12 +49,12 @@
 			return fluExtra;
 		}
 		
-		function getLabTechnique(techniqueId) { 
-			return labTechniques[techniqueId];
+		function getLabTechnique(techniqueIndex) { 
+			return labTechniques[techniqueIndex];
 		}
 		
-		function getLoadingStarted() { 
-			return loadingStarted;
+		function getLoaded() { 
+			return loaded;
 		}
 		
 		function getTechniques(sectionId) { 
@@ -178,24 +178,24 @@
 				return returnTechniques;
 		}
 		
-		function setCurrentTechniqueId(sectionId, techniqueId) { 
+		function setCurrentTechniqueIndex(sectionId, techniqueIndex) { 
 			if(sectionId === 'research') {
-				currentResearchTechniqueId = techniqueId;
+				currentResearchTechniqueIndex = techniqueIndex;
 			}
 			else if(sectionId === 'revision') {
-				currentRevisionTechniqueId = techniqueId;
+				currentRevisionTechniqueIndex = techniqueIndex;
 			}
 		}
 		
-		function setLoadingStarted() { 
-			loadingStarted = true;
+		function setLoaded() { 
+			loaded = true;
 		}
 		
 		function setRevisionComplete() {
 			var sectionId = 'revision';
-			for(var techniqueId = 0; techniqueId < revisionTechniques.length; techniqueId++) {
-				//if(techniques[techniqueId].level <= vm.levelThreshold) {
-					if(!revisionTechniques[techniqueId].infoOnly && typeof(usefulTechniques[revisionTechniques[techniqueId].id]) === "undefined" || usefulTechniques[revisionTechniques[techniqueId].id] === null) {
+			for(var techniqueIndex = 0; techniqueIndex < revisionTechniques.length; techniqueIndex++) {
+				//if(techniques[techniqueIndex].level <= vm.levelThreshold) {
+					if(!revisionTechniques[techniqueIndex].infoOnly && typeof(usefulTechniques[revisionTechniques[techniqueIndex].id]) === "undefined" || usefulTechniques[revisionTechniques[techniqueIndex].id] === null) {
 						//lockFactory.setProgressAndLocks(sectionId, 0);	//Set the progress for this section to incomplete (unnecessary, will already be so)
 						return true; //Exit the check, don't need to do anything more
 					}

@@ -12,9 +12,9 @@
 		var responses = [];
 		//setAnswered();	//Set whether each question has been answered
 		//var notAnswered = setNotAnswered();
-		var currentQuestionId = 0;
+		var currentQuestionIndex = 0;
 		var romans = ["(i) ", "(ii) ", "(iii) ", "(iv) ", "(v) ", "(vi) ", "(vii) ", "(viii) ", "(ix) ", "(x) ", "(xi) ", "(xii) ", "(xiii) ", "(xiv) ", "(xv) "];
-		var loadingStarted = false;
+		var loaded = false;
 		var saving = [];
 		
 		//Exposed Methods
@@ -23,8 +23,8 @@
 			checkAnswers: checkAnswers,
 			clearAnswers: clearAnswers,
 			getResponses: getResponses,
-			getCurrentQuestionId: getCurrentQuestionId,
-			getLoadingStarted: getLoadingStarted,
+			getCurrentQuestionIndex: getCurrentQuestionIndex,
+			getLoaded: getLoaded,
 			//getNotAnswered: getNotAnswered,
 			getQuestions: getQuestions,
 			getRoman: getRoman,
@@ -33,8 +33,8 @@
 			loadQuestions: loadQuestions,
 			loadResponses: loadResponses,
 			setAnswered: setAnswered,
-			setCurrentQuestionId: setCurrentQuestionId,
-			setLoadingStarted: setLoadingStarted,
+			setCurrentQuestionIndex: setCurrentQuestionIndex,
+			setLoaded: setLoaded,
 		}
 		return factory;
 
@@ -78,7 +78,7 @@
 
 		function clearAnswers(questionIndex) {
 			var questionDBId = questions[questionIndex].id;
-			if(responses.scores[questionDBId] === null) {	//If question has not been answered...
+			if(!(responses.scores[questionDBId] > -1)) {	//If question has not been answered...
 				var stems = questions[questionIndex].question_stems;
 				for(var s = 0; s < stems.length; s++) {
 					responses.answers[questionDBId][stems[s].id] = null;
@@ -87,12 +87,12 @@
 			responses.answered[questionDBId] = setAnsweredByQuestion(questionIndex);
 		}
 
-		function getCurrentQuestionId() { 
-			return currentQuestionId; 
+		function getCurrentQuestionIndex() { 
+			return currentQuestionIndex; 
 		}
 		
-		function getLoadingStarted() { 
-			return loadingStarted;
+		function getLoaded() { 
+			return loaded;
 		}
 		
 		function getNotAnswered() { 
@@ -175,8 +175,8 @@
 		
 		function setAnswered() {
 			responses.answered = [];
-			for(var q = 0; q < questions.length; q++) {
-				responses.answered[questions[q].id] = setAnsweredByQuestion(q);
+			for(var questionIndex = 0; questionIndex < questions.length; questionIndex++) {
+				responses.answered[questions[questionIndex].id] = setAnsweredByQuestion(questionIndex);
 			}
 			//return answered;
 		}
@@ -201,17 +201,17 @@
 			return answered;
 		}
 		
-		function setCurrentQuestionId(questionIndex) { 
-			currentQuestionId = questionIndex; 
+		function setCurrentQuestionIndex(questionIndex) { 
+			currentQuestionIndex = questionIndex; 
 		}
 		
-		function setLoadingStarted() { 
-			loadingStarted = true;
+		function setLoaded() { 
+			loaded = true;
 		}
 		
 		function setQuestionsComplete() {
-			for(var q = 0; q < questions.length; q++) {
-				if(responses.scores[q] === null) {
+			for(var questionIndex = 0; questionIndex < questions.length; questionIndex++) {
+				if(!(responses.scores[questions[questionIndex].id] > -1)) {
 					return false;
 				}
 			}

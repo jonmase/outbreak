@@ -46,6 +46,9 @@ class AttemptsTable extends Table
         $this->hasMany('Assays', [
             'foreignKey' => 'attempt_id'
         ]);
+        $this->hasMany('AttemptsSchools', [
+            'foreignKey' => 'attempt_id'
+        ]);
         $this->hasMany('Notes', [
             'foreignKey' => 'attempt_id'
         ]);
@@ -64,11 +67,11 @@ class AttemptsTable extends Table
         $this->hasMany('TechniqueUsefulness', [
             'foreignKey' => 'attempt_id'
         ]);
-        $this->belongsToMany('Schools', [
+        /*$this->belongsToMany('Schools', [
             'foreignKey' => 'attempt_id',
             'targetForeignKey' => 'school_id',
             'joinTable' => 'attempts_schools'
-        ]);
+        ]);*/
     }
 
     /**

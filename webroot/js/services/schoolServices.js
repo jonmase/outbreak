@@ -2,13 +2,17 @@
 	angular.module('flu.samples')
 		.factory('schoolFactory', schoolFactory)
 		
-	function schoolFactory() {
+	schoolFactory.$inject = ['$resource', '$q'];
+
+	function schoolFactory($resource, $q) {
 		//Variables
-		var schools = readSchools();
+		//var schools = readSchools();
+		var schools = [];
 		
 		//Exposed Methods
 		var factory = {
 			getSchools: getSchools,
+			loadSchools: loadSchools,
 		};
 		return factory;
 		
@@ -18,7 +22,18 @@
 			return schools; 
 		}
 		
-		function readSchools() {
+		function loadSchools() {
+			var deferred = $q.defer();
+			var SchoolsCall = $resource('../../schools/load.json', {});
+			SchoolsCall.get({}, function(result) {
+				schools = result.schools;
+				deferred.resolve('Schools loaded');
+				deferred.reject('Schools not loaded');
+			});
+			return deferred.promise;
+		}
+		
+		/*function readSchools() {
 			//API: get the schools from the DB? [constant]
 			//API: Get acuteDisabled from the DB for each school
 			var schools = [
@@ -62,6 +77,6 @@
 			];
 			
 			return schools;
-		}
+		}*/
 	}
 })();

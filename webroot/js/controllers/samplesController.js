@@ -2,9 +2,9 @@
 	angular.module('flu.samples', [])
 		.controller('SamplesController', SamplesController);
 
-	SamplesController.$inject = ['$scope', '$sce', '$uibModal', 'sectionFactory', 'progressFactory', 'lockFactory', 'siteFactory', 'schoolFactory', 'sampleFactory'];
+	SamplesController.$inject = ['$scope', '$sce', '$uibModal', 'sectionFactory', 'progressFactory', 'lockFactory', 'siteFactory', 'schoolFactory', 'sampleFactory', '$q'];
 		
-	function SamplesController($scope, $sce, $uibModal, sectionFactory, progressFactory, lockFactory, siteFactory, schoolFactory, sampleFactory) {
+	function SamplesController($scope, $sce, $uibModal, sectionFactory, progressFactory, lockFactory, siteFactory, schoolFactory, sampleFactory, $q) {
 		var vm = this;
 		var sectionId = 'samples';
 
@@ -12,29 +12,54 @@
 		if(!lockFactory.checkLock(sectionId)) {	
 			return false;
 		}
+		vm.loading = true;
 		$scope.$parent.currentSectionId = sectionId;	//Make sure the section ID is set correctly in Main Controller
-
-		//Bindable Members
 		vm.section = sectionFactory.getSection(sectionId);	//Get the section details
-		vm.subsections = siteFactory.getSites();
-		vm.siteIds = siteFactory.getSiteIds();
-		vm.currentSiteId = siteFactory.getCurrentSiteId();
-		vm.schools = schoolFactory.getSchools();
-		vm.samples = sampleFactory.getSamples();
-		vm.types = sampleFactory.getSampleTypes();
-		vm.happiness = getHappiness();
+
+		if(!sampleFactory.getLoaded()) {
+			var sitesPromise = siteFactory.loadSites();
+			var schoolsPromise = schoolFactory.loadSchools();
+			var typesPromise = sampleFactory.loadTypes();
+			var samplesPromise = sampleFactory.loadSamples();
+			var happinessPromise = sampleFactory.loadHappiness();
+			$q.all([sitesPromise, schoolsPromise, typesPromise, samplesPromise, happinessPromise]).then(
+				function(result) {
+					sampleFactory.setup();
+					console.log(result);
+					setup();
+				}, 
+				function(reason) {
+					console.log("Error: " + reason);
+				}
+			);
+		}
+		else {
+			setup();
+		}
 		
-		vm.checkSamples = checkSamples;
-		vm.confirmSamples = confirmSamples;
-		//vm.modalCancel = modalCancel;
-		vm.selectAllOrNone = selectAllOrNone;
-		vm.setSubsection = setSubsection;
-		
-		//Actions
-		setSubsection(vm.currentSiteId);
-		//For Development, set to complete as soon as you go to the samples page
-		//Note that this still gets called even if user is redirected home by checkLock - doesn't really matter, as won't just unlock page on first visit.
-		//lockFactory.setComplete(sectionId);	//Set the progress for this section to complete
+		function setup() {
+			//Bindable Members
+			vm.subsections = siteFactory.getSites();
+			vm.siteIds = siteFactory.getSiteIds();
+			vm.currentSiteIndex = siteFactory.getCurrentSiteIndex();
+			vm.schools = schoolFactory.getSchools();
+			vm.samples = sampleFactory.getSamples();
+			vm.types = sampleFactory.getSampleTypes();
+			vm.happiness = getHappiness();
+			
+			vm.checkSamples = checkSamples;
+			vm.confirmSamples = confirmSamples;
+			//vm.modalCancel = modalCancel;
+			vm.selectAllOrNone = selectAllOrNone;
+			vm.setSubsection = setSubsection;
+			
+			//Actions
+			setSubsection(vm.currentSiteIndex);
+			//For Development, set to complete as soon as you go to the samples page
+			//Note that this still gets called even if user is redirected home by checkLock - doesn't really matter, as won't just unlock page on first visit.
+			//lockFactory.setComplete(sectionId);	//Set the progress for this section to complete
+			vm.loading = false;
+		}
 		
 		//Functions
 		//When user clicks a sample, check whether the sample is available, show any appropriate advice/warnings, and update happiness
@@ -83,15 +108,15 @@
 		}*/
 		
 		function selectAllOrNone(allOrNone, schoolId, typeId) {
-			sampleFactory.selectAllOrNone(allOrNone, vm.currentSiteId, schoolId, typeId);
+			sampleFactory.selectAllOrNone(allOrNone, vm.currentSiteIndex, schoolId, typeId);
 			vm.happiness = getHappiness();
 		}
 
 		//Set the subsection
-		function setSubsection(siteId) {
-			siteFactory.setCurrentSiteId(siteId);
-			vm.currentSiteId = siteId;
-			vm.currentSite = vm.subsections[siteId];
+		function setSubsection(siteIndex) {
+			siteFactory.setCurrentSiteIndex(siteIndex);
+			vm.currentSiteIndex = siteIndex;
+			vm.currentSite = vm.subsections[siteIndex];
 		};
 	}
 })();

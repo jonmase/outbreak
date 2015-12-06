@@ -16,11 +16,11 @@
 						</div>
 					</div-->
 					<!--h4 class="col-xs-12 visible-xs-block visible-sm-block">{{technique.name}}</h4-->
-					<h4 class="col-xs-12 hidden-md hidden-lg" ng-repeat="(techniqueId, technique) in techniquesCtrl.subsections" ng-show="techniquesCtrl.currentTechniqueId === techniqueId">{{technique.name}}</h4>
+					<h4 class="col-xs-12 hidden-md hidden-lg" ng-repeat="(techniqueIndex, technique) in techniquesCtrl.subsections" ng-show="techniquesCtrl.currentTechniqueIndex === techniqueIndex">{{technique.name}}</h4>
 
 					<technique-video ng-show="techniquesCtrl.currentTechniqueVideo !== null" video="techniquesCtrl.currentTechniqueVideo" part="techniquesCtrl.currentVideoPart" on-select="techniquesCtrl.setVideoTab(url)"></technique-video>
-					<!--div class="revision-content" ng-repeat="(techniqueId, technique) in techniques | subobjectFilter: { type: typeThreshold}" ng-include="'pages/techniques/' + techniqueId + '.html'" ng-show="techniqueId === techniquesCtrl.currentTechniqueId"></div-->
-					<div ng-repeat="(techniqueId, technique) in techniquesCtrl.subsections" ng-show="techniquesCtrl.currentTechniqueId === techniqueId">
+					<!--div class="revision-content" ng-repeat="(techniqueIndex, technique) in techniques | subobjectFilter: { type: typeThreshold}" ng-include="'pages/techniques/' + techniqueIndex + '.html'" ng-show="techniqueIndex === techniquesCtrl.currentTechniqueIndex"></div-->
+					<div ng-repeat="(techniqueIndex, technique) in techniquesCtrl.subsections" ng-show="techniquesCtrl.currentTechniqueIndex === techniqueIndex">
 						<!--technique-costs ng-if="currentSectionId === 'revision'" technique="techniquesCtrl.currentTechnique"></technique-costs-->
 						<!--h4>{{techniquesCtrl.currentTechnique.name}}</h4>
 						<div ng-bind-html="techniquesCtrl.currentTechnique.content | unsafe"></div-->

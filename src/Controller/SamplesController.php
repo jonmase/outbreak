@@ -2,6 +2,7 @@
 namespace App\Controller;
 
 use App\Controller\AppController;
+use Cake\Event\Event;
 
 /**
  * Samples Controller
@@ -10,13 +11,37 @@ use App\Controller\AppController;
  */
 class SamplesController extends AppController
 {
+	public function load($attemptId = null) {
+		if($attemptId && $this->Samples->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
+			$samplesQuery = $this->Samples->find('all', [
+				'conditions' => ['attempt_id' => $attemptId],
+			]);
+			$samplesRaw = $samplesQuery->all();
+			$samples = [];
+			foreach($samplesRaw as $sample) {
+				if(!isset($samples[$sample->site_id])) { $samples[$sample->site_id] = []; }
+				if(!isset($samples[$sample->site_id][$sample->school_id])) { $samples[$sample->site_id][$sample->school_id] = []; }
+				if(!isset($samples[$sample->site_id][$sample->school_id][$sample->child_id])) { $samples[$sample->site_id][$sample->school_id][$sample->child_id] = []; }
+				//if(!isset($samples[$sample->site_id][$sample->school_id][$sample->child_id][$sample->sample_stage_id])) { $samples[$sample->site_id][$sample->school_id][$sample->child_id][$sample->sample_stage_id] = []; }
+
+				$samples[$sample->site_id][$sample->school_id][$sample->child_id][$sample->sample_stage_id] = 1;
+			}
+			$this->set(compact('samples'));
+			$this->set('_serialize', ['samples']);
+			//pr($resources);
+		}
+		else {
+			pr('denied');
+		}
+	}
+	
 
     /**
      * Index method
      *
      * @return void
      */
-    public function index()
+    /*public function index()
     {
         $this->paginate = [
             'contain' => ['Attempts', 'Sites', 'Schools', 'Children', 'SampleStages']
@@ -32,7 +57,7 @@ class SamplesController extends AppController
      * @return void
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
-    public function view($id = null)
+    /*public function view($id = null)
     {
         $sample = $this->Samples->get($id, [
             'contain' => ['Attempts', 'Sites', 'Schools', 'Children', 'SampleStages', 'Assays']
@@ -46,7 +71,7 @@ class SamplesController extends AppController
      *
      * @return void Redirects on successful add, renders view otherwise.
      */
-    public function add()
+    /*public function add()
     {
         $sample = $this->Samples->newEntity();
         if ($this->request->is('post')) {
@@ -74,7 +99,7 @@ class SamplesController extends AppController
      * @return void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
-    public function edit($id = null)
+    /*public function edit($id = null)
     {
         $sample = $this->Samples->get($id, [
             'contain' => []
@@ -104,7 +129,7 @@ class SamplesController extends AppController
      * @return \Cake\Network\Response|null Redirects to index.
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
-    public function delete($id = null)
+    /*public function delete($id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
         $sample = $this->Samples->get($id);
@@ -114,5 +139,5 @@ class SamplesController extends AppController
             $this->Flash->error(__('The sample could not be deleted. Please, try again.'));
         }
         return $this->redirect(['action' => 'index']);
-    }
+    }*/
 }

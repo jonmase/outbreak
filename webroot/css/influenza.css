@@ -56,6 +56,9 @@ th, td {
     background-color: #337ab7;
     border-color: #337ab7;
 }
+.radio input[type="radio"], .checkbox input[type="checkbox"] {
+    cursor: pointer;
+}
 
 /* General Classes */
 .clickable {

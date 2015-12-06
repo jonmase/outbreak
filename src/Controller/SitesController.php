@@ -2,6 +2,7 @@
 namespace App\Controller;
 
 use App\Controller\AppController;
+use Cake\Event\Event;
 
 /**
  * Sites Controller
@@ -10,13 +11,28 @@ use App\Controller\AppController;
  */
 class SitesController extends AppController
 {
+	public function beforeFilter(Event $event) {
+        parent::beforeFilter($event);
+		$this->Auth->allow('load');
+	}
+	
+	public function load() {
+		$query = $this->Sites->find('all', [
+			'order' => ['Sites.order' => 'ASC'],
+		]);
+		$sites = $query->all();
+		$this->set(compact('sites'));
+		$this->set('_serialize', ['sites']);
+		//pr($sites->toArray());
+	}
+
 
     /**
      * Index method
      *
      * @return void
      */
-    public function index()
+    /*public function index()
     {
         $this->set('sites', $this->paginate($this->Sites));
         $this->set('_serialize', ['sites']);
@@ -29,7 +45,7 @@ class SitesController extends AppController
      * @return void
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
-    public function view($id = null)
+   /* public function view($id = null)
     {
         $site = $this->Sites->get($id, [
             'contain' => ['Samples']
@@ -43,7 +59,7 @@ class SitesController extends AppController
      *
      * @return void Redirects on successful add, renders view otherwise.
      */
-    public function add()
+    /*public function add()
     {
         $site = $this->Sites->newEntity();
         if ($this->request->is('post')) {
@@ -66,7 +82,7 @@ class SitesController extends AppController
      * @return void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
-    public function edit($id = null)
+    /*public function edit($id = null)
     {
         $site = $this->Sites->get($id, [
             'contain' => []
@@ -91,7 +107,7 @@ class SitesController extends AppController
      * @return \Cake\Network\Response|null Redirects to index.
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
-    public function delete($id = null)
+   /* public function delete($id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
         $site = $this->Sites->get($id);
@@ -101,5 +117,5 @@ class SitesController extends AppController
             $this->Flash->error(__('The site could not be deleted. Please, try again.'));
         }
         return $this->redirect(['action' => 'index']);
-    }
+    }*/
 }

@@ -2,23 +2,12 @@
 	angular.module('flu.samples')
 		.factory('sampleFactory', sampleFactory);
 		
-	sampleFactory.$inject = ['$uibModal', 'siteFactory', 'schoolFactory'];
+	sampleFactory.$inject = ['$uibModal', 'siteFactory', 'schoolFactory', '$resource', '$q'];
 		
-	function sampleFactory($uibModal, siteFactory, schoolFactory) {
+	function sampleFactory($uibModal, siteFactory, schoolFactory, $resource, $q) {
 		//Variables
-		var sites = siteFactory.getSites();
-		var siteIds = siteFactory.getSiteIds();
-		var schools = schoolFactory.getSchools();
-		var types = readTypes();
-
-		//Samples are stored in a multidimensional object - samples[temp/saved][siteId][schoolId][childId][typeId] (type = acute or convalescent)
-		var emptySamples = initializeSamples();
-		var emptySamplesCounts = initializeSampleCounts();
-		var samples = readSamples();
-		setSampleCounts('saved', 'saved', false);	//Set the saved counts based on the saved samples
-		var savedHappiness = readHappiness();	//Get the saved happiness
-		var happiness = setHappiness();	//Work out the initial happiness
-		var acuteSwabSamplesCollected = setAcuteSwabSamplesCollected();
+		var loaded = false;
+		var sites, siteIds, schools, types, savedSamples, emptySamples, emptySamplesCounts, samples, savedHappiness, acuteSwabSamplesCollected;
 		
 		//Exposed Methods
 		var factory = {
@@ -26,15 +15,40 @@
 			collectAllAcuteSwabSamples: collectAllAcuteSwabSamples,
 			getAcuteSwabSamplesCollected: getAcuteSwabSamplesCollected,
 			getHappiness: getHappiness,
+			getLoaded: getLoaded,
 			getSamples: getSamples,
 			getSampleTypes: getSampleTypes,
+			loadHappiness: loadHappiness,
+			loadSamples: loadSamples,
+			loadTypes: loadTypes,
 			selectAllOrNone: selectAllOrNone,
+			setHappiness: setHappiness,
+			setLoaded: setLoaded,
 			setSamples: setSamples,
+			setup: setup,
 		}
 		return factory;  
 		
 		//Methods
 		//Note getTestSamples is out of order at the end as it is long and only used for development
+		
+		function setup() {
+			sites = siteFactory.getSites();
+			siteIds = siteFactory.getSiteIds();
+			schools = schoolFactory.getSchools();
+			//var types = readTypes();
+			
+			//Samples are stored in a multidimensional object - samples[temp/saved][siteId][schoolId][childId][typeId] (type = acute or convalescent)
+			emptySamples = initializeSamples();
+			emptySamplesCounts = initializeSampleCounts();
+			samples = readSamples();
+			setSampleCounts('saved', 'saved', false);	//Set the saved counts based on the saved samples
+			//var savedHappiness = readHappiness();	//Get the saved happiness
+			savedHappiness = loadHappiness();	//Get the saved happiness
+			happiness = setHappiness();	//Work out the initial happiness
+			acuteSwabSamplesCollected = setAcuteSwabSamplesCollected();
+			setLoaded();
+		}
 
 		//When user clicks a sample, check whether the sample is available, and show any appropriate advice/warnings
 		function checkSamples(siteId, schoolId, childId, typeId) {
@@ -104,6 +118,10 @@
 			return happiness;
 		}
 		
+		function getLoaded() { 
+			return loaded;
+		}
+		
 		function getSamples() {
 			return samples; 
 		}
@@ -121,14 +139,15 @@
 			};
 			
 			//Set the counts for each site to 0
-			for(var site = 0; site < sites.length; site++) {
-				sampleCounts.sites[site] = 0;
+			for(var siteIndex = 0; siteIndex < sites.length; siteIndex++) {
+				sampleCounts.sites[sites[siteIndex].id] = 0;
 			}
 			sampleCounts.sites['np_convalescent'] = 0;
 			sampleCounts.sites['np_acute'] = 0;
 			//Set the counts for each school to 0
-			for(var school = 0; school < schools.length; school++) {
-				sampleCounts.schools[school] = {
+			for(var schoolIndex = 0; schoolIndex < schools.length; schoolIndex++) {
+				var schoolId = schools[schoolIndex].id;
+				sampleCounts.schools[schoolId] = {
 					total: 0,	//total samples for the school
 					acute: 0,	//total acute samples for the school
 					convalescent: 0,	//total convalescent samples for the school
@@ -136,10 +155,10 @@
 					//blood_convalescent: 0,	//blood convlescent samples for the school
 				};
 				//Add a counter for each site for each school
-				for(var site = 0; site < sites.length; site++) {
-					sampleCounts.schools[school][site] = { total: 0 };
-					for(var typeId = 0; typeId < types.length; typeId++) {
-						sampleCounts.schools[school][site][types[typeId]] = 0;
+				for(var siteIndex = 0; siteIndex < sites.length; siteIndex++) {
+					sampleCounts.schools[schoolId][sites[siteIndex].id] = { total: 0 };
+					for(var typeIndex = 0; typeIndex < types.length; typeIndex++) {
+						sampleCounts.schools[schoolId][sites[siteIndex].id][types[typeIndex].stage] = 0;
 					}
 				}
 			}
@@ -149,14 +168,17 @@
 		
 		function initializeSamples() {
 			var emptySamples = [];
-			for(var siteId = 0; siteId < sites.length; siteId++) {
+			for(var siteIndex = 0; siteIndex < sites.length; siteIndex++) {
+				var siteId = sites[siteIndex].id;
 				emptySamples[siteId] = [];
-				for(var schoolId = 0; schoolId < schools.length; schoolId++) {
+				for(var schoolIndex = 0; schoolIndex < schools.length; schoolIndex++) {
+					var schoolId = schools[schoolIndex].id;
 					emptySamples[siteId][schoolId] = [];
-					for(var childId = 0; childId < schools[schoolId].children.length; childId++) {
+					for(var childIndex = 0; childIndex < schools[schoolIndex].children.length; childIndex++) {
+						var childId = schools[schoolIndex].children[childIndex].id;
 						emptySamples[siteId][schoolId][childId] = [];
-						for(var typeId = 0; typeId < types.length; typeId++) {
-							emptySamples[siteId][schoolId][childId][typeId] = 0;
+						for(var typeIndex = 0; typeIndex < types.length; typeIndex++) {
+							emptySamples[siteId][schoolId][childId][types[typeIndex].id] = 0;
 						}
 					}
 				}
@@ -164,21 +186,55 @@
 			return emptySamples;
 		}
 		
-		function readHappiness() {
-			//API: get from the DB
+		function loadHappiness() {
+			var deferred = $q.defer();
+			var HappinessCall = $resource('../../Attempts/loadHappiness/:attemptId.json', {attemptId: '@id'});
+			HappinessCall.get({attemptId: ATTEMPT_ID}, function(result) {
+				savedHappiness = result.happiness;
+				deferred.resolve('Happiness loaded');
+				deferred.reject('Happiness not loaded');
+			});
+			return deferred.promise;
+		}
+
+		function loadSamples() {
+			var deferred = $q.defer();
+			var SamplesCall = $resource('../../Samples/load/:attemptId.json', {attemptId: '@id'});
+			SamplesCall.get({attemptId: ATTEMPT_ID}, function(result) {
+				savedSamples = result.samples;
+				deferred.resolve('Samples loaded');
+				deferred.reject('Samples not loaded');
+			});
+			return deferred.promise;
+		}
+
+		function loadTypes() {
+			var deferred = $q.defer();
+			var TypesCall = $resource('../../SampleStages/load.json', {});
+			TypesCall.get({}, function(result) {
+				types = result.stages;
+				deferred.resolve('Types loaded');
+				deferred.reject('Types not loaded');
+			});
+			return deferred.promise;
+		}
+
+		/*function readHappiness() {
 			var happiness = 3;
 			return happiness;
-		}
+		}*/
 		
 		function readSamples() {
 			var samples = {
 				all: {
-					samples: angular.copy(emptySamples), //API: get the user's saved samples form the DB
+					samples: angular.copy(savedSamples), //API: get the user's saved samples form the DB
+					//samples: angular.copy(emptySamples),
 					//samples: getTestSamples(),	//Development: get array of test samples
 					counts: angular.copy(emptySamplesCounts),	//Start with the saved counts empty
 				},
 				saved: {
-					samples: angular.copy(emptySamples), //API: get the user's saved samples form the DB
+					samples: angular.copy(savedSamples), //API: get the user's saved samples form the DB
+					//samples: angular.copy(emptySamples),
 					//samples: getTestSamples(),	//Development: get array of test samples
 					counts: angular.copy(emptySamplesCounts),	//Start with the saved counts empty
 				},
@@ -197,14 +253,14 @@
 		}
 		
 		function selectAllOrNone(allOrNone, siteId, schoolId, typeId) {
-			if(allOrNone && types[typeId] === "acute" && !schools[schoolId].acute) {
+			if(allOrNone && types[typeId].stage === "acute" && !schools[schoolId].acute) {
 				if(!schools[schoolId].acuteDisabled) {	//If the acute boxes haven't already been disabled for this school...
 					tooLate(schoolId);	//...show warning and disable the boxes
 				}
-				
 			}
 			else {
-				for(var childId = 0; childId < schools[schoolId].children.length; childId++) {
+				for(var childIndex = 0; childIndex < schools[schoolId].children.length; childIndex++) {
+					var childId = schools[schoolId].children[childIndex].id;
 					if(samples.saved.samples[siteId][schoolId][childId][typeId] === 0) {
 						samples.all.samples[siteId][schoolId][childId][typeId] = allOrNone;
 						samples.temp.samples[siteId][schoolId][childId][typeId] = allOrNone;
@@ -266,6 +322,10 @@
 			}
 
 			return happiness;
+		}
+		
+		function setLoaded() { 
+			loaded = true;
 		}
 		
 		function setSampleCounts(sampleStatus, countStatus, copyToSamples) {
@@ -425,6 +485,7 @@
 		}
 		
 		function tooLate(schoolId) {
+			//API: Set this in the DB
 			schools[schoolId].acuteDisabled = true;
 			//alert(tooLateMessage);
 			$uibModal.open({

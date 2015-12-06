@@ -2,75 +2,78 @@
 	<div class="col-xs-12">
 		<page-title section="samplesCtrl.section"></page-title>
 		<p>You now need to go to the schools that have experienced outbreaks of the virus to collect the samples that you will need. You can collect 3 types of samples - nasopharyngeal swab, blood serum and cerebrospinal fluid - at, where available, the acute and convalescent stages for each child that has had the infection. Choose you samples carefully to avoid unhappy children. Once you have collected some samples, you will be able to test them in the lab.</p>
-		<page-menu items="samplesCtrl.subsections" on-click="samplesCtrl.setSubsection(subsectionId)"></page-menu>
-		<div class="row page-content">
-			<div class="col-xs-12 col-sm-4 col-sm-push-8">
-				<div class="panel panel-default">
-					<!--div class="panel-heading">Happiness</div-->
-					<div class="panel-body">
-						<div>
-							<div class="col-lg-5 col-md-6 col-sm-8 col-xs-4 smiley">
-								<img ng-src="../../img/smileys/smile-o.svg" ng-show="samplesCtrl.happiness == 3" />
-								<img ng-src="../../img/smileys/meh-o.svg" ng-show="samplesCtrl.happiness == 2" />
-								<img ng-src="../../img/smileys/frown-o.svg" ng-show="samplesCtrl.happiness == 1" />
-								<img ng-src="../../img/smileys/cry.svg" ng-show="samplesCtrl.happiness == 0" />
+		<loader ng-show="samplesCtrl.loading"></loader>
+		<div ng-if="!samplesCtrl.loading">
+			<page-menu items="samplesCtrl.subsections" on-click="samplesCtrl.setSubsection(subsectionId)"></page-menu>
+			<div class="row page-content">
+				<div class="col-xs-12 col-sm-4 col-sm-push-8">
+					<div class="panel panel-default">
+						<!--div class="panel-heading">Happiness</div-->
+						<div class="panel-body">
+							<div>
+								<div class="col-lg-5 col-md-6 col-sm-8 col-xs-4 smiley">
+									<img ng-src="../../img/smileys/smile-o.svg" ng-show="samplesCtrl.happiness == 3" />
+									<img ng-src="../../img/smileys/meh-o.svg" ng-show="samplesCtrl.happiness == 2" />
+									<img ng-src="../../img/smileys/frown-o.svg" ng-show="samplesCtrl.happiness == 1" />
+									<img ng-src="../../img/smileys/cry.svg" ng-show="samplesCtrl.happiness == 0" />
+								</div>
+								<!--i class="fa fa-smile-o fa-4x" ng-if="samplesCtrl.happiness == 3"></i>
+								<i class="fa fa-meh-o fa-4x" ng-if="samplesCtrl.happiness == 2"></i>
+								<i class="fa fa-frown-o fa-4x" ng-if="samplesCtrl.happiness == 1"></i>
+								<span class="fa-stack fa-2x" ng-if="samplesCtrl.happiness == 0">
+									<i class="fa fa-frown-o fa-stack-2x"></i>
+									<i class="fa fa-times fa-stack-2x text-danger"></i>
+								</span-->
+								Try to keep the children as happy as possible when collecting samples. Intrusive and/or unnecessary samples will make them unhappy, as will returning multiple times to collect samples that you did not collect the first time.
 							</div>
-							<!--i class="fa fa-smile-o fa-4x" ng-if="samplesCtrl.happiness == 3"></i>
-							<i class="fa fa-meh-o fa-4x" ng-if="samplesCtrl.happiness == 2"></i>
-							<i class="fa fa-frown-o fa-4x" ng-if="samplesCtrl.happiness == 1"></i>
-							<span class="fa-stack fa-2x" ng-if="samplesCtrl.happiness == 0">
-								<i class="fa fa-frown-o fa-stack-2x"></i>
-								<i class="fa fa-times fa-stack-2x text-danger"></i>
-							</span-->
-							Try to keep the children as happy as possible when collecting samples. Intrusive and/or unnecessary samples will make them unhappy, as will returning multiple times to collect samples that you did not collect the first time.
 						</div>
 					</div>
 				</div>
-			</div>
-			<div class="col-xs-12 col-sm-8 col-sm-pull-4">
-				<h4 class="no-top-margin">{{samplesCtrl.currentSite.name}}</h4>
-				<div class="row">
-					<div class="col-xs-12 col-md-6 sample-school" ng-repeat="(schoolId, school) in samplesCtrl.schools">
-						<h5 class="no-top-margin">{{school.name}}</h5>
-						<p>{{school.details}}</p>
-						<!--p><strong>Infected:</strong> {{school.infected}}</p>
-						<p><strong>Current Situation:</strong> {{school.current}}</p-->
-						<table>
-							<tr>
-								<th><!--Child--></th>
-								<th ng-repeat="(typeId, type) in samplesCtrl.types" ng-class="'samples-' + type">{{type.charAt(0).toUpperCase() + type.slice(1)}}<br /><span ng-class="{'all-or-none-disabled': samplesCtrl.samples.saved.counts.schools[schoolId][samplesCtrl.currentSiteId][samplesCtrl.types[typeId]] >= school.children.length || school[type + 'Disabled']}" class="all-or-none">(<all-or-none school-id="schoolId" type-id="typeId" on-click="samplesCtrl.selectAllOrNone(allOrNone, schoolId, typeId)"></all-or-none>)</span></th>
-							</tr>
-							<!--tr>
-								<th>All {{school.children.length}}</th>
-								<td ng-repeat="(typeId, type) in samplesCtrl.types">
-									<div class="checkbox checkbox-primary">
-										<input type="checkbox" id="{{samplesCtrl.sites[samplesCtrl.currentSiteId].name}}_{{samplesCtrl.schools[schoolId].id}}_all_{{type}}" 
-											ng-click="samplesCtrl.selectAllOrNone(1, schoolId, typeId)" 
-											ng-disabled="school[type + 'Disabled']" />
-										<label> </label>
-									</div>
-								</td>
-							</tr-->
-							<tr ng-repeat="(childId, child) in school.children">
-								<th>{{child.name}}</th>
-								<td ng-repeat="(typeId, type) in samplesCtrl.types" ng-class="'samples-' + type">
-									<div class="checkbox checkbox-primary">
-										<input type="checkbox" id="{{samplesCtrl.sites[samplesCtrl.currentSiteId].name}}_{{samplesCtrl.schools[schoolId].id}}_{{samplesCtrl.schools[schoolId].children[childId].id}}_{{type}}" 
-											ng-model="samplesCtrl.samples.all.samples[samplesCtrl.currentSiteId][schoolId][childId][typeId]" ng-true-value=1 ng-false-value=0
-											ng-click="samplesCtrl.checkSamples(samplesCtrl.currentSiteId, schoolId, childId, typeId)" 
-											ng-disabled="school[type + 'Disabled'] || samplesCtrl.samples.saved.samples[samplesCtrl.currentSiteId][schoolId][childId][typeId] == 1" />
-										<label> </label>
-									</div>
-								</td>
-							</tr>
-						</table>
-						<!--p ng-show="school.acute && school.convalescent && school.showReturnTripCheck">Return trip check</p-->
+				<div class="col-xs-12 col-sm-8 col-sm-pull-4">
+					<h4 class="no-top-margin">{{samplesCtrl.currentSite.name}}</h4>
+					<div class="row">
+						<div class="col-xs-12 col-md-6 sample-school" ng-repeat="(schoolIndex, school) in samplesCtrl.schools">
+							<h5 class="no-top-margin">{{school.name}}</h5>
+							<p>{{school.details}}</p>
+							<!--p><strong>Infected:</strong> {{school.infected}}</p>
+							<p><strong>Current Situation:</strong> {{school.current}}</p-->
+							<table>
+								<tr>
+									<th><!--Child--></th>
+									<th ng-repeat="(typeIndex, type) in samplesCtrl.types" ng-class="'samples-' + type.stage">{{type.stage.charAt(0).toUpperCase() + type.stage.slice(1)}}<br /><span ng-class="{'all-or-none-disabled': samplesCtrl.samples.saved.counts.schools[school.id][samplesCtrl.currentSite.id][type.stage] >= school.children.length || school[type.stage + 'Disabled']}" class="all-or-none">(<all-or-none school-id="school.id" type-id="type.id" on-click="samplesCtrl.selectAllOrNone(allOrNone, school.id, type.id)"></all-or-none>)</span></th>
+								</tr>
+								<!--tr>
+									<th>All {{school.children.length}}</th>
+									<td ng-repeat="(typeIndex, type) in samplesCtrl.types">
+										<div class="checkbox checkbox-primary">
+											<input type="checkbox" id="{{samplesCtrl.currentSite.name}}_{{samplesCtrl.schools[schoolIndex].code}}_all_{{type.stage}}" 
+												ng-click="samplesCtrl.selectAllOrNone(1, school.id, type.id)" 
+												ng-disabled="school[type.stage + 'Disabled']" />
+											<label> </label>
+										</div>
+									</td>
+								</tr-->
+								<tr ng-repeat="(childIndex, child) in school.children">
+									<th>{{child.name}}</th>
+									<td ng-repeat="(typeIndex, type) in samplesCtrl.types" ng-class="'samples-' + type.stage">
+										<div class="checkbox checkbox-primary">
+											<input type="checkbox" id="{{samplesCtrl.currentSite.name}}_{{samplesCtrl.schools[schoolIndex].code}}_{{samplesCtrl.schools[schoolIndex].children[childIndex].code}}_{{type.stage}}" 
+												ng-model="samplesCtrl.samples.all.samples[samplesCtrl.currentSite.id][school.id][child.id][type.id]" ng-true-value=1 ng-false-value=0
+												ng-click="samplesCtrl.checkSamples(samplesCtrl.currentSite.id, school.id, child.id, type.id)" 
+												ng-disabled="school[type.stage + 'Disabled'] || samplesCtrl.samples.saved.samples[samplesCtrl.currentSite.id][school.id][child.id][type.id] == 1" />
+											<label> </label>
+										</div>
+									</td>
+								</tr>
+							</table>
+							<!--p ng-show="school.acute && school.convalescent && school.showReturnTripCheck">Return trip check</p-->
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-	<div class="col-xs-12 col-lg-6">
+	<div class="col-xs-12 col-lg-6" ng-if="!samplesCtrl.loading">
 		<div id="selected_samples" class="panel panel-info">
 			<div class="panel-heading">Selected Samples</div>
 			<div class="panel-body">
@@ -80,7 +83,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="col-xs-12 col-lg-6">
+	<div class="col-xs-12 col-lg-6" ng-if="!samplesCtrl.loading">
 		<div id="collected_samples" class="panel panel-success">
 			<div class="panel-heading">Collected Samples</div>
 			<div class="panel-body">
