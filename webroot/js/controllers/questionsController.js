@@ -67,7 +67,31 @@
 		}
 		
 		function check(questionIndex) {
-			questionFactory.checkAnswers(questionIndex);
+			questionFactory.setSaving(questionIndex, true);
+			var questionPromise = questionFactory.checkAnswers(questionIndex);
+			//var completePromise = questionFactory.setQuestionsComplete();
+			questionPromise.then(
+				function(result) {
+					var completePromise = questionFactory.setQuestionsComplete();
+					if(completePromise) {	//If complete promise is not false, then all questions have been completed and we need to wait for progress to be saved
+						completePromise.then(
+							function(result) {
+								questionFactory.setSaving(questionIndex, false);
+								console.log(result);
+							}, 
+							function(reason) {
+								console.log("Error: " + reason);
+							}
+						);
+					}
+					else {
+						questionFactory.setSaving(questionIndex, false);
+					}
+				}, 
+				function(reason) {
+					console.log("Error: " + reason);
+				}
+			);
 		}
 		
 		function clear(questionIndex) {

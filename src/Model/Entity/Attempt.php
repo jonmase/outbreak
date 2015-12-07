@@ -13,7 +13,7 @@ use Cake\ORM\Entity;
  * @property bool $alert
  * @property bool $revision
  * @property bool $questions
- * @property bool $samples
+ * @property bool $sampling
  * @property bool $lab
  * @property bool $hidentified
  * @property bool $nidentified
@@ -63,7 +63,7 @@ class Attempt extends Entity
 		if($this->_properties['lab']) {
 			return "Lab visited"; 
 		}
-		if($this->_properties['samples']) {
+		if($this->_properties['sampling']) {
 			return "Samples collected"; 
 		}
 		if($this->_properties['questions']) {

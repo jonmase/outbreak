@@ -34,7 +34,9 @@
 			loadResponses: loadResponses,
 			setAnswered: setAnswered,
 			setCurrentQuestionIndex: setCurrentQuestionIndex,
+			setQuestionsComplete: setQuestionsComplete,
 			setLoaded: setLoaded,
+			setSaving: setSaving,
 		}
 		return factory;
 
@@ -53,25 +55,23 @@
 			}
 			else {
 				//API: Save responses (answers, score) to DB
-				saving[questionIndex] = true;
 				var score = setScoreByQuestion(questionIndex);
-				//var deferred = $q.defer();
+				var deferred = $q.defer();
 				var QuestionsCall = $resource('../../question_answers/save', {});
 				QuestionsCall.save({}, {attemptId: ATTEMPT_ID, questionId: questionDBId, answers: responses.answers[questionDBId], score: score}, function(result) {
 					var message = result.message;
 					if(result.message === "success") {
 						responses.scores[questionDBId] = score;
-						setQuestionsComplete();
-						saving[questionIndex] = false;
+						//setQuestionsComplete();
 					}
 					else {
 						//Deal with error
 					}
 					
-					//deferred.resolve(message);
-					//deferred.reject('Error: ' + message);
+					deferred.resolve(message);
+					deferred.reject('Error: ' + message);
 				});
-				//return deferred.promise;
+				return deferred.promise;
 
 			}
 		}
@@ -216,9 +216,13 @@
 				}
 			}
 			//If we've got here, none of the questions are unscored (and therefore unchecked), so set the section to complete
-			lockFactory.setComplete('questions');
+			return lockFactory.setComplete('questions');
 		}
 
+		function setSaving(questionIndex, value) { 
+			saving[questionIndex] = value;
+		}
+		
 		function setScoreByQuestion(questionIndex) {
 			var score = 0;
 			for(var s = 0; s < questions[questionIndex].question_stems.length; s++) {
