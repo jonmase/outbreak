@@ -32,10 +32,10 @@ class SchoolsController extends AppController
 			'order' => ['Schools.order' => 'ASC'],
 			'contain' => $contain,
 		]);
-		$schools = $query->all();
+		$rawSchools = $query->all();
 		//pr($schools->toArray());
-		
-		foreach($schools as $school) {
+		$schools = [];
+		foreach($rawSchools as $school) {
 			if(!empty($school->attempts_schools)) {
 				$school->acuteDisabled = $school->attempts_schools[0]->acuteDisabled;
 			}
@@ -45,6 +45,13 @@ class SchoolsController extends AppController
 			if(isset($school->attempts_schools)) {
 				unset($school->attempts_schools);
 			}
+			
+			$rawChildren = $school->children;
+			$school->children = [];
+			foreach($rawChildren as $child) {
+				$school->children[$child->id] = $child;
+			}
+			$schools[$school->id] = $school;
 		}
 		
 		$this->set(compact('schools'));

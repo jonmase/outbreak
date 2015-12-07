@@ -5,7 +5,7 @@
 		<loader ng-show="questionsCtrl.loading"></loader>
 		<div ng-hide="questionsCtrl.loading">
 			<page-menu items="questionsCtrl.subsections" on-click="questionsCtrl.setSubsection(subsectionId)"></page-menu>
-			<div ng-repeat="(questionIndex, question) in questionsCtrl.subsections" ng-show="questionsCtrl.currentQuestionId === questionIndex" class="page-content">
+			<div ng-repeat="(questionIndex, question) in questionsCtrl.subsections" ng-show="questionsCtrl.currentQuestionIndex === questionIndex" class="page-content">
 				<h4>{{question.name}}<div class="pull-right alert" role="alert" ng-show="questionsCtrl.responses.scores[question.id] > -1" ng-class="{'alert-success': questionsCtrl.responses.scores[question.id] >= (question.question_stems.length - 1), 'alert-warning': (questionsCtrl.responses.scores[question.id] < (question.question_stems.length - 1) && questionsCtrl.responses.scores[question.id] > 1), 'alert-danger': questionsCtrl.responses.scores[question.id] <= 1}">Score: {{questionsCtrl.responses.scores[question.id]}}/{{question.question_stems.length}}</div></h4>
 				<div ng-bind-html="question.background | unsafe"></div>
 				<div class="clearfix"></div>

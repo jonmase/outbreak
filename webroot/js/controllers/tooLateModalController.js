@@ -2,9 +2,9 @@
 	angular.module('flu.samples')
 		.controller('tooLateModalController', tooLateModalController);
 
-	tooLateModalController.$inject = ['$uibModalInstance', 'reportFactory', 'lockFactory'];
+	tooLateModalController.$inject = ['$uibModalInstance'];
 	
-	function tooLateModalController($uibModalInstance, reportFactory, lockFactory) {
+	function tooLateModalController($uibModalInstance) {
 		var vm = this;
 		
 		//Bindable Members - values
@@ -14,16 +14,6 @@
 		vm.cancel = cancel;
 
 		function confirm() {
-			var editors = CKEDITOR.instances;	//Get all of the editors
-			angular.forEach(editors, function(editor) {
-				//editor.destroy();
-				editor.setReadOnly();	//Set the editors to readOnly
-			});
-			
-			reportFactory.save();
-			reportFactory.submit();
-			
-			lockFactory.setComplete('report');
 			$uibModalInstance.close();
 		}
 		

@@ -59,6 +59,9 @@ th, td {
 .radio input[type="radio"], .checkbox input[type="checkbox"] {
     cursor: pointer;
 }
+.radio input[type="radio"]:disabled, .checkbox input[type="checkbox"]:disabled {
+    cursor: not-allowed;
+}
 
 /* General Classes */
 .clickable {
@@ -499,7 +502,7 @@ td.samples-convalescent div.checkbox {
 	text-align: start;
 }*/
 .samples-list-item{
-	padding: 5px 15px;
+	padding: 5px 0;
 	list-style-type: none;
 }
 .samples-list-child {

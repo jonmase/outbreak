@@ -20,7 +20,11 @@ class SampleStagesController extends AppController
 		$query = $this->SampleStages->find('all', [
 			'order' => ['SampleStages.order' => 'ASC'],
 		]);
-		$stages = $query->all();
+		$rawStages = $query->all();
+		$stages = [];
+		foreach($rawStages as $stage) {
+			$stages[$stage->id] = $stage;
+		}
 		$this->set(compact('stages'));
 		$this->set('_serialize', ['stages']);
 		//pr($sites->toArray());

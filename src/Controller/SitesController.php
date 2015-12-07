@@ -20,7 +20,11 @@ class SitesController extends AppController
 		$query = $this->Sites->find('all', [
 			'order' => ['Sites.order' => 'ASC'],
 		]);
-		$sites = $query->all();
+		$rawSites = $query->all();
+		$sites = [];
+		foreach($rawSites as $site) {
+			$sites[$site->id] = $site;
+		}
 		$this->set(compact('sites'));
 		$this->set('_serialize', ['sites']);
 		//pr($sites->toArray());

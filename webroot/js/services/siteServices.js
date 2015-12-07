@@ -7,8 +7,8 @@
 	function siteFactory($resource, $q) {
 		//Variables
 		//var sites = readSites();
-		var sites = [];
-		var currentSiteIndex = 0;
+		var sites;
+		var currentSiteIndex = 1;
 		
 		//Exposed Methods
 		var factory = {
@@ -32,9 +32,12 @@
 		
 		function getSiteIds() {
 			var siteIds = {};
-			for(var siteIndex = 0; siteIndex < sites.length; siteIndex++) {
+			/*for(var siteIndex = 0; siteIndex < sites.length; siteIndex++) {
 				siteIds[sites[siteIndex].code] = sites[siteIndex].id;
-			}
+			}*/
+			angular.forEach(sites, function(site, id) {
+				siteIds[site.code] = id;
+			});
 			return siteIds;
 		}
 		

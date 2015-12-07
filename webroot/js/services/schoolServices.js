@@ -7,7 +7,7 @@
 	function schoolFactory($resource, $q) {
 		//Variables
 		//var schools = readSchools();
-		var schools = [];
+		var schools;
 		
 		//Exposed Methods
 		var factory = {

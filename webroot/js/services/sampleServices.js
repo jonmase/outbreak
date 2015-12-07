@@ -55,7 +55,7 @@
 			samples.temp.samples[siteId][schoolId][childId][typeId] = samples.all.samples[siteId][schoolId][childId][typeId];	//Copy the all samples value into temp samples
 			
 			//If user is trying to take an acute sample for a school where they are not available, alert the user and untick the box
-			if(samples.temp.samples[siteId][schoolId][childId][typeId] === 1 && types[typeId] === "acute" && !schools[schoolId].acute) {
+			if(samples.temp.samples[siteId][schoolId][childId][typeId] === 1 && types[typeId].stage === "acute" && !schools[schoolId].acute) {
 				samples.temp.samples[siteId][schoolId][childId][typeId] = samples.all.samples[siteId][schoolId][childId][typeId] = 0;
 				//$event.target.checked = false;
 				tooLate(schoolId);
@@ -102,7 +102,8 @@
 			var schoolId = 1;
 			var typeId = 0;
 			
-			for(var childId = 0; childId < schools[schoolId].children.length; childId++) {
+			//for(var childId = 0; childId < schools[schoolId].children.length; childId++) {
+			for(var childId in schools[schoolId].children) {
 				samples.saved.samples[siteId][schoolId][childId][typeId] = 1;
 				samples.all.samples[siteId][schoolId][childId][typeId] = 1;
 			}
@@ -135,17 +136,19 @@
 			var sampleCounts = { 
 				total: 0,
 				sites: {}, 
-				schools: [] 
+				schools: {} 
 			};
 			
 			//Set the counts for each site to 0
-			for(var siteIndex = 0; siteIndex < sites.length; siteIndex++) {
+			//for(var siteIndex = 0; siteIndex < sites.length; siteIndex++) {
+			for(var siteIndex in sites) {
 				sampleCounts.sites[sites[siteIndex].id] = 0;
 			}
 			sampleCounts.sites['np_convalescent'] = 0;
 			sampleCounts.sites['np_acute'] = 0;
 			//Set the counts for each school to 0
-			for(var schoolIndex = 0; schoolIndex < schools.length; schoolIndex++) {
+			//for(var schoolIndex = 0; schoolIndex < schools.length; schoolIndex++) {
+			for(var schoolIndex in schools) {
 				var schoolId = schools[schoolIndex].id;
 				sampleCounts.schools[schoolId] = {
 					total: 0,	//total samples for the school
@@ -155,9 +158,11 @@
 					//blood_convalescent: 0,	//blood convlescent samples for the school
 				};
 				//Add a counter for each site for each school
-				for(var siteIndex = 0; siteIndex < sites.length; siteIndex++) {
+				//for(var siteIndex = 0; siteIndex < sites.length; siteIndex++) {
+				for(var siteIndex in sites) {
 					sampleCounts.schools[schoolId][sites[siteIndex].id] = { total: 0 };
-					for(var typeIndex = 0; typeIndex < types.length; typeIndex++) {
+					//for(var typeIndex = 0; typeIndex < types.length; typeIndex++) {
+					for(var typeIndex in types) {
 						sampleCounts.schools[schoolId][sites[siteIndex].id][types[typeIndex].stage] = 0;
 					}
 				}
@@ -167,18 +172,35 @@
 		}
 		
 		function initializeSamples() {
-			var emptySamples = [];
-			for(var siteIndex = 0; siteIndex < sites.length; siteIndex++) {
-				var siteId = sites[siteIndex].id;
-				emptySamples[siteId] = [];
-				for(var schoolIndex = 0; schoolIndex < schools.length; schoolIndex++) {
-					var schoolId = schools[schoolIndex].id;
-					emptySamples[siteId][schoolId] = [];
-					for(var childIndex = 0; childIndex < schools[schoolIndex].children.length; childIndex++) {
-						var childId = schools[schoolIndex].children[childIndex].id;
-						emptySamples[siteId][schoolId][childId] = [];
-						for(var typeIndex = 0; typeIndex < types.length; typeIndex++) {
-							emptySamples[siteId][schoolId][childId][types[typeIndex].id] = 0;
+			var emptySamples = {};
+			//for(var siteIndex = 0; siteIndex < sites.length; siteIndex++) {
+			for(var siteId in sites) {
+				//var siteId = sites[siteIndex].id;
+				emptySamples[siteId] = {};
+				if(typeof(savedSamples[siteId]) === 'undefined') {
+					savedSamples[siteId] = {};
+				}
+				//for(var schoolIndex = 0; schoolIndex < schools.length; schoolIndex++) {
+				for(var schoolId in schools) {
+					//var schoolId = schools[schoolIndex].id;
+					emptySamples[siteId][schoolId] = {};
+					if(typeof(savedSamples[siteId][schoolId]) === 'undefined') {
+						savedSamples[siteId][schoolId] = {};
+					}
+					//for(var childIndex = 0; childIndex < schools[schoolIndex].children.length; childIndex++) {
+					for(var childId in schools[schoolId].children) {
+						//var childId = schools[schoolIndex].children[childIndex].id;
+						emptySamples[siteId][schoolId][childId] = {};
+						if(typeof(savedSamples[siteId][schoolId][childId]) === 'undefined') {
+							savedSamples[siteId][schoolId][childId] = {};
+						}
+						//for(var typeIndex = 0; typeIndex < types.length; typeIndex++) {
+						for(var typeId in types) {
+							//var typeId = types[typeIndex].id;
+							emptySamples[siteId][schoolId][childId][typeId] = 0;
+							if(typeof(savedSamples[siteId][schoolId][childId][typeId]) === 'undefined') {
+								savedSamples[siteId][schoolId][childId][typeId] = 0;
+							}
 						}
 					}
 				}
@@ -253,15 +275,20 @@
 		}
 		
 		function selectAllOrNone(allOrNone, siteId, schoolId, typeId) {
+			//siteId = siteId.toString();
+			//schoolId = schoolId.toString();
+			//typeId = typeId.toString();
 			if(allOrNone && types[typeId].stage === "acute" && !schools[schoolId].acute) {
 				if(!schools[schoolId].acuteDisabled) {	//If the acute boxes haven't already been disabled for this school...
 					tooLate(schoolId);	//...show warning and disable the boxes
 				}
 			}
 			else {
-				for(var childIndex = 0; childIndex < schools[schoolId].children.length; childIndex++) {
-					var childId = schools[schoolId].children[childIndex].id;
-					if(samples.saved.samples[siteId][schoolId][childId][typeId] === 0) {
+				//for(var childIndex = 0; childIndex < schools[schoolId].children.length; childIndex++) {
+				for(var childId in schools[schoolId].children) {
+					//var childId = schools[schoolId].children[childIndex].id;
+					//if(samples.saved.samples[siteId][schoolId][childId][typeId] === 0) {
+					if(!isSampleSet(samples.saved.samples, siteId, schoolId, childId, typeId)) {
 						samples.all.samples[siteId][schoolId][childId][typeId] = allOrNone;
 						samples.temp.samples[siteId][schoolId][childId][typeId] = allOrNone;
 					}
@@ -273,6 +300,15 @@
 			return false;
 		}
 
+		function isSampleSet(samples, siteId, schoolId, childId, typeId) {
+			if(typeof(samples[siteId]) === 'undefined' || typeof(samples[siteId][schoolId]) === 'undefined' || typeof(samples[siteId][schoolId][childId]) === 'undefined' || typeof(samples[siteId][schoolId][childId][typeId]) === 'undefined' || samples[siteId][schoolId][childId][typeId] === 0 || samples[siteId][schoolId][childId][typeId] === null) {
+				return false;
+			}
+			else {
+				return true;
+			}
+		}
+		
 		function setAcuteSwabSamplesCollected() {
 			if(samples.saved.counts.sites["np_acute"] > 0) {
 				if(samples.saved.counts.sites["np_acute"] >= 3) {	//If 3 (or more, though should never be more) acute swabs have been collected, that's all of them
@@ -341,7 +377,7 @@
 			for(var siteId in samples[sampleStatus].samples) {
 				for(var schoolId in samples[sampleStatus].samples[siteId]) {
 					for(var childId in samples[sampleStatus].samples[siteId][schoolId]) {
-						for(var typeId = 0 in samples[sampleStatus].samples[siteId][schoolId][childId]) {
+						for(var typeId in samples[sampleStatus].samples[siteId][schoolId][childId]) {
 							if(samples[sampleStatus].samples[siteId][schoolId][childId][typeId] === 1) {
 								if(copyToSamples) {
 									samples[countStatus].samples[siteId][schoolId][childId][typeId] = 1;
@@ -360,17 +396,17 @@
 								samples[countStatus].counts.schools[schoolId][types[typeId]]++;	//School type
 								samples[countStatus].counts.schools[schoolId][siteId].total++;	//School site
 								samples[countStatus].counts.schools[schoolId][siteId][types[typeId]]++;	//School site and type
-								/*if(sites[siteId].id === "blood") {	//School blood type
+								/*if(sites[siteId].code === "blood") {	//School blood type
 									samples[countStatus].counts.schools[schoolId]["blood_" + types[typeId]]++;
 								}*/
-								if(sites[siteId].id === "np") {
+								if(sites[siteId].code === "np") {
 									//Count the acute swabs - needed for setting happiness
-									if(types[typeId] === "convalescent") {
+									if(types[typeId].stage === "convalescent") {
 										samples[countStatus].counts.sites["np_convalescent"]++;
 									}
 									//Count the acute swabs - needed for the "it's flu" alert.
 									//Note: doesn't need to be school specific, as can only collect these from one school
-									else if(types[typeId] === "acute") {	 
+									else if(types[typeId].stage === "acute") {	 
 										samples[countStatus].counts.sites["np_acute"]++;
 									}
 								}

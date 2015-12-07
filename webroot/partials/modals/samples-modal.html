@@ -5,7 +5,7 @@
 <div class="modal-body">
 	<p>The samples you have selected are shown below. If you wish to go ahead and collect these samples, please select Confirm to continue.</p><p>Alternatively, please select Cancel and you can add or remove samples before collecting. You do have the opportunity to return to collect more samples, but this may affect the happiness of the children.</p>
 	<show-samples status="'temp'"></show-samples>
-	<div class="alert alert-danger no-margin" role="alert" ng-if="SamplesModalCtrl.samples.temp.counts.sites['2'] > 0">You are about to collect CSF samples, which is particularly intrusive and painful for the children. Consider whether this is really necessary before continuing.</div>
+	<div class="alert alert-danger no-margin" role="alert" ng-if="SamplesModalCtrl.samples.temp.counts.sites[SamplesModalCtrl.siteIds['csf']] > 0">You are about to collect CSF samples, which is particularly intrusive and painful for the children. Consider whether this is really necessary before continuing.</div>
 </div>
 <div class="modal-footer">
 	<!--button type="button" class="btn btn-default" data-dismiss="modal" ng-show="mainCtrl.modal.closable" ng-click="progress.userProgress.intro = 1">{{mainCtrl.modal.buttons.dismiss.text}}</button-->

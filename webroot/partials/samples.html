@@ -57,7 +57,7 @@
 									<th>{{child.name}}</th>
 									<td ng-repeat="(typeIndex, type) in samplesCtrl.types" ng-class="'samples-' + type.stage">
 										<div class="checkbox checkbox-primary">
-											<input type="checkbox" id="{{samplesCtrl.currentSite.name}}_{{samplesCtrl.schools[schoolIndex].code}}_{{samplesCtrl.schools[schoolIndex].children[childIndex].code}}_{{type.stage}}" 
+											<input type="checkbox" id="{{samplesCtrl.currentSite.code}}_{{samplesCtrl.schools[schoolIndex].code}}_{{samplesCtrl.schools[schoolIndex].children[childIndex].code}}_{{type.stage}}" 
 												ng-model="samplesCtrl.samples.all.samples[samplesCtrl.currentSite.id][school.id][child.id][type.id]" ng-true-value=1 ng-false-value=0
 												ng-click="samplesCtrl.checkSamples(samplesCtrl.currentSite.id, school.id, child.id, type.id)" 
 												ng-disabled="school[type.stage + 'Disabled'] || samplesCtrl.samples.saved.samples[samplesCtrl.currentSite.id][school.id][child.id][type.id] == 1" />

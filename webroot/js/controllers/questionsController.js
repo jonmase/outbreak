@@ -84,7 +84,7 @@
 		}
 		
 		function setSubsection(questionIndex) {
-			questionFactory.setCurrentQuestionId(questionIndex);
+			questionFactory.setCurrentQuestionIndex(questionIndex);
 			vm.currentQuestionIndex = questionIndex;
 			vm.currentQuestion = vm.subsections[questionIndex];
 		};
