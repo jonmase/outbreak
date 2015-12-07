@@ -126,7 +126,7 @@
 			var deferred = $q.defer();
 			var ProgressCall = $resource('../saveProgress', {});
 			ProgressCall.save({}, {attemptId: ATTEMPT_ID, sectionId: sectionId, completed: completed}, function(result) {
-				console.log(result.message);
+				//console.log(result.message);
 				deferred.resolve('Progress saved');
 				deferred.reject('Progress not saved');
 			});

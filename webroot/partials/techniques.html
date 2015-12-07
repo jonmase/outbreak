@@ -30,7 +30,7 @@
 							<div ng-if="currentSectionId === 'revision' && !technique.infoOnly" class="panel panel-default useful-techniques">
 								<div class="panel-heading">Will this technique be useful in your investigations?</div>
 								<div class="panel-body">
-									<div class="pull-right" style="margin-top: 24px;" ng-show="techniquesCtrl.usefulDisabled">
+									<div class="pull-right" style="margin-top: 24px;" ng-show="techniquesCtrl.usefulDisabled[technique.id]">
 										<loader></loader> Saving Response
 									</div>
 									<div>
@@ -42,7 +42,7 @@
 											<input type="radio" name="{{technique.code}}" id="{{technique.code}}_useful_{{option.value}}" 
 											ng-model="techniquesCtrl.techniquesUseful[technique.id]" value="{{option.value}}"
 											ng-change="techniquesCtrl.setUsefulTechnique(technique.id)" 
-											ng-disabled="techniquesCtrl.usefulDisabled || mainCtrl.progress['lab']" /> 
+											ng-disabled="techniquesCtrl.usefulDisabled[technique.id] || mainCtrl.progress['lab']" /> 
 											<label for="{{technique.code}}_useful_{{option.value}}">{{option.label}}</label>
 										</div>
 									<div>

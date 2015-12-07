@@ -57,6 +57,7 @@
 			if(sectionId === 'research') {	//For research section, only show research techniques
 				lockFactory.setComplete(sectionId);
 			}
+			vm.usefulDisabled = [];
 			vm.loading = false;
 		}
 		
@@ -88,15 +89,15 @@
 			}*/
 		};
 		
-		function setUsefulTechnique(techniqueCode) {
-			vm.usefulDisabled = true;
+		function setUsefulTechnique(techniqueId) {
+			vm.usefulDisabled[techniqueId] = true;
 			
-			var usefulPromise = techniqueFactory.setUsefulTechnique(techniqueCode, vm.techniquesUseful[techniqueCode]);
+			var usefulPromise = techniqueFactory.setUsefulTechnique(techniqueId, vm.techniquesUseful[techniqueId]);
 			var completePromise = techniqueFactory.setRevisionComplete();
 			$q.all([usefulPromise, completePromise]).then(
 				function(result) {
 					console.log(result);
-					vm.usefulDisabled = false;
+					vm.usefulDisabled[techniqueId] = false;
 				}, 
 				function(reason) {
 					console.log("Error: " + reason);
