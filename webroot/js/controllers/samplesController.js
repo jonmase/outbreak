@@ -6,7 +6,7 @@
 		
 	function SamplesController($scope, $sce, $uibModal, sectionFactory, progressFactory, lockFactory, siteFactory, schoolFactory, sampleFactory, $q) {
 		var vm = this;
-		var sectionId = 'samples';
+		var sectionId = 'sampling';
 
 		//Check whether the section is locked
 		if(!lockFactory.checkLock(sectionId)) {	

@@ -35,7 +35,7 @@
 				prerequisites: ['revision'],
 				//highlighted: true
 			},
-			samples: {
+			sampling: {
 				name: 'Collect Samples',
 				controller: 'SamplesController',
 				template: 'samples',
@@ -47,7 +47,7 @@
 				controller: 'LabController',
 				template: 'lab',
 				icon: 'flask',
-				prerequisites: ['samples'],
+				prerequisites: ['sampling'],
 			},
 			results: {
 				name: 'Results',

@@ -107,9 +107,9 @@ class AttemptsTable extends Table
             ->notEmpty('questions');
 
         $validator
-            ->add('samples', 'valid', ['rule' => 'boolean'])
-            ->requirePresence('samples', 'create')
-            ->notEmpty('samples');
+            ->add('sampling', 'valid', ['rule' => 'boolean'])
+            ->requirePresence('sampling', 'create')
+            ->notEmpty('sampling');
 
         $validator
             ->add('lab', 'valid', ['rule' => 'boolean'])

@@ -2,27 +2,36 @@
 	angular.module('flu.samples')
 		.controller('SamplesModalController', SamplesModalController);
 
-	SamplesModalController.$inject = ['$uibModalInstance', 'progressFactory', 'lockFactory', 'sampleFactory', 'siteFactory'];
+	SamplesModalController.$inject = ['$uibModalInstance', '$q', 'progressFactory', 'lockFactory', 'sampleFactory', 'siteFactory'];
 
-	function SamplesModalController($uibModalInstance, progressFactory, lockFactory, sampleFactory, siteFactory) {
+	function SamplesModalController($uibModalInstance, $q, progressFactory, lockFactory, sampleFactory, siteFactory) {
 		var vm = this;
 		var sectionId = 'samples';
 		vm.confirm = confirm;
 		vm.cancel = cancel;
 		vm.samples = sampleFactory.getSamples();
 		vm.siteIds = siteFactory.getSiteIds();
+		vm.saving = false;
 		
 		//Moved the temporary samples to the saved samples
-		function collectSamples() {
-			sampleFactory.setSamples();
-			if(!progressFactory.checkProgress(sectionId)) {
-				lockFactory.setComplete(sectionId);	//Set the progress for this section to complete
-			}
-		}
-		
 		function confirm() {
-			$uibModalInstance.close();
-			collectSamples();
+			vm.saving = true;
+			
+			var samplesPromise = sampleFactory.setSamples();
+			$q.all([samplesPromise]).then(
+				function(result) {
+					console.log(result);
+					//Only need to set progress locally - progress is saved to DB as part of samples saving
+					if(!progressFactory.checkProgress(sectionId)) {
+						//lockFactory.setComplete(sectionId, false);	//Set the progress for this section to complete
+					}
+					$uibModalInstance.close();
+					vm.saving = false;
+				}, 
+				function(reason) {
+					console.log("Error: " + reason);
+				}
+			);
 		}
 		
 		function cancel() {

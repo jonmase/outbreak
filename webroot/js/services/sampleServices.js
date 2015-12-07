@@ -310,6 +310,7 @@
 		}
 		
 		function setAcuteSwabSamplesCollected() {
+			//API:
 			if(samples.saved.counts.sites["np_acute"] > 0) {
 				if(samples.saved.counts.sites["np_acute"] >= 3) {	//If 3 (or more, though should never be more) acute swabs have been collected, that's all of them
 					return "all";
@@ -421,15 +422,29 @@
 		}
 			
 		function setSamples() {
-			setSampleCounts('temp', 'saved', true);	//Set the saved counts based on the temp samples, and add the new samples to the saved samples array
 			//API Save samples and happiness to DB, plus acutesDisabled
-			savedHappiness = angular.copy(happiness);
-			acuteSwabSamplesCollected = setAcuteSwabSamplesCollected();
-			
-			samples.temp.samples = angular.copy(emptySamples);	//Clear the temp samples array
-			
-			//samples.counts.saved = updateSavedCounts();	//Update the saved counts
-			samples.temp.counts = angular.copy(emptySamplesCounts);	//Reset the temp counts
+			var deferred = $q.defer();
+			var SamplesCall = $resource('../../samples/save', {});
+			SamplesCall.save({}, {attemptId: ATTEMPT_ID, samples: samples.temp.samples, happiness: happiness}, function(result) {
+				var message = result.message;
+				if(result.message === "success") {
+					setSampleCounts('temp', 'saved', true);	//Set the saved counts based on the temp samples, and add the new samples to the saved samples array
+					savedHappiness = angular.copy(happiness);
+					acuteSwabSamplesCollected = setAcuteSwabSamplesCollected();
+
+					samples.temp.samples = angular.copy(emptySamples);	//Clear the temp samples array
+					
+					//samples.counts.saved = updateSavedCounts();	//Update the saved counts
+					samples.temp.counts = angular.copy(emptySamplesCounts);	//Reset the temp counts
+				}
+				else {
+					//Deal with error
+				}
+				
+				deferred.resolve(message);
+				deferred.reject('Error: ' + message);
+			});
+			return deferred.promise;
 		}
 
 		function getTestSamples() {

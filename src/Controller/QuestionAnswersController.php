@@ -77,13 +77,7 @@ class QuestionAnswersController extends AppController
 					$this->QuestionAnswers->Attempts->QuestionScores->save($scoreData);
 				});
 				
-				
-				
-				//if ($this->TechniqueUsefulness->save($useful)) {
 				$this->set('message', 'success');
-				//} else {
-				//	$this->set('message', 'Useful techniques save failed');
-				//}
 			}
 			else {
 				$this->set('message', 'Response save denied');

@@ -46,8 +46,9 @@
 			return locks[sectionId];
 		}
 		
-		function setComplete(sectionId) {
-			return setProgressAndLocks(sectionId, 1);	//Set the progress for this section to complete
+		function setComplete(sectionId, saveToDB) {
+			if(typeof(saveToDB) === 'undefined') {	saveToDB = true; }
+			return setProgressAndLocks(sectionId, 1, saveToDB);	//Set the progress for this section to complete
 		}
 
 		function setLocks() {
@@ -73,10 +74,16 @@
 			return locks;
 		}
 
-		function setProgressAndLocks(sectionId, completed) {
-			var progressPromise = progressFactory.setProgress(sectionId, completed);
+		function setProgressAndLocks(sectionId, completed, saveToDB) {
+			progressFactory.setProgress(sectionId, completed);	//Set progress locally
 			setLocks();
-			return progressPromise;
+			if(saveToDB) {
+				var progressPromise = progressFactory.saveProgress(sectionId, completed);	//save progress to DB
+				return progressPromise;
+			}
+			else {
+				return true;
+			}
 			//progress[sectionId] = completed;
 			//return setLocks();
 		}

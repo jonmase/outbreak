@@ -29,6 +29,7 @@
 			loadResources: loadResources,
 			resetResources: resetResources,
 			setProgress: setProgress,
+			saveProgress: saveProgress,
 			subtractResources: subtractResources,
 		}
 		return factory;
@@ -118,15 +119,18 @@
 		//Update the user's progress in a section. Completed = 1 or 0.
 		function setProgress(sectionId, completed) {
 			progress[sectionId] = completed;
+		}
+		
+		function saveProgress(sectionId, completed) {
 			//API: Update user's progress in DB. Just set the changed value?
-			//var deferred = $q.defer();
+			var deferred = $q.defer();
 			var ProgressCall = $resource('../saveProgress', {});
 			ProgressCall.save({}, {attemptId: ATTEMPT_ID, sectionId: sectionId, completed: completed}, function(result) {
 				console.log(result.message);
-				//deferred.resolve('Progress saved');
-				//deferred.reject('Progress not saved');
+				deferred.resolve('Progress saved');
+				deferred.reject('Progress not saved');
 			});
-			//return deferred.promise;
+			return deferred.promise;
 			//return progress;
 		}
 		

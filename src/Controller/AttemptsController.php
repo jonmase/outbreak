@@ -12,7 +12,7 @@ class AttemptsController extends AppController
 {
 	public function loadProgress($attemptId = null) {
 		if($attemptId && $this->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
-			$progress = $this->Attempts->get($attemptId, ['fields' => ['start', 'alert', 'revision', 'questions', 'samples', 'lab', 'hidentified', 'nidentified', 'report', 'research']]);
+			$progress = $this->Attempts->get($attemptId, ['fields' => ['start', 'alert', 'revision', 'questions', 'sampling', 'lab', 'hidentified', 'nidentified', 'report', 'research']]);
 			$this->set(compact('progress'));
 			$this->set('_serialize', ['progress']);
 			//pr($attempt);

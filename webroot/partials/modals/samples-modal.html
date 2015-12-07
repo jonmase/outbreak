@@ -10,6 +10,12 @@
 <div class="modal-footer">
 	<!--button type="button" class="btn btn-default" data-dismiss="modal" ng-show="mainCtrl.modal.closable" ng-click="progress.userProgress.intro = 1">{{mainCtrl.modal.buttons.dismiss.text}}</button-->
 	<!--button type="button" class="btn btn-primary" ng-show="mainCtrl.modal.buttons.primary.show">{{mainCtrl.modal.buttons.primary.text}}</button-->
-	<button type="button" class="btn btn-default" ng-click="SamplesModalCtrl.cancel()">Cancel</button>
-	<button type="button" class="btn btn-primary" ng-click="SamplesModalCtrl.confirm()">Confirm</button>
+	<div ng-hide="SamplesModalCtrl.saving">
+		<button type="button" class="btn btn-default" ng-click="SamplesModalCtrl.cancel()">Cancel</button>
+		<button type="button" class="btn btn-primary" ng-click="SamplesModalCtrl.confirm()">Confirm</button>
+	</div>
+	<div ng-show="SamplesModalCtrl.saving">
+		<loader></loader>
+		Collecting Samples
+	</div>
 </div>
