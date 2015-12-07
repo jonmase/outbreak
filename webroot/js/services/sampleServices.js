@@ -521,8 +521,20 @@
 		}
 		
 		function tooLate(schoolId) {
-			//API: Set this in the DB
 			schools[schoolId].acuteDisabled = true;
+			
+			//API: Set this in the DB
+			var TooLateCall = $resource('../../schools/tooLate', {});
+			TooLateCall.save({}, {attemptId: ATTEMPT_ID}, function(result) {
+				var message = result.message;
+				if(result.message === "success") {
+					console.log = 'Too late saved';
+				}
+				else {
+					//Deal with error
+				}
+			});
+			
 			//alert(tooLateMessage);
 			$uibModal.open({
 				animation: true,
@@ -532,8 +544,6 @@
 				controller: 'tooLateModalController',
 				controllerAs: 'tooLateModalCtrl',
 			});
-
-			
 		}
 	
 		/*

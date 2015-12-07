@@ -59,7 +59,37 @@ class SchoolsController extends AppController
 		//pr($sites->toArray());
 	}
 
-    /**
+	public function tooLate() {
+		if($this->request->is('post')) {
+			//pr($this->request->data);
+			$attemptId = $this->request->data['attemptId'];
+			
+			if($attemptId && $this->Schools->AttemptsSchools->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
+				$attemptSchoolQuery = $this->Schools->AttemptsSchools->find('all', ['conditions' => ['attempt_id' => $attemptId]]);
+				$attemptSchool = $attemptSchoolQuery->first();
+				$attemptSchool->acuteDisabled = 1;
+				//pr($attempt);
+				//exit;
+				if ($this->Schools->AttemptsSchools->save($attemptSchool)) {
+					$this->set('message', 'Too late save succeeded');
+				} else {
+					$this->set('message', 'Too late save failed');
+				}
+				//$this->Attempts->save($attempt);
+				//pr($attempt);
+			}
+			else {
+				$this->set('message', 'Too late save denied');
+			}
+		}
+		else {
+			$this->set('message', 'Too late save not POST');
+		}
+		$this->viewBuilder()->layout('ajax');
+		$this->render('/Element/ajaxmessage');		
+	}
+	
+   /**
      * Index method
      *
      * @return void

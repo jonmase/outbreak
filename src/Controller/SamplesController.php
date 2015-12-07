@@ -35,7 +35,6 @@ class SamplesController extends AppController
 		}
 	}
 	
-
     /**
      * Index method
      *

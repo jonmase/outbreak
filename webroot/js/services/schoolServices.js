@@ -24,8 +24,8 @@
 		
 		function loadSchools() {
 			var deferred = $q.defer();
-			var SchoolsCall = $resource('../../schools/load.json', {});
-			SchoolsCall.get({}, function(result) {
+			var SchoolsCall = $resource('../../schools/load/:attemptId.json', {attemptId: '@id'});
+			SchoolsCall.get({attemptId: ATTEMPT_ID}, function(result) {
 				schools = result.schools;
 				deferred.resolve('Schools loaded');
 				deferred.reject('Schools not loaded');

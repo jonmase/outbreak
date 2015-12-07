@@ -11,7 +11,9 @@
 		vm.loading = true;
 		
 		//Bindable Members
+		$location.path( "/home" );
 		vm.sections = sectionsConstant();
+		$scope.currentSectionId = getSectionFromPath();
 
 		//Actions
 		var progressPromise = progressFactory.loadProgress();
@@ -32,7 +34,6 @@
 		$q.all([progressPromise, resourcePromise, techniquesPromise, researchTechniquesPromise, usefulPromise, questionsPromise, responsesPromise, sitesPromise, schoolsPromise, typesPromise, samplesPromise, happinessPromise]).then(
 			function(result) {
 				console.log(result);
-				$scope.currentSectionId = getSectionFromPath();
 				vm.progress = progressFactory.getProgress();
 				vm.resources = progressFactory.getResources();
 				sampleFactory.setup();
