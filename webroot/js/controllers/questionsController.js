@@ -16,7 +16,9 @@
 		$scope.$parent.currentSectionId = sectionId;	//Make sure the section ID is set correctly in Main Controller
 		vm.section = sectionFactory.getSection(sectionId);	//Get the section details
 
-		if(!questionFactory.getLoaded()) {
+		setup();
+		
+		/*if(!questionFactory.getLoaded()) {
 			var questionsPromise = questionFactory.loadQuestions();
 			var responsesPromise = questionFactory.loadResponses();
 			$q.all([questionsPromise, responsesPromise]).then(
@@ -32,7 +34,7 @@
 		}
 		else {
 			setup();
-		}
+		}*/
 		
 		function setup() {
 			vm.subsections = questionFactory.getQuestions();

@@ -44,7 +44,7 @@
 			samples = readSamples();
 			setSampleCounts('saved', 'saved', false);	//Set the saved counts based on the saved samples
 			//var savedHappiness = readHappiness();	//Get the saved happiness
-			savedHappiness = loadHappiness();	//Get the saved happiness
+			//savedHappiness = loadHappiness();	//Get the saved happiness
 			happiness = setHappiness();	//Work out the initial happiness
 			acuteSwabSamplesCollected = setAcuteSwabSamplesCollected();
 			setLoaded();

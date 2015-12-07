@@ -16,7 +16,9 @@
 		$scope.$parent.currentSectionId = sectionId;	//Make sure the section ID is set correctly in Main Controller
 		vm.section = sectionFactory.getSection(sectionId);	//Get the section details
 
-		if(!techniqueFactory.getLoaded()) {
+		setup();
+		
+		/*if(!techniqueFactory.getLoaded()) {
 			techniqueFactory.setLoaded();
 			var techniquesPromise = techniqueFactory.loadTechniques();
 			var researchTechniquesPromise = techniqueFactory.loadResearchTechniques();
@@ -33,7 +35,7 @@
 		}
 		else {
 			setup();
-		}
+		}*/
 
 		//Functions
 		function setup() {

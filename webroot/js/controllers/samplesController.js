@@ -15,8 +15,10 @@
 		vm.loading = true;
 		$scope.$parent.currentSectionId = sectionId;	//Make sure the section ID is set correctly in Main Controller
 		vm.section = sectionFactory.getSection(sectionId);	//Get the section details
+		
+		setup();
 
-		if(!sampleFactory.getLoaded()) {
+		/*if(!sampleFactory.getLoaded()) {
 			var sitesPromise = siteFactory.loadSites();
 			var schoolsPromise = schoolFactory.loadSchools();
 			var typesPromise = sampleFactory.loadTypes();
@@ -35,7 +37,7 @@
 		}
 		else {
 			setup();
-		}
+		}*/
 		
 		function setup() {
 			//Bindable Members

@@ -2,9 +2,11 @@
 	angular.module('flu')
 		.controller('MainController', MainController);
 
-	MainController.$inject = ['$scope', '$location', '$uibModal', 'sectionsConstant', 'progressFactory', 'lockFactory', 'mediaFactory', 'modalFactory', '$q'];
+	//MainController.$inject = ['$scope', '$location', '$uibModal', '$q', 'sectionsConstant', 'progressFactory', 'lockFactory', 'mediaFactory', 'modalFactory', 'techniqueFactory', 'questionFactory', 'siteFactory', 'schoolFactory', 'sampleFactory', 'assayFactory', 'resultFactory', 'reportFactory'];
+	MainController.$inject = ['$scope', '$location', '$uibModal', '$q', 'sectionsConstant', 'progressFactory', 'lockFactory', 'mediaFactory', 'modalFactory', 'techniqueFactory', 'questionFactory', 'siteFactory', 'schoolFactory', 'sampleFactory'];
 	
-	function MainController($scope, $location, $uibModal, sectionsConstant, progressFactory, lockFactory, mediaFactory, modalFactory, $q) {
+	//function MainController($scope, $location, $uibModal, $q, sectionsConstant, progressFactory, lockFactory, mediaFactory, modalFactory, techniqueFactory, questionFactory, siteFactory, schoolFactory, sampleFactory, assayFactory, resultFactory, reportFactory) {
+	function MainController($scope, $location, $uibModal, $q, sectionsConstant, progressFactory, lockFactory, mediaFactory, modalFactory, techniqueFactory, questionFactory, siteFactory, schoolFactory, sampleFactory) {
 		var vm = this;
 		vm.loading = true;
 		
@@ -14,12 +16,26 @@
 		//Actions
 		var progressPromise = progressFactory.loadProgress();
 		var resourcePromise = progressFactory.loadResources();
-		$q.all([progressPromise, resourcePromise]).then(
+		
+		var techniquesPromise = techniqueFactory.loadTechniques();
+		var researchTechniquesPromise = techniqueFactory.loadResearchTechniques();
+		var usefulPromise = techniqueFactory.loadUsefulTechniques();
+		
+		var questionsPromise = questionFactory.loadQuestions();
+		var responsesPromise = questionFactory.loadResponses();
+
+		var sitesPromise = siteFactory.loadSites();
+		var schoolsPromise = schoolFactory.loadSchools();
+		var typesPromise = sampleFactory.loadTypes();
+		var samplesPromise = sampleFactory.loadSamples();
+		var happinessPromise = sampleFactory.loadHappiness();
+		$q.all([progressPromise, resourcePromise, techniquesPromise, researchTechniquesPromise, usefulPromise, questionsPromise, responsesPromise, sitesPromise, schoolsPromise, typesPromise, samplesPromise, happinessPromise]).then(
 			function(result) {
 				console.log(result);
 				$scope.currentSectionId = getSectionFromPath();
 				vm.progress = progressFactory.getProgress();
 				vm.resources = progressFactory.getResources();
+				sampleFactory.setup();
 				vm.locks = lockFactory.setLocks();
 				vm.checkLockOnClick = checkLockOnClick;
 				vm.loading = false;
