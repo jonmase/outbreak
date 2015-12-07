@@ -44,7 +44,7 @@ class SamplesController extends AppController
 			$happiness = $this->request->data['happiness'];
 
 			
-			if($attemptId && $rawSamples && !is_null($happiness) && $this->Samples->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
+			if($attemptId && $rawSamples && $this->Samples->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
 				$samples = [];
 				foreach($rawSamples as $siteId => $schools) {
 					foreach($schools as $schoolId => $children) {
@@ -69,16 +69,21 @@ class SamplesController extends AppController
 				//Note: Always create new entry - should never already be saved entries
 				$samplesData = $this->Samples->newEntities($samples);
 				
-				$attempt = $this->Samples->Attempts->get($attemptId);
-				$attempt->happiness = $happiness;
-				$attempt->sampling = true;
+				if(!is_null($happiness)) {
+					$attempt = $this->Samples->Attempts->get($attemptId);
+					$attempt->happiness = $happiness;
+					$attempt->sampling = true;
+				}
+				else {
+					$attempt = null;
+				}
 				
 				//pr($samplesData);
 				//pr($attempt);
 				//exit;
 				$connection = ConnectionManager::get('default');
 				//$this->QuestionAnswers->connection()->transactional(function () use ($answers) {
-				//$connection->transactional(function () use ($samplesData, $attempt) {
+				$connection->transactional(function () use ($samplesData, $attempt) {
 					foreach ($samplesData as $sample) {
 						//pr($sample);
 						if(!$this->Samples->save($sample)) {
@@ -86,12 +91,12 @@ class SamplesController extends AppController
 							return false;
 						}
 					}
-					if(!$this->Samples->Attempts->save($attempt)) {
+					if(!is_null($attempt) && !$this->Samples->Attempts->save($attempt)) {
 						$this->set('message', 'Sample save error');
 						return false;
 					}
 					$this->set('message', 'success');
-				//});
+				});
 			}
 			else {
 				$this->set('message', 'Samples save denied');

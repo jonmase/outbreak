@@ -14,7 +14,7 @@ html, body {
 	left: 0;
 	width: 60px;
 	height: 100%;
-	z-index: 1049;	/*Just below modals */
+	z-index: 1039;	/*Just below modals */
 }
 #main {
 	margin-left: 45px;

@@ -23,7 +23,7 @@
 					console.log(result);
 					//Only need to set progress locally - progress is saved to DB as part of samples saving
 					if(!progressFactory.checkProgress(sectionId)) {
-						//lockFactory.setComplete(sectionId, false);	//Set the progress for this section to complete
+						lockFactory.setComplete(sectionId, false);	//Set the progress for this section to complete, but don't save to DB
 					}
 					$uibModalInstance.close();
 					vm.saving = false;

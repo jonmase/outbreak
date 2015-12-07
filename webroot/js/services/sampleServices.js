@@ -99,16 +99,46 @@
 	
 		function collectAllAcuteSwabSamples() {
 			var siteId = siteIds['np'];
-			var schoolId = 1;
-			var typeId = 0;
+			var schoolId = 2;
+			var typeId = 1;
+			var samplesToSave = {};
+			samplesToSave[siteId] = {};
+			samplesToSave[siteId][schoolId] = {};
+			var samplesToSaveCount = 0;
+			
 			
 			//for(var childId = 0; childId < schools[schoolId].children.length; childId++) {
 			for(var childId in schools[schoolId].children) {
-				samples.saved.samples[siteId][schoolId][childId][typeId] = 1;
-				samples.all.samples[siteId][schoolId][childId][typeId] = 1;
+				//If any of the acute swabs haven't already been saved, save them
+				if(samples.saved.samples[siteId][schoolId][childId][typeId] === 0) {
+					samplesToSave[siteId][schoolId][childId] = {};
+					samplesToSave[siteId][schoolId][childId][typeId] = 1;
+					samples.saved.samples[siteId][schoolId][childId][typeId] = 1;
+					samples.all.samples[siteId][schoolId][childId][typeId] = 1;
+					samplesToSaveCount++;
+				}
 			}
-			setSampleCounts('all', 'all');	//Count the all samples into the all counts
-			setSampleCounts('saved', 'saved');	//Count the saved samples into the saved counts
+			if(samplesToSaveCount > 0) {
+				setSampleCounts('all', 'all');	//Count the all samples into the all counts
+				setSampleCounts('saved', 'saved');	//Count the saved samples into the saved counts
+				
+				var deferred = $q.defer();
+				var SamplesCall = $resource('../../samples/save', {});
+				SamplesCall.save({}, {attemptId: ATTEMPT_ID, samples: samplesToSave, happiness: null}, function(result) {
+					var message = result.message;
+					if(result.message === "success") {
+						//Nothing to do here
+					}
+					else {
+						//Deal with error
+					}
+					
+					deferred.resolve(message);
+					deferred.reject('Error: ' + message);
+				});
+				return deferred.promise;
+			}
+			return 'No extra samples collected';
 		}
 	
 		function getAcuteSwabSamplesCollected() {
