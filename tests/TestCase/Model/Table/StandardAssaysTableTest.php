@@ -1,14 +1,14 @@
 <?php
 namespace App\Test\TestCase\Model\Table;
 
-use App\Model\Table\AssaysTable;
+use App\Model\Table\StandardAssaysTable;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
 /**
- * App\Model\Table\AssaysTable Test Case
+ * App\Model\Table\StandardAssaysTable Test Case
  */
-class AssaysTableTest extends TestCase
+class StandardAssaysTableTest extends TestCase
 {
 
     /**
@@ -17,23 +17,23 @@ class AssaysTableTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'app.assays',
+        'app.standard_assays',
         'app.attempts',
         'app.lti_users',
         'app.lti_keys',
         'app.lti_contexts',
         'app.lti_resources',
-        'app.attempts_schools',
-        'app.schools',
-        'app.children',
-        'app.samples',
-        'app.sites',
-        'app.sample_stages',
-        'app.notes',
+        'app.assays',
         'app.techniques',
-        'app.standard_assays',
+        'app.notes',
         'app.technique_results',
         'app.technique_usefulness',
+        'app.sites',
+        'app.samples',
+        'app.schools',
+        'app.attempts_schools',
+        'app.children',
+        'app.sample_stages',
         'app.question_answers',
         'app.question_stems',
         'app.questions',
@@ -53,8 +53,8 @@ class AssaysTableTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $config = TableRegistry::exists('Assays') ? [] : ['className' => 'App\Model\Table\AssaysTable'];
-        $this->Assays = TableRegistry::get('Assays', $config);
+        $config = TableRegistry::exists('StandardAssays') ? [] : ['className' => 'App\Model\Table\StandardAssaysTable'];
+        $this->StandardAssays = TableRegistry::get('StandardAssays', $config);
     }
 
     /**
@@ -64,7 +64,7 @@ class AssaysTableTest extends TestCase
      */
     public function tearDown()
     {
-        unset($this->Assays);
+        unset($this->StandardAssays);
 
         parent::tearDown();
     }

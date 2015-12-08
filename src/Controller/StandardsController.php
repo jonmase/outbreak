@@ -2,6 +2,7 @@
 namespace App\Controller;
 
 use App\Controller\AppController;
+use Cake\Event\Event;
 
 /**
  * Standards Controller
@@ -10,13 +11,32 @@ use App\Controller\AppController;
  */
 class StandardsController extends AppController
 {
+	public function beforeFilter(Event $event) {
+        parent::beforeFilter($event);
+		$this->Auth->allow('load');
+	}
+	
+	public function load() {
+		$query = $this->Standards->find('all', [
+			'order' => ['Standards.order' => 'ASC'],
+			//'contain' => ['QuestionStems' => ['QuestionOptions'], 'QuestionOptions'],
+		]);
+		$rawStandards = $query->all();
+		$standards = [];
+		foreach($rawStandards as $standard) {
+			$standards[$standard->id] = $standard;
+		}
+		$this->set(compact('standards'));
+		$this->set('_serialize', ['standards']);
+		//pr($questions->toArray());
+	}
 
     /**
      * Index method
      *
      * @return void
      */
-    public function index()
+    /*public function index()
     {
         $this->set('standards', $this->paginate($this->Standards));
         $this->set('_serialize', ['standards']);
@@ -29,7 +49,7 @@ class StandardsController extends AppController
      * @return void
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
-    public function view($id = null)
+   /* public function view($id = null)
     {
         $standard = $this->Standards->get($id, [
             'contain' => ['Assays']
@@ -43,7 +63,7 @@ class StandardsController extends AppController
      *
      * @return void Redirects on successful add, renders view otherwise.
      */
-    public function add()
+    /*public function add()
     {
         $standard = $this->Standards->newEntity();
         if ($this->request->is('post')) {
@@ -66,7 +86,7 @@ class StandardsController extends AppController
      * @return void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
-    public function edit($id = null)
+    /*public function edit($id = null)
     {
         $standard = $this->Standards->get($id, [
             'contain' => []
@@ -91,7 +111,7 @@ class StandardsController extends AppController
      * @return \Cake\Network\Response|null Redirects to index.
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
-    public function delete($id = null)
+    /*public function delete($id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
         $standard = $this->Standards->get($id);
@@ -101,5 +121,5 @@ class StandardsController extends AppController
             $this->Flash->error(__('The standard could not be deleted. Please, try again.'));
         }
         return $this->redirect(['action' => 'index']);
-    }
+    }*/
 }

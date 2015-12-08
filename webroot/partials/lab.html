@@ -39,39 +39,18 @@
 										<h5 class="panel-title">Standards (<all-or-none site-id="'standards'" on-click="labCtrl.selectAllOrNoneBySite(allOrNone, 'standards')"></all-or-none>)</h5>
 									</div>
 									<div class="panel-body">
-										<!--TODO: Change this into a directive to avoid repetition --> 
-										<table class="standards-table pull-left" style="margin-right: 40px;">
-											<tr ng-repeat="(standardId, standard) in labCtrl.standards | limitTo: 5">
-												<td>{{standard.name}}</td>
-												<td>
-													<div class="checkbox checkbox-primary">
-														<input type="checkbox" 
-															id="assays_standards_{{standard.id}}" 
-															ng-model="labCtrl.assays.all.standards[techniqueId][standardId]" ng-true-value="1" ng-false-value="0" 
-															ng-click="labCtrl.setAssayCount()" 
-															ng-disabled="labCtrl.assays.saved.standards[techniqueId][standardId] === 1" 
-															 />
-														<label></label>
-													</div>
-												</td>
-											</tr>
-										</table>
-										<table class="standards-table pull-left">
-											<tr ng-repeat="(standardId, standard) in labCtrl.standards | limitTo: 5 : 5">
-												<td>{{standard.name}}</td>
-												<td>
-													<div class="checkbox checkbox-primary">
-														<input type="checkbox" 
-															id="assays_standards_{{standard.id}}" 
-															ng-model="labCtrl.assays.all.standards[techniqueId][standardId + 5]" ng-true-value="1" ng-false-value="0" 
-															ng-click="labCtrl.setAssayCount()" 
-															ng-disabled="labCtrl.assays.saved.standards[techniqueId][standardId + 5] === 1" 
-															 />
-														<label></label>
-													</div>
-												</td>
-											</tr>
-										</table>
+										<div ng-repeat="(standardId, standard) in labCtrl.standards" class="lab-standard">
+											<span class="checkbox checkbox-primary">
+												<input type="checkbox" 
+													id="assays_standards_{{standard.id}}" 
+													ng-model="labCtrl.assays.all.standards[techniqueId][standardId]" ng-true-value="1" ng-false-value="0" 
+													ng-click="labCtrl.setAssayCount()" 
+													ng-disabled="labCtrl.assays.saved.standards[techniqueId][standardId] === 1" 
+													 />
+												<label></label>
+											</span>
+											<span class="lab-standard-name">{{standard.name}}</span>
+										</div>
 									</div>
 								</div>
 							</div>
@@ -88,13 +67,13 @@
 													<thead>
 														<tr>
 															<th><!--Child--></th>
-															<th ng-repeat="(typeId, type) in labCtrl.types" ng-if="!labCtrl.schools[schoolId][type + 'Disabled']" ng-class="'assays-' + type">{{type.charAt(0).toUpperCase() + type.slice(1)}}<br /><span class="all-or-none">(<all-or-none site-id="siteId" school-id="schoolId" type-id="typeId" on-click="labCtrl.selectAllOrNoneByType(allOrNone, siteId, schoolId, typeId)"></all-or-none>)</span></th>
+															<th ng-repeat="(typeId, type) in labCtrl.types" ng-if="!labCtrl.schools[schoolId][type.stage + 'Disabled']" ng-class="'assays-' + type.stage">{{type.stage.charAt(0).toUpperCase() + type.stage.slice(1)}}<br /><span class="all-or-none">(<all-or-none site-id="siteId" school-id="schoolId" type-id="typeId" on-click="labCtrl.selectAllOrNoneByType(allOrNone, siteId, schoolId, typeId)"></all-or-none>)</span></th>
 														</tr>
 													</thead>
 													<tbody>
 														<tr ng-repeat="(childId, child) in labCtrl.schools[schoolId].children">
 															<th>{{child.name}}</th>
-															<td ng-repeat="(typeId, type) in labCtrl.types" ng-if="!labCtrl.schools[schoolId][type + 'Disabled']" ng-class="'assays-' + type">
+															<td ng-repeat="(typeId, type) in labCtrl.types" ng-if="!labCtrl.schools[schoolId][type.stage + 'Disabled']" ng-class="'assays-' + type.stage">
 																<div class="checkbox checkbox-primary">
 																	<!-- Assay checkbox - ticked to add sample to assay
 																		ng-model - linked to assays.temp.samples array
@@ -141,9 +120,9 @@
 								<div ng-repeat="(schoolId, school) in  labCtrl.schools" ng-if="labCtrl.assays.saved.counts[techniqueId].sites[siteId].schools[schoolId].total > 0" class="col-xs-12 results-school-section" ng-class="{'col-md-6': technique.id === 'ha' || technique.id === 'pcrn' || technique.id === 'pfu'}">
 									<h6>{{labCtrl.schools[schoolId].name}}</h6>
 									<div ng-repeat="(typeId, type) in labCtrl.types" ng-if="labCtrl.assays.saved.counts[techniqueId].sites[siteId].schools[schoolId].types[typeId] > 0" class="results-type-section">
-										<p><strong>{{type.charAt(0).toUpperCase() + type.slice(1)}} Samples</strong></p>
+										<p><strong>{{type.stage.charAt(0).toUpperCase() + type.stage.slice(1)}} Samples</strong></p>
 										<div>
-											<show-result technique="technique" samples="labCtrl.schools[schoolId].children" samples-performed="labCtrl.assays.saved.samples[techniqueId][siteId][schoolId]" type="typeId" type-ref="type.charAt(0)" site-ref="labCtrl.sites[siteId].resultId"></show-result>
+											<show-result technique="technique" samples="labCtrl.schools[schoolId].children" samples-performed="labCtrl.assays.saved.samples[techniqueId][siteId][schoolId]" type="typeId" type-ref="type.stage.charAt(0)" site-ref="labCtrl.sites[siteId].resultId"></show-result>
 										</div>
 									</div>
 								</div>

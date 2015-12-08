@@ -56,9 +56,6 @@ class SamplesTable extends Table
             'foreignKey' => 'sample_stage_id',
             'joinType' => 'INNER'
         ]);
-        $this->hasMany('Assays', [
-            'foreignKey' => 'sample_id'
-        ]);
     }
 
     /**

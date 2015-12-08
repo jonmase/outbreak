@@ -4,27 +4,12 @@
 		.value('timeCutoff', 1)
 		.factory('assayFactory', assayFactory);
 	
-	assayFactory.$inject = ['techniqueFactory', 'siteFactory', 'schoolFactory', 'sampleFactory', 'progressFactory', 'lockFactory'];
+	assayFactory.$inject = ['techniqueFactory', 'siteFactory', 'schoolFactory', 'sampleFactory', 'progressFactory', 'lockFactory', '$resource', '$q'];
 	
-	function assayFactory(techniqueFactory, siteFactory, schoolFactory, sampleFactory, progressFactory, lockFactory) {
+	function assayFactory(techniqueFactory, siteFactory, schoolFactory, sampleFactory, progressFactory, lockFactory, $resource, $q) {
 		//Variables
-		var techniques = techniqueFactory.getTechniques('lab');
-		var currentTechniqueId = 0;
-		var samples = sampleFactory.getSamples();
-		var sites = siteFactory.getSites();
-		var schools = schoolFactory.getSchools();
-		var types = sampleFactory.getSampleTypes();
-		var standards = readStandards();
-		var requiredTests = readRequiredTests();
-		var resources = progressFactory.getResources();
-		var activeTabs = [];
-
-		//The assays that the user has performed - assays[temp/saved][standards/samples/counts][techniqueId][siteId][schoolId][childId][typeId]
-		var emptyStandardsForTechnique = readEmptyStandardsForTechnique();
-		var emptyAssaysForTechnique = readEmptyAssaysForTechnique();
-		var emptyCountsForTechnique = readEmptyCountsForTechnique();
-		var assays = initializeAssays();
-
+		var techniques, currentTechniqueId, samples, sites, schools, types, standards, requiredTests, resources, activeTabs, emptyStandardsForTechnique, emptyAssaysForTechnique, emptyCountsForTechnique, assays, savedAssays, savedStandardAssays;
+		
 		//Exposed Methods
 		var factory = {
 			getActiveTabs: getActiveTabs,
@@ -32,6 +17,9 @@
 			getCurrentTechniqueId: getCurrentTechniqueId,
 			getStandards: getStandards,
 			getRequiredTests: getRequiredTests,
+			loadAssays: loadAssays,
+			loadStandardAssays: loadStandardAssays,
+			loadStandards: loadStandards,
 			resetActiveTabs: resetActiveTabs,
 			selectAllOrNoneBySite: selectAllOrNoneBySite,
 			selectAllOrNoneByType: selectAllOrNoneByType,
@@ -40,11 +28,29 @@
 			setCurrentTechniqueId: setCurrentTechniqueId,
 			setLabComplete: setLabComplete,
 			setTab: setTab,
+			setup: setup,
 		}
 		return factory;
 		
 		//Methods
+		function setup() {
+			techniques = techniqueFactory.getTechniques('lab');
+			currentTechniqueId = 0;
+			samples = sampleFactory.getSamples();
+			sites = siteFactory.getSites();
+			schools = schoolFactory.getSchools();
+			types = sampleFactory.getSampleTypes();
+			//standards = readStandards();
+			requiredTests = readRequiredTests();
+			resources = progressFactory.getResources();
+			activeTabs = [];
 
+			//The assays that the user has performed - assays[temp/saved][standards/samples/counts][techniqueId][siteId][schoolId][childId][typeId]
+			//emptyStandardsForTechnique = readEmptyStandardsForTechnique();
+			//emptyAssaysForTechnique = readEmptyAssaysForTechnique();
+			//emptyCountsForTechnique = readEmptyCountsForTechnique();
+			initializeAssays();
+		}
 		function getActiveTabs() {
 			return activeTabs;
 		}
@@ -61,7 +67,7 @@
 			return standards;
 		}
 		
-		function initializeAssays() {
+		/*function initializeAssays() {
 			var savedAssays = readSavedAssays();
 			var allAssays = angular.copy(savedAssays);
 			var tempAssays = readEmptyAssays();
@@ -72,6 +78,162 @@
 				temp: tempAssays
 			};
 			return assays;
+		}*/
+
+		function initializeAssays() {
+			emptyAssaysForTechnique = {};
+			emptyCountsForTechnique = {};
+			emptyStandardsForTechnique = {};
+			emptyCountsForTechnique.total = 0;
+			emptyCountsForTechnique.standards = 0;
+			emptyCountsForTechnique.sites = {};
+			
+			var savedAssayCounts = {};
+			
+			//Set up temp assays
+			var tempAssaysAndCounts = {
+				standards: {},
+				samples: {},
+				counts: {}
+			};
+			
+			var firstTechnique = 1;
+			for(var techniqueIndex in techniques) {
+				var techniqueId = techniques[techniqueIndex].id;
+				if(typeof(savedAssays[techniqueId]) === 'undefined') {
+					savedAssays[techniqueId] = {};
+				}
+				if(typeof(savedStandardAssays[techniqueId]) === 'undefined') {
+					savedStandardAssays[techniqueId] = {};
+				}
+				savedAssayCounts[techniqueId] = angular.copy(emptyCountsForTechnique);
+
+				//for(var siteId = 0; siteId < sites.length; siteId++) {
+				for(var siteId in sites) {
+					if(typeof(savedAssays[techniqueId][siteId]) === 'undefined') {
+						savedAssays[techniqueId][siteId] = {};
+					}
+					if(firstTechnique) {
+						emptyAssaysForTechnique[siteId] = {};
+						emptyCountsForTechnique.sites[siteId] = {};
+						emptyCountsForTechnique.sites[siteId].schools = {};
+						emptyCountsForTechnique.sites[siteId].total = 0;
+					}
+					savedAssayCounts[techniqueId].sites[siteId] = angular.copy(emptyCountsForTechnique.sites[siteId]);
+					
+					//for(var schoolId = 0; schoolId < schools.length; schoolId++) {
+					for(var schoolId in schools) {
+						if(typeof(savedAssays[techniqueId][siteId][schoolId]) === 'undefined') {
+							savedAssays[techniqueId][siteId][schoolId] = {};
+						}
+						if(firstTechnique) {
+							emptyAssaysForTechnique[siteId][schoolId] = {};
+							emptyCountsForTechnique.sites[siteId].schools[schoolId] = {};
+							emptyCountsForTechnique.sites[siteId].schools[schoolId].children = {};
+							emptyCountsForTechnique.sites[siteId].schools[schoolId].types = {};
+							emptyCountsForTechnique.sites[siteId].schools[schoolId].total = 0;
+						}
+						savedAssayCounts[techniqueId].sites[siteId].schools[schoolId] = angular.copy(emptyCountsForTechnique.sites[siteId].schools[schoolId]);
+						
+						//for(var childId = 0; childId < schools[schoolId].children.length; childId++) {
+						for(var childId in schools[schoolId].children) {
+							if(typeof(savedAssays[techniqueId][siteId][schoolId][childId]) === 'undefined') {
+								savedAssays[techniqueId][siteId][schoolId][childId] = {};
+							}
+							if(firstTechnique) {
+								emptyAssaysForTechnique[siteId][schoolId][childId] = {};
+								emptyCountsForTechnique.sites[siteId].schools[schoolId].children[childId] = 0;
+							}
+							savedAssayCounts[techniqueId].sites[siteId].schools[schoolId].children[childId] = 0;
+							//for(var typeId = 0; typeId < types.length; typeId++) {
+							for(var typeId in types) {
+								if(typeof(savedAssays[techniqueId][siteId][schoolId][childId][typeId]) === 'undefined') {
+									savedAssays[techniqueId][siteId][schoolId][childId][typeId] = 0;
+								}
+								else if(savedAssays[techniqueId][siteId][schoolId][childId][typeId]) {
+									savedAssayCounts[techniqueId].total++;
+									savedAssayCounts[techniqueId].sites[siteId].total++;
+									savedAssayCounts[techniqueId].sites[siteId].schools[schoolId].total++;
+									savedAssayCounts[techniqueId].sites[siteId].schools[schoolId].children[childId]++;
+									savedAssayCounts[techniqueId].sites[siteId].schools[schoolId].types[typeId]++;
+								}
+								if(firstTechnique) {
+									emptyAssaysForTechnique[siteId][schoolId][childId][typeId] = 0;
+									emptyCountsForTechnique.sites[siteId].schools[schoolId].types[typeId] = 0;
+								}
+							}
+						}
+					}
+				}
+				
+				for(var standardId in standards) {
+					if(typeof(savedStandardAssays[techniqueId][standardId]) === 'undefined') {
+						savedStandardAssays[techniqueId][standardId] = 0;
+					}
+					else if(savedStandardAssays[techniqueId][standardId]) {
+						savedAssayCounts[techniqueId].total++;
+						savedAssayCounts[techniqueId].standards++;
+					}
+
+					if(firstTechnique) {
+						emptyStandardsForTechnique[standardId] = 0;
+					}
+				}
+				
+				tempAssaysAndCounts.standards[techniqueId] = angular.copy(emptyStandardsForTechnique);
+				tempAssaysAndCounts.samples[techniqueId] = angular.copy(emptyAssaysForTechnique);
+				tempAssaysAndCounts.counts[techniqueId] = angular.copy(emptyCountsForTechnique);
+
+				firstTechnique = 0;
+			}
+
+			
+			var savedAssaysAndCounts = {
+				standards: savedStandardAssays,
+				samples: savedAssays,
+				counts: savedAssayCounts,
+			};
+			var allAssaysAndCounts = angular.copy(savedAssaysAndCounts);
+			
+			assays = {
+				all: allAssaysAndCounts,
+				saved: savedAssaysAndCounts,
+				temp: tempAssaysAndCounts
+			};
+			//return assays;
+		}
+		
+		function loadAssays() {
+			var deferred = $q.defer();
+			var AssaysCall = $resource('../../Assays/load/:attemptId.json', {attemptId: '@id'});
+			AssaysCall.get({attemptId: ATTEMPT_ID}, function(result) {
+				savedAssays = result.assays;
+				deferred.resolve('Assays loaded');
+				deferred.reject('Assays not loaded');
+			});
+			return deferred.promise;
+		}
+
+		function loadStandardAssays() {
+			var deferred = $q.defer();
+			var StandardAssaysCall = $resource('../../StandardAssays/load/:attemptId.json', {attemptId: '@id'});
+			StandardAssaysCall.get({attemptId: ATTEMPT_ID}, function(result) {
+				savedStandardAssays = result.standardAssays;
+				deferred.resolve('Standard Assays loaded');
+				deferred.reject('Standard Assays not loaded');
+			});
+			return deferred.promise;
+		}
+
+		function loadStandards() {
+			var deferred = $q.defer();
+			var StandardsCall = $resource('../../Standards/load.json', {});
+			StandardsCall.get({}, function(result) {
+				standards = result.standards;
+				deferred.resolve('Standards loaded');
+				deferred.reject('Standards not loaded');
+			});
+			return deferred.promise;
 		}
 				
 		function readEmptyAssays() {
@@ -185,30 +347,58 @@
 			return requiredTests;
 		}
 
-		function readSavedAssays() {
+		/*function readSavedAssays() {
 			//API: get saved assays from the DB
 			//Also need to generate the counts of the saved assays
+			var allSavedAssays = {
+				standards: savedStandardAssays,
+				samples: savedAssays,
+				counts: [],
+			};
 			
-			//For Dev, just use empty assays
-			var savedAssays = readEmptyAssays();
-			return savedAssays;
-		}
+			for(var standardIndex = 0; standardIndex < allSavedAssays.standards.length; standardIndex++) {
+				if(assays.saved.standards[techniqueId][standardId] === 0) {
+					assays.temp.standards[techniqueId][standardId] = assays.all.standards[techniqueId][standardId];
+				}
+				
+				if(assays.all.standards[techniqueId][standardId] === 1) {
+					assays.all.counts[techniqueId].total++;
+					assays.all.counts[techniqueId].standards++;
+				}
+				if(assays.temp.standards[techniqueId][standardId] === 1) {
+					assays.temp.counts[techniqueId].total++;
+					assays.temp.counts[techniqueId].standards++;
+				}
+			}
+						for(var siteId = 0; siteId < sites.length; siteId++) {
+				for(var schoolId = 0; schoolId < schools.length; schoolId++) {
+					for(var childId = 0; childId < schools[schoolId].children.length; childId++) {
+						for(var typeId = 0; typeId < types.length; typeId++) {
+							if(assays.saved.samples[techniqueId][siteId][schoolId][childId][typeId] === 0) {
+								assays.temp.samples[techniqueId][siteId][schoolId][childId][typeId] = assays.all.samples[techniqueId][siteId][schoolId][childId][typeId];
+							}
+							if(assays.all.samples[techniqueId][siteId][schoolId][childId][typeId] === 1) {
+								assays.all.counts[techniqueId].total++;
+								assays.all.counts[techniqueId].sites[siteId].total++;
+								assays.all.counts[techniqueId].sites[siteId].schools[schoolId].total++;
+								assays.all.counts[techniqueId].sites[siteId].schools[schoolId].children[childId]++;
+								assays.all.counts[techniqueId].sites[siteId].schools[schoolId].types[typeId]++;
+							}
 
-		function readStandards() {
+
+			//For Dev, just use empty assays
+			//var allSavedAssays = readEmptyAssays();
+			
+			return allSavedAssays;
+		}*/
+
+		/*function readStandards() {
 			//API: Get these from the DB?
 			//Note: Don't need to specify results, the image links will be automatically generated
 			var standards = [
 				{
 					id: 'ash1',
 					name: 'Antiserum H1',
-					/*results: [
-						'100 PFU/ml',	//pfu
-						'1/1024',	//HA
-						'1/512',	//HAI
-						'H1: -ve; H2: -ve; H5: -ve; H7: -ve',	//PCRH
-						'N1: -ve; N2: -ve',	//PCRN
-						'1/1024',	//ELISA
-					],*/
 				},
 				{
 					id: 'ash3',
@@ -240,7 +430,7 @@
 				},
 			];
 			return standards;
-		}
+		}*/
 		
 		function resetActiveTabs(techniqueId) {
 			var activeTab = {

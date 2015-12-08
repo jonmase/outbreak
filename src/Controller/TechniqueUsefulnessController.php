@@ -15,8 +15,8 @@ class TechniqueUsefulnessController extends AppController
 			$usefulQuery = $this->TechniqueUsefulness->find('list', ['conditions' => ['attempt_id' => $attemptId], 'order' => ['technique_id' => 'ASC'], 'keyField' => 'technique_id', 'valueField' => 'useful']);
 			$usefulness = $usefulQuery->toArray();
 			
-			$techniqueQuery = $this->TechniqueUsefulness->Techniques->find('list', ['conditions' => ['lab_only' => 0], 'order' => ['id' => 'ASC'], 'valueField' => 'code']);
-			$revisionTechniques = $techniqueQuery->toArray();
+			//$techniqueQuery = $this->TechniqueUsefulness->Techniques->find('list', ['conditions' => ['lab_only' => 0], 'order' => ['id' => 'ASC'], 'valueField' => 'code']);
+			//$revisionTechniques = $techniqueQuery->toArray();
 			
 			/*$usefulness = [];
 			foreach($revisionTechniques as $id => $code) {

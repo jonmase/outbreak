@@ -1,19 +1,20 @@
 <?php
 namespace App\Model\Table;
 
-use App\Model\Entity\Child;
+use App\Model\Entity\StandardAssay;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
 
 /**
- * Children Model
+ * StandardAssays Model
  *
- * @property \Cake\ORM\Association\BelongsTo $Schools
- * @property \Cake\ORM\Association\HasMany $Samples
+ * @property \Cake\ORM\Association\BelongsTo $Attempts
+ * @property \Cake\ORM\Association\BelongsTo $Techniques
+ * @property \Cake\ORM\Association\BelongsTo $Standards
  */
-class ChildrenTable extends Table
+class StandardAssaysTable extends Table
 {
 
     /**
@@ -26,21 +27,23 @@ class ChildrenTable extends Table
     {
         parent::initialize($config);
 
-        $this->table('children');
-        $this->displayField('name');
+        $this->table('standard_assays');
+        $this->displayField('id');
         $this->primaryKey('id');
 
         $this->addBehavior('Timestamp');
 
-        $this->hasMany('Assays', [
-            'foreignKey' => 'child_id'
-        ]);
-        $this->belongsTo('Schools', [
-            'foreignKey' => 'school_id',
+        $this->belongsTo('Attempts', [
+            'foreignKey' => 'attempt_id',
             'joinType' => 'INNER'
         ]);
-        $this->hasMany('Samples', [
-            'foreignKey' => 'child_id'
+        $this->belongsTo('Techniques', [
+            'foreignKey' => 'technique_id',
+            'joinType' => 'INNER'
+        ]);
+        $this->belongsTo('Standards', [
+            'foreignKey' => 'standard_id',
+            'joinType' => 'INNER'
         ]);
     }
 
@@ -57,14 +60,9 @@ class ChildrenTable extends Table
             ->allowEmpty('id', 'create');
 
         $validator
-            ->allowEmpty('code');
-
-        $validator
-            ->allowEmpty('name');
-
-        $validator
-            ->add('order', 'valid', ['rule' => 'numeric'])
-            ->allowEmpty('order');
+            ->add('before_submit', 'valid', ['rule' => 'boolean'])
+            ->requirePresence('before_submit', 'create')
+            ->notEmpty('before_submit');
 
         return $validator;
     }
@@ -78,7 +76,9 @@ class ChildrenTable extends Table
      */
     public function buildRules(RulesChecker $rules)
     {
-        $rules->add($rules->existsIn(['school_id'], 'Schools'));
+        $rules->add($rules->existsIn(['attempt_id'], 'Attempts'));
+        $rules->add($rules->existsIn(['technique_id'], 'Techniques'));
+        $rules->add($rules->existsIn(['standard_id'], 'Standards'));
         return $rules;
     }
 }

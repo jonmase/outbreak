@@ -31,6 +31,9 @@ class SampleStagesTable extends Table
 
         $this->addBehavior('Timestamp');
 
+        $this->hasMany('Assays', [
+            'foreignKey' => 'sample_stage_id'
+        ]);
         $this->hasMany('Samples', [
             'foreignKey' => 'sample_stage_id'
         ]);

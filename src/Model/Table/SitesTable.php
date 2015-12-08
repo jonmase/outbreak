@@ -34,6 +34,9 @@ class SitesTable extends Table
         $this->hasMany('Samples', [
             'foreignKey' => 'site_id'
         ]);
+        $this->hasMany('Assays', [
+            'foreignKey' => 'site_id'
+        ]);
     }
 
     /**

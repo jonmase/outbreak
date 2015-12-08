@@ -20,9 +20,9 @@ class SamplesController extends AppController
 			$samplesRaw = $samplesQuery->all();
 			$samples = [];
 			foreach($samplesRaw as $sample) {
-				if(!isset($samples[$sample->site_id])) { $samples[$sample->site_id] = []; }
-				if(!isset($samples[$sample->site_id][$sample->school_id])) { $samples[$sample->site_id][$sample->school_id] = []; }
-				if(!isset($samples[$sample->site_id][$sample->school_id][$sample->child_id])) { $samples[$sample->site_id][$sample->school_id][$sample->child_id] = []; }
+				//if(!isset($samples[$sample->site_id])) { $samples[$sample->site_id] = []; }
+				//if(!isset($samples[$sample->site_id][$sample->school_id])) { $samples[$sample->site_id][$sample->school_id] = []; }
+				//if(!isset($samples[$sample->site_id][$sample->school_id][$sample->child_id])) { $samples[$sample->site_id][$sample->school_id][$sample->child_id] = []; }
 				//if(!isset($samples[$sample->site_id][$sample->school_id][$sample->child_id][$sample->sample_stage_id])) { $samples[$sample->site_id][$sample->school_id][$sample->child_id][$sample->sample_stage_id] = []; }
 
 				$samples[$sample->site_id][$sample->school_id][$sample->child_id][$sample->sample_stage_id] = 1;

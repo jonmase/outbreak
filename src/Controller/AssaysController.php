@@ -10,13 +10,37 @@ use App\Controller\AppController;
  */
 class AssaysController extends AppController
 {
+	public function load($attemptId = null) {
+		if($attemptId && $this->Assays->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
+			$assaysQuery = $this->Assays->find('all', [
+				'conditions' => ['attempt_id' => $attemptId],
+			]);
+			$assaysRaw = $assaysQuery->all();
+			$assays = [];
+			foreach($assaysRaw as $assay) {
+				//if(!isset($assays[$assay->technique_id])) { $assays[$assay->technique_id] = []; }
+				//if(!isset($assays[$assay->technique_id][$assay->site_id])) { $assays[$assay->technique_id][$assay->site_id] = []; }
+				//if(!isset($assays[$assay->technique_id][$assay->site_id][$assay->school_id])) { $assays[$assay->technique_id][$assay->site_id][$assay->school_id] = []; }
+				//if(!isset($assays[$assay->technique_id][$assay->site_id][$assay->school_id][$assay->child_id])) { $assays[$assay->technique_id][$assay->site_id][$assay->school_id][$assay->child_id] = []; }
+				//if(!isset($assays[$assay->site_id][$assay->school_id][$assay->child_id][$assay->sample_stage_id])) { $assays[$assay->site_id][$assay->school_id][$assay->child_id][$assay->sample_stage_id] = []; }
+
+				$assays[$assay->technique_id][$assay->site_id][$assay->school_id][$assay->child_id][$assay->sample_stage_id] = 1;
+			}
+			$this->set(compact('assays'));
+			$this->set('_serialize', ['assays']);
+			//pr($assays);
+		}
+		else {
+			pr('denied');
+		}
+	}
 
     /**
      * Index method
      *
      * @return void
      */
-    public function index()
+    /*public function index()
     {
         $this->paginate = [
             'contain' => ['Attempts', 'Techniques', 'Samples', 'Standards']
@@ -32,7 +56,7 @@ class AssaysController extends AppController
      * @return void
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
-    public function view($id = null)
+    /*public function view($id = null)
     {
         $assay = $this->Assays->get($id, [
             'contain' => ['Attempts', 'Techniques', 'Samples', 'Standards']
@@ -46,7 +70,7 @@ class AssaysController extends AppController
      *
      * @return void Redirects on successful add, renders view otherwise.
      */
-    public function add()
+    /*public function add()
     {
         $assay = $this->Assays->newEntity();
         if ($this->request->is('post')) {
@@ -73,7 +97,7 @@ class AssaysController extends AppController
      * @return void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
-    public function edit($id = null)
+    /*public function edit($id = null)
     {
         $assay = $this->Assays->get($id, [
             'contain' => []
@@ -102,7 +126,7 @@ class AssaysController extends AppController
      * @return \Cake\Network\Response|null Redirects to index.
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
-    public function delete($id = null)
+    /*public function delete($id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
         $assay = $this->Assays->get($id);
@@ -112,5 +136,5 @@ class AssaysController extends AppController
             $this->Flash->error(__('The assay could not be deleted. Please, try again.'));
         }
         return $this->redirect(['action' => 'index']);
-    }
+    }*/
 }

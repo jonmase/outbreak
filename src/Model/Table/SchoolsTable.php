@@ -33,6 +33,9 @@ class SchoolsTable extends Table
 
         $this->addBehavior('Timestamp');
 
+        $this->hasMany('Assays', [
+            'foreignKey' => 'school_id'
+        ]);
         $this->hasMany('AttemptsSchools', [
             'foreignKey' => 'school_id'
         ]);

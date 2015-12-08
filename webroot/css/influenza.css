@@ -563,6 +563,20 @@ td.samples-convalescent div.checkbox {
 .standards-table  td, .standards-table  td {
 	padding: 8px;
 }
+.lab-standard  {
+	float: left;
+	margin-right: 30px;
+}
+
+.lab-standard span {
+	display: inline-block;
+}
+.lab-standard .checkbox {
+	margin: 8px 0;
+}
+.lab-standard-name {
+	width: 150px;
+}
 
 .assays table div.checkbox {
 	margin: 0;
@@ -578,10 +592,12 @@ th.assays-acute, th.assays-convalescent {
 }
 
 td.assays-acute div.checkbox {
-	margin: 5px 0 5px 29px;;
+	/*margin: 5px 0 5px 29px;*/
+	margin-left: 29px;
 }
 td.assays-convalescent div.checkbox {
-	margin: 5px 0 5px 37px;;
+	/*margin: 5px 0 5px 37px;*/
+	margin-left: 37px;
 }
 
 /*.assays-schools thead th, .assays-schools tbody td {

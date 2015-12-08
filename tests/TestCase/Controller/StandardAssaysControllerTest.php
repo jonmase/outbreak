@@ -1,14 +1,13 @@
 <?php
-namespace App\Test\TestCase\Model\Table;
+namespace App\Test\TestCase\Controller;
 
-use App\Model\Table\AssaysTable;
-use Cake\ORM\TableRegistry;
-use Cake\TestSuite\TestCase;
+use App\Controller\StandardAssaysController;
+use Cake\TestSuite\IntegrationTestCase;
 
 /**
- * App\Model\Table\AssaysTable Test Case
+ * App\Controller\StandardAssaysController Test Case
  */
-class AssaysTableTest extends TestCase
+class StandardAssaysControllerTest extends IntegrationTestCase
 {
 
     /**
@@ -17,23 +16,23 @@ class AssaysTableTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'app.assays',
+        'app.standard_assays',
         'app.attempts',
         'app.lti_users',
         'app.lti_keys',
         'app.lti_contexts',
         'app.lti_resources',
-        'app.attempts_schools',
-        'app.schools',
-        'app.children',
-        'app.samples',
-        'app.sites',
-        'app.sample_stages',
-        'app.notes',
+        'app.assays',
         'app.techniques',
-        'app.standard_assays',
+        'app.notes',
         'app.technique_results',
         'app.technique_usefulness',
+        'app.sites',
+        'app.samples',
+        'app.schools',
+        'app.attempts_schools',
+        'app.children',
+        'app.sample_stages',
         'app.question_answers',
         'app.question_stems',
         'app.questions',
@@ -46,55 +45,51 @@ class AssaysTableTest extends TestCase
     ];
 
     /**
-     * setUp method
+     * Test index method
      *
      * @return void
      */
-    public function setUp()
-    {
-        parent::setUp();
-        $config = TableRegistry::exists('Assays') ? [] : ['className' => 'App\Model\Table\AssaysTable'];
-        $this->Assays = TableRegistry::get('Assays', $config);
-    }
-
-    /**
-     * tearDown method
-     *
-     * @return void
-     */
-    public function tearDown()
-    {
-        unset($this->Assays);
-
-        parent::tearDown();
-    }
-
-    /**
-     * Test initialize method
-     *
-     * @return void
-     */
-    public function testInitialize()
+    public function testIndex()
     {
         $this->markTestIncomplete('Not implemented yet.');
     }
 
     /**
-     * Test validationDefault method
+     * Test view method
      *
      * @return void
      */
-    public function testValidationDefault()
+    public function testView()
     {
         $this->markTestIncomplete('Not implemented yet.');
     }
 
     /**
-     * Test buildRules method
+     * Test add method
      *
      * @return void
      */
-    public function testBuildRules()
+    public function testAdd()
+    {
+        $this->markTestIncomplete('Not implemented yet.');
+    }
+
+    /**
+     * Test edit method
+     *
+     * @return void
+     */
+    public function testEdit()
+    {
+        $this->markTestIncomplete('Not implemented yet.');
+    }
+
+    /**
+     * Test delete method
+     *
+     * @return void
+     */
+    public function testDelete()
     {
         $this->markTestIncomplete('Not implemented yet.');
     }

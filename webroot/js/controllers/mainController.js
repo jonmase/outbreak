@@ -3,10 +3,10 @@
 		.controller('MainController', MainController);
 
 	//MainController.$inject = ['$scope', '$location', '$uibModal', '$q', 'sectionsConstant', 'progressFactory', 'lockFactory', 'mediaFactory', 'modalFactory', 'techniqueFactory', 'questionFactory', 'siteFactory', 'schoolFactory', 'sampleFactory', 'assayFactory', 'resultFactory', 'reportFactory'];
-	MainController.$inject = ['$scope', '$location', '$uibModal', '$q', 'sectionsConstant', 'progressFactory', 'lockFactory', 'mediaFactory', 'modalFactory', 'techniqueFactory', 'questionFactory', 'siteFactory', 'schoolFactory', 'sampleFactory'];
+	MainController.$inject = ['$scope', '$location', '$uibModal', '$q', 'sectionsConstant', 'progressFactory', 'lockFactory', 'mediaFactory', 'modalFactory', 'techniqueFactory', 'questionFactory', 'siteFactory', 'schoolFactory', 'sampleFactory', 'assayFactory'];
 	
 	//function MainController($scope, $location, $uibModal, $q, sectionsConstant, progressFactory, lockFactory, mediaFactory, modalFactory, techniqueFactory, questionFactory, siteFactory, schoolFactory, sampleFactory, assayFactory, resultFactory, reportFactory) {
-	function MainController($scope, $location, $uibModal, $q, sectionsConstant, progressFactory, lockFactory, mediaFactory, modalFactory, techniqueFactory, questionFactory, siteFactory, schoolFactory, sampleFactory) {
+	function MainController($scope, $location, $uibModal, $q, sectionsConstant, progressFactory, lockFactory, mediaFactory, modalFactory, techniqueFactory, questionFactory, siteFactory, schoolFactory, sampleFactory, assayFactory) {
 		var vm = this;
 		vm.loading = true;
 		
@@ -31,12 +31,17 @@
 		var typesPromise = sampleFactory.loadTypes();
 		var samplesPromise = sampleFactory.loadSamples();
 		var happinessPromise = sampleFactory.loadHappiness();
-		$q.all([progressPromise, resourcePromise, techniquesPromise, researchTechniquesPromise, usefulPromise, questionsPromise, responsesPromise, sitesPromise, schoolsPromise, typesPromise, samplesPromise, happinessPromise]).then(
+		
+		var assaysPromise = assayFactory.loadAssays();
+		var standardsPromise = assayFactory.loadStandards();
+		var standardAssaysPromise = assayFactory.loadStandardAssays();
+		$q.all([progressPromise, resourcePromise, techniquesPromise, researchTechniquesPromise, usefulPromise, questionsPromise, responsesPromise, sitesPromise, schoolsPromise, typesPromise, samplesPromise, happinessPromise, assaysPromise, standardsPromise, standardAssaysPromise]).then(
 			function(result) {
 				console.log(result);
 				vm.progress = progressFactory.getProgress();
 				vm.resources = progressFactory.getResources();
 				sampleFactory.setup();
+				assayFactory.setup();
 				vm.locks = lockFactory.setLocks();
 				vm.checkLockOnClick = checkLockOnClick;
 				vm.loading = false;

@@ -31,7 +31,7 @@ class StandardsTable extends Table
 
         $this->addBehavior('Timestamp');
 
-        $this->hasMany('Assays', [
+        $this->hasMany('StandardAssays', [
             'foreignKey' => 'standard_id'
         ]);
     }
