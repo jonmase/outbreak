@@ -40,7 +40,7 @@
 		//Functions
 		function setup() {
 			vm.subsections = techniqueFactory.getTechniques(sectionId);
-			vm.currentTechniqueIndex = techniqueFactory.getCurrentTechniqueIndex(sectionId);
+			vm.currentTechniqueId = techniqueFactory.getCurrentTechniqueId(sectionId);
 			if(sectionId === 'revision') {
 				//Pass techniques useful to view for revision page
 				vm.techniquesUseful = techniqueFactory.getUsefulTechniques();
@@ -53,7 +53,7 @@
 			vm.complete = complete;	//Dev only, so don't have to click all of the buttons
 			
 			//Actions
-			vm.setSubsection(vm.currentTechniqueIndex);
+			vm.setSubsection(vm.currentTechniqueId);
 			if(sectionId === 'research') {	//For research section, only show research techniques
 				lockFactory.setComplete(sectionId);
 			}
@@ -66,12 +66,12 @@
 			lockFactory.setComplete('revision');
 		}
 		
-		function setSubsection(techniqueIndex) {
-			techniqueFactory.setCurrentTechniqueIndex(sectionId, techniqueIndex);
-			vm.currentTechniqueIndex = techniqueIndex;
+		function setSubsection(techniqueId) {
+			techniqueFactory.setCurrentTechniqueId(sectionId, techniqueId);
+			vm.currentTechniqueId = techniqueId;
 			
 			//Youtube videos - need to allow the URL
-			var video = vm.subsections[techniqueIndex].video;
+			var video = vm.subsections[techniqueId].video;
 			if(angular.isObject(video)) {	//If multiple videos, the URL is allowed when the tab is changed using setVideoTab function below
 				vm.currentTechniqueVideo = video;	//Set currentTechniqueVideo to the video object
 			}

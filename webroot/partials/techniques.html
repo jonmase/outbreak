@@ -16,16 +16,16 @@
 						</div>
 					</div-->
 					<!--h4 class="col-xs-12 visible-xs-block visible-sm-block">{{technique.name}}</h4-->
-					<h4 class="col-xs-12 hidden-md hidden-lg" ng-repeat="(techniqueIndex, technique) in techniquesCtrl.subsections" ng-show="techniquesCtrl.currentTechniqueIndex === techniqueIndex">{{technique.name}}</h4>
+					<h4 class="col-xs-12 hidden-md hidden-lg" ng-repeat="technique in techniquesCtrl.subsections" ng-show="techniquesCtrl.currentTechniqueId === technique.id">{{technique.name}}</h4>
 
 					<technique-video ng-show="techniquesCtrl.currentTechniqueVideo !== null" video="techniquesCtrl.currentTechniqueVideo" part="techniquesCtrl.currentVideoPart" on-select="techniquesCtrl.setVideoTab(url)"></technique-video>
-					<!--div class="revision-content" ng-repeat="(techniqueIndex, technique) in techniques | subobjectFilter: { type: typeThreshold}" ng-include="'pages/techniques/' + techniqueIndex + '.html'" ng-show="techniqueIndex === techniquesCtrl.currentTechniqueIndex"></div-->
-					<div ng-repeat="(techniqueIndex, technique) in techniquesCtrl.subsections" ng-show="techniquesCtrl.currentTechniqueIndex === techniqueIndex">
+					<!--div class="revision-content" ng-repeat="technique in techniques | subobjectFilter: { type: typeThreshold}" ng-include="'pages/techniques/' + technique.code + '.html'" ng-show="technique.id === techniquesCtrl.currentTechniqueId"></div-->
+					<div ng-repeat="technique in techniquesCtrl.subsections" ng-show="techniquesCtrl.currentTechniqueId === technique.id">
 						<!--technique-costs ng-if="currentSectionId === 'revision'" technique="techniquesCtrl.currentTechnique"></technique-costs-->
 						<!--h4>{{techniquesCtrl.currentTechnique.name}}</h4>
 						<div ng-bind-html="techniquesCtrl.currentTechnique.content | unsafe"></div-->
-						<h4 class="col-xs-12 hidden-xs hidden-sm" ng-class="{'col-md-6': technique.video !== null, 'col-md-pull-6': technique.video !== null}">{{technique.name}}</h4>
 						<div class="col-xs-12" ng-class="{'col-md-6': technique.video !== null, 'col-md-pull-6': technique.video !== null}">
+							<h4 class="hidden-xs hidden-sm">{{technique.name}}</h4>
 							<technique-info technique="technique"></technique-info>
 							<div ng-if="currentSectionId === 'revision' && !technique.infoOnly" class="panel panel-default useful-techniques">
 								<div class="panel-heading">Will this technique be useful in your investigations?</div>

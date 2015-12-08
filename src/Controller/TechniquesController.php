@@ -17,8 +17,15 @@ class TechniquesController extends AppController
 	}
 	
 	public function load() {
-		$query = $this->Techniques->find('all', ['order' => ['Techniques.order' => 'ASC']]);
-		$techniques = $query->all();
+		$query = $this->Techniques->find('all', [
+			'order' => ['Techniques.order' => 'ASC'],
+			'contain' => 'TechniqueResults',
+		]);
+		$rawTechniques = $query->all();
+		$techniques = [];
+		foreach($rawTechniques as $technique) {
+			$techniques[$technique->id] = $technique;
+		}
 		$this->set(compact('techniques'));
 		$this->set('_serialize', ['techniques']);
 		//pr($techniques->toArray());

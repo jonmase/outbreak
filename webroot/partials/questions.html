@@ -5,7 +5,7 @@
 		<loader ng-show="questionsCtrl.loading"></loader>
 		<div ng-hide="questionsCtrl.loading">
 			<page-menu items="questionsCtrl.subsections" on-click="questionsCtrl.setSubsection(subsectionId)"></page-menu>
-			<div ng-repeat="(questionIndex, question) in questionsCtrl.subsections" ng-show="questionsCtrl.currentQuestionIndex === questionIndex" class="page-content">
+			<div ng-repeat="question in questionsCtrl.subsections" ng-show="questionsCtrl.currentQuestionId === question.id" class="page-content">
 				<h4>{{question.name}}<div class="pull-right alert" role="alert" ng-show="questionsCtrl.responses.scores[question.id] > -1" ng-class="{'alert-success': questionsCtrl.responses.scores[question.id] >= (question.question_stems.length - 1), 'alert-warning': (questionsCtrl.responses.scores[question.id] < (question.question_stems.length - 1) && questionsCtrl.responses.scores[question.id] > 1), 'alert-danger': questionsCtrl.responses.scores[question.id] <= 1}">Score: {{questionsCtrl.responses.scores[question.id]}}/{{question.question_stems.length}}</div></h4>
 				<div ng-bind-html="question.background | unsafe"></div>
 				<div class="clearfix"></div>
@@ -23,7 +23,7 @@
 								<div class="radio radio-primary">
 									<input type="radio" 
 										ng-model="questionsCtrl.responses.answers[question.id][stem.id]" ng-value="option.id" 
-										ng-click="questionsCtrl.checkAllAnswered(questionIndex)" 
+										ng-click="questionsCtrl.checkAllAnswered(question.id)" 
 										ng-disabled="questionsCtrl.responses.scores[question.id] > -1"
 										name="question_{{question.id}}_{{stem.id}}" />
 										<label> </label>
@@ -44,25 +44,25 @@
 						</tr>
 					</tbody>
 					<tbody class="question-buttons">
-						<tr ng-hide="questionsCtrl.responses.scores[question.id] > -1 || questionsCtrl.saving[questionIndex]">
+						<tr ng-hide="questionsCtrl.responses.scores[question.id] > -1 || questionsCtrl.saving[question.id]">
 							<td></td>
 							<td>
-								<button type="button" class="btn btn-primary" ng-click="questionsCtrl.check(questionIndex)" ng-class="{disabled: !questionsCtrl.responses.answered[question.id]}">Check</button>
+								<button type="button" class="btn btn-primary" ng-click="questionsCtrl.check(question.id)" ng-class="{disabled: !questionsCtrl.responses.answered[question.id]}">Check</button>
 							</td>
 							<td>
-								<button type="button" class="btn btn-default" ng-click="questionsCtrl.clear(questionIndex)">Clear</button>
+								<button type="button" class="btn btn-default" ng-click="questionsCtrl.clear(question.id)">Clear</button>
 							</td>
 						</tr>
-						<tr ng-show="questionsCtrl.saving[questionIndex]">
+						<tr ng-show="questionsCtrl.saving[question.id]">
 							<td></td>
 							<td colspan="2" class="saving">
 								<loader></loader> Saving Answers
 							</td>
 						</tr>						
-						<tr ng-show="questionsCtrl.responses.scores[question.id] > -1 && !questionsCtrl.saving[questionIndex]">
+						<tr ng-show="questionsCtrl.responses.scores[question.id] > -1 && !questionsCtrl.saving[question.id]">
 							<td colspan=3 class="next-prev-questions">
-								<button type="button" class="btn btn-primary" ng-click="questionsCtrl.change(1)" ng-show="questionIndex < (questionsCtrl.subsections.length - 1)">Next Question</button>
-								<button type="button" class="btn btn-primary" ng-click="questionsCtrl.change(-1)" ng-show="questionIndex > 0">Previous Question</button>
+								<button type="button" class="btn btn-primary" ng-click="questionsCtrl.next()" ng-hide="question.last">Next Question</button>
+								<button type="button" class="btn btn-primary" ng-click="questionsCtrl.prev()" ng-hide="question.first">Previous Question</button>
 							</td>						
 						</tr>
 					</tbody>

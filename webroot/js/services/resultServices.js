@@ -10,7 +10,7 @@
 		var assays = assayFactory.getAssays();
 		//var results = readResults();
 		var notes = readNotes();
-		var defaultInitialTechnique = 6;
+		var defaultInitialTechnique = 'quickvue';
 		var currentTechniqueId = angular.copy(defaultInitialTechnique);
 		var techniqueChangedManually = false;
 		setDisabledTechniques();
@@ -63,9 +63,9 @@
 		}
 
 		function readSections() {
-			var sections = angular.copy(techniqueFactory.readTechniques(false,true));	//Get lab only but not revision only techniques
-			sections.push(readQuickVue());
-			sections.push(angular.copy(techniqueFactory.getFluExtra()));	//Add additional info
+			var sections = techniqueFactory.readTechniques(false,true);	//Get lab only but not revision only techniques
+			sections.quickvue = readQuickVue();
+			sections.xflu = techniqueFactory.getFluExtra();	//Add additional info
 			
 			return sections;
 		}

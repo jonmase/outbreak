@@ -7,18 +7,14 @@
 	function techniqueFactory(lockFactory, $resource, $q) {
 		//Variables
 		var fluExtra = readFluExtra();
-		var techniques = [];
-		var labTechniques = [];
-		var researchTechniques = [];
-		var revisionTechniques = [];
-		var usefulTechniques = [];
-		var currentRevisionTechniqueIndex = 0;
-		var currentResearchTechniqueIndex = 0;
-		var loaded = false;
+		var techniques, labTechniques, researchTechniques, revisionTechniques, usefulTechniques;
+		var currentRevisionTechniqueId = 1;
+		var currentResearchTechniqueId = 1;
+		//var loaded = false;
 			
 		//Exposed Methods
 		var factory = {
-			getCurrentTechniqueIndex: getCurrentTechniqueIndex,
+			getCurrentTechniqueId: getCurrentTechniqueId,
 			getFluExtra: getFluExtra,
 			getLabTechnique: getLabTechnique,
 			getLoaded: getLoaded,
@@ -28,7 +24,7 @@
 			loadResearchTechniques: loadResearchTechniques,
 			loadUsefulTechniques: loadUsefulTechniques,
 			readTechniques: readTechniques,
-			setCurrentTechniqueIndex: setCurrentTechniqueIndex,
+			setCurrentTechniqueId: setCurrentTechniqueId,
 			setLoaded: setLoaded,
 			setRevisionComplete: setRevisionComplete,
 			setUsefulTechnique: setUsefulTechnique,
@@ -36,12 +32,12 @@
 		return factory;
 		
 		//Methods
-		function getCurrentTechniqueIndex(sectionId) { 
+		function getCurrentTechniqueId(sectionId) { 
 			if(sectionId === 'research') {
-				return currentResearchTechniqueIndex;
+				return currentResearchTechniqueId;
 			}
 			else if(sectionId === 'revision') {
-				return currentRevisionTechniqueIndex;
+				return currentRevisionTechniqueId;
 			}
 		}
 		
@@ -49,8 +45,8 @@
 			return fluExtra;
 		}
 		
-		function getLabTechnique(techniqueIndex) { 
-			return labTechniques[techniqueIndex];
+		function getLabTechnique(techniqueId) { 
+			return labTechniques[techniqueId];
 		}
 		
 		function getLoaded() { 
@@ -93,7 +89,8 @@
 			var Techniques = $resource('../../researchTechniques/load.json', {});
 			Techniques.get({}, function(result) {
 				researchTechniques = result.techniques;
-				researchTechniques.push(fluExtra);
+				//researchTechniques.push(fluExtra);
+				researchTechniques.xflu = fluExtra;
 				deferred.resolve('Research Techniques loaded');
 				deferred.reject('Research Techniques not loaded');
 			});
@@ -119,7 +116,7 @@
 
 		function readFluExtra() { 
 			var fluExtra = 	{
-				id: 'fluextra',
+				id: 'xflu',
 				menu: 'Extra Info',
 				name: 'Extra Influenza Information',
 				video: null,
@@ -133,7 +130,8 @@
 		
 		function readLabTechniques() { 
 			var labTechniques = readTechniques(false, true);	//Include lab only but not revision only
-			labTechniques.push(readFluExtra());
+			//labTechniques.push(readFluExtra());
+			labTechniques.xflu = readFluExtra();
 			return labTechniques;
 		}
 
@@ -144,7 +142,7 @@
 		
 		function readRevisionExtra() { 
 			var revisionExtra = {
-				id: 'revisionextra',
+				id: 'xrevision',
 				menu: 'Lecture Notes',
 				name: 'Lecture Notes',
 				video: null,
@@ -156,7 +154,8 @@
 		
 		function readRevisionTechniques() { 
 			var revisionTechniques = readTechniques(true, false);	//Include revision only but not lab only
-			revisionTechniques.push(readRevisionExtra());
+			//revisionTechniques.push(readRevisionExtra());
+			revisionTechniques.xrevision = readRevisionExtra();
 			return revisionTechniques;
 		}
 
@@ -165,25 +164,27 @@
 				if(showRevisionOnly) { showRevisionOnly = true; } else { showRevisionOnly = false; }
 				if(showLabOnly) { showLabOnly = true; } else { showLabOnly = false; }
 				
-				var returnTechniques = [];
-				for(var i = 0; i < techniques.length; i++) {
+				var returnTechniques = {};
+				//for(var i = 0; i < techniques.length; i++) {
+				for(var techniqueId in techniques) {
 					//If technique is neither revision only or lab only return it
 					//Or If technique is revision only and showRevisionOnly is true, return it
 					//Or If technique is lab only and showLabOnly is true, return it
-					if((!techniques[i].revision_only && !techniques[i].lab_only) || ((techniques[i].revision_only === showRevisionOnly) && (techniques[i].lab_only === showLabOnly))) {
-						returnTechniques.push(techniques[i]);
+					if((!techniques[techniqueId].revision_only && !techniques[techniqueId].lab_only) || ((techniques[techniqueId].revision_only === showRevisionOnly) && (techniques[techniqueId].lab_only === showLabOnly))) {
+						//returnTechniques.push(techniques[techniqueId]);
+						returnTechniques[techniqueId] = techniques[techniqueId];
 					}
 				}
 				
 				return returnTechniques;
 		}
 		
-		function setCurrentTechniqueIndex(sectionId, techniqueIndex) { 
+		function setCurrentTechniqueId(sectionId, techniqueId) { 
 			if(sectionId === 'research') {
-				currentResearchTechniqueIndex = techniqueIndex;
+				currentResearchTechniqueId = techniqueId;
 			}
 			else if(sectionId === 'revision') {
-				currentRevisionTechniqueIndex = techniqueIndex;
+				currentRevisionTechniqueId = techniqueId;
 			}
 		}
 		
@@ -193,9 +194,9 @@
 		
 		function setRevisionComplete() {
 			var sectionId = 'revision';
-			for(var techniqueIndex = 0; techniqueIndex < revisionTechniques.length; techniqueIndex++) {
-				//if(techniques[techniqueIndex].level <= vm.levelThreshold) {
-					if(!revisionTechniques[techniqueIndex].infoOnly && typeof(usefulTechniques[revisionTechniques[techniqueIndex].id]) === "undefined" || usefulTechniques[revisionTechniques[techniqueIndex].id] === null) {
+			for(var techniqueId in revisionTechniques) {
+				//if(techniques[techniqueId].level <= vm.levelThreshold) {
+					if(!revisionTechniques[techniqueId].infoOnly && typeof(usefulTechniques[techniqueId]) === "undefined" || usefulTechniques[techniqueId] === null) {
 						//lockFactory.setProgressAndLocks(sectionId, 0);	//Set the progress for this section to incomplete (unnecessary, will already be so)
 						return true; //Exit the check, don't need to do anything more
 					}

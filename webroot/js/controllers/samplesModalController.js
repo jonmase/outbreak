@@ -6,7 +6,7 @@
 
 	function SamplesModalController($uibModalInstance, $q, progressFactory, lockFactory, sampleFactory, siteFactory) {
 		var vm = this;
-		var sectionId = 'samples';
+		var sectionId = 'sampling';
 		vm.confirm = confirm;
 		vm.cancel = cancel;
 		vm.samples = sampleFactory.getSamples();

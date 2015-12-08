@@ -7,7 +7,7 @@
 
 <div class="blue-tabs menu-tabs">
 	<uib-tabset type="pills">
-		<uib-tab ng-repeat="(itemId, item) in items" heading="{{item.menu}}" ng-click="click({ subsectionId: itemId })" disable="item.disabled" active="item.active">
+		<uib-tab ng-repeat="item in items" heading="{{item.menu}}" ng-click="click({ subsectionId: item.id })" disable="item.disabled" active="item.active">
 		</uib-tab>
 	</uib-tabset>
 </div>

@@ -21,7 +21,11 @@ class QuestionsController extends AppController
 			'order' => ['Questions.order' => 'ASC'],
 			'contain' => ['QuestionStems' => ['QuestionOptions'], 'QuestionOptions'],
 		]);
-		$questions = $query->all();
+		$rawQuestions = $query->all();
+		$questions = [];
+		foreach($rawQuestions as $question) {
+			$questions[$question->id] = $question;
+		}
 		$this->set(compact('questions'));
 		$this->set('_serialize', ['questions']);
 		//pr($questions->toArray());

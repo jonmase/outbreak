@@ -1,34 +1,34 @@
 <!-- PFU -->
-<div class="pfu-results" ng-if="technique.id === 'pfu'">
-	<div ng-repeat="(sampleId, sample) in samples | assayedSampleFilter:samplesPerformed:type" class="pull-left" ng-class="{'clear-left': $even }">
+<div class="pfu-results" ng-if="technique.code === 'pfu'">
+	<div ng-repeat="sample in samples | assayedSampleFilter:samplesPerformed:type" class="pull-left" ng-class="{'clear-left': $even }">
 		<span ng-if="$even" class="align-right">{{sample.name}}</span>
-		<img ng-src="../../img/results/pfu/{{sample.id + (typeRef?typeRef:'') + (siteRef?siteRef:'') + 'p'}}.jpg" />
+		<img ng-src="../../img/results/pfu/{{sample.code + (typeRef?typeRef:'') + (siteRef?siteRef:'') + 'p'}}.jpg" />
 		<span ng-if="$odd" class="align-left">{{sample.name}}</span>
 	</div>
 	<div class="clearfix"></div>
 </div>
 
 <!-- HA -->
-<div class="ha-results" ng-if="technique.id === 'ha'">
-	<div ng-repeat="(sampleId, sample) in samples | assayedSampleFilter:samplesPerformed:type">
+<div class="ha-results" ng-if="technique.code === 'ha'">
+	<div ng-repeat="sample in samples | assayedSampleFilter:samplesPerformed:type">
 		<span>{{sample.name}}</span>
-		<img ng-src="../../img/results/ha/{{sample.id + (typeRef?typeRef:'') + (siteRef?siteRef:'') + 'ha'}}.jpg" />
+		<img ng-src="../../img/results/ha/{{sample.code + (typeRef?typeRef:'') + (siteRef?siteRef:'') + 'ha'}}.jpg" />
 	</div>
 </div>
 
 <!-- ELISA, HAI and PCR -->
-<table class="results-table {{technique.id}}-results" ng-if="technique.id === 'elisa' || technique.id === 'hai' || technique.id === 'pcrh' || technique.id === 'pcrn'">
+<table class="results-table {{technique.code}}-results" ng-if="technique.code === 'elisa' || technique.code === 'hai' || technique.code === 'pcrh' || technique.code === 'pcrn'">
 	<thead>
 		<tr>
 			<th></th>
-			<th ng-repeat="(resultId, result) in technique.results">{{result.label}}</th>
+			<th ng-repeat="result in technique.technique_results">{{result.label}}</th>
 		</tr>
 	</thead>
 	<tbody>
-		<tr ng-repeat="(sampleId, sample) in samples | assayedSampleFilter:samplesPerformed:type">
+		<tr ng-repeat="sample in samples | assayedSampleFilter:samplesPerformed:type">
 			<th>{{sample.name}}</th>
-			<td ng-repeat="(resultId, result) in technique.results">
-				<img ng-src="../../img/results/{{technique.id}}/{{sample.id + (typeRef?typeRef:'') + (siteRef?siteRef:'') + result.id}}.{{(technique.id === 'pcrh' || technique.id === 'pcrn')?'png':'jpg'}}" />
+			<td ng-repeat="result in technique.technique_results">
+				<img ng-src="../../img/results/{{technique.code}}/{{sample.code + (typeRef?typeRef:'') + (siteRef?siteRef:'') + result.code}}.{{(technique.code === 'pcrh' || technique.code === 'pcrn')?'png':'jpg'}}" />
 			</td>
 		</tr>
 	</tbody>	

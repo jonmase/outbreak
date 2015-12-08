@@ -20,7 +20,11 @@ class ResearchTechniquesController extends AppController
 		//$this->autoRender = false;
 		$query = $this->ResearchTechniques->find('all', ['order' => ['ResearchTechniques.order' => 'ASC']]);
 		//$techniquesQuery = $this->Techniques->find('all');
-		$techniques = $query->all();
+		$rawTechniques = $query->all();
+		$techniques = [];
+		foreach($rawTechniques as $technique) {
+			$techniques[$technique->id] = $technique;
+		}
 		$this->set(compact('techniques'));
 		$this->set('_serialize', ['techniques']);
 		//pr($techniques->toArray());

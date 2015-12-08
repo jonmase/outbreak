@@ -41,7 +41,7 @@
 					<tr ng-repeat="(childId, child) in LabModalCtrl.schools[schoolId].children track by $index" 
 						ng-if="LabModalCtrl.assays.temp.counts[LabModalCtrl.currentTechniqueId].sites[siteId].schools[schoolId].children[childId] > 0">
 						<td>{{child.name}}: </td>
-						<td ng-repeat="(typeId, type) in LabModalCtrl.assays.temp.samples[LabModalCtrl.currentTechniqueId][siteId][schoolId][childId] track by $index" ng-if="type == 1"><span class="label label-primary">{{LabModalCtrl.types[typeId]}}</span></td>
+						<td ng-repeat="(typeId, type) in LabModalCtrl.assays.temp.samples[LabModalCtrl.currentTechniqueId][siteId][schoolId][childId] track by $index" ng-if="type == 1"><span class="label label-primary">{{LabModalCtrl.types[typeId].stage}}</span></td>
 					</tr>
 				</tbody>	
 			</table>

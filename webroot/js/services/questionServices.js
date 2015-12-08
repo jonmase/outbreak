@@ -7,14 +7,14 @@
 	function questionFactory(lockFactory, $resource, $q) {
 		//Variables
 		//var questions = readQuestions();
-		var questions = [];
+		var questions, responses, questionOrders;
 		//var responses = readResponses();
-		var responses = [];
+		//var responses = [];
 		//setAnswered();	//Set whether each question has been answered
 		//var notAnswered = setNotAnswered();
-		var currentQuestionIndex = 0;
+		var currentQuestionId = 1;
 		var romans = ["(i) ", "(ii) ", "(iii) ", "(iv) ", "(v) ", "(vi) ", "(vii) ", "(viii) ", "(ix) ", "(x) ", "(xi) ", "(xii) ", "(xiii) ", "(xiv) ", "(xv) "];
-		var loaded = false;
+		//var loaded = false;
 		var saving = [];
 		
 		//Exposed Methods
@@ -23,9 +23,10 @@
 			checkAnswers: checkAnswers,
 			clearAnswers: clearAnswers,
 			getResponses: getResponses,
-			getCurrentQuestionIndex: getCurrentQuestionIndex,
+			getCurrentQuestionId: getCurrentQuestionId,
 			getLoaded: getLoaded,
 			//getNotAnswered: getNotAnswered,
+			getNextOrPrev: getNextOrPrev,
 			getQuestions: getQuestions,
 			getRoman: getRoman,
 			getRomans: getRomans,
@@ -33,7 +34,7 @@
 			loadQuestions: loadQuestions,
 			loadResponses: loadResponses,
 			setAnswered: setAnswered,
-			setCurrentQuestionIndex: setCurrentQuestionIndex,
+			setCurrentQuestionId: setCurrentQuestionId,
 			setQuestionsComplete: setQuestionsComplete,
 			setLoaded: setLoaded,
 			setSaving: setSaving,
@@ -43,25 +44,24 @@
 		//Methods
 		//note that readQuestions is out of order at the end, because it is so long
 		
-		function checkAllAnswered(questionIndex) {
-			responses.answered[questions[questionIndex].id] = setAnsweredByQuestion(questionIndex)
+		function checkAllAnswered(questionId) {
+			responses.answered[questionId] = setAnsweredByQuestion(questionId)
 		}
 
-		function checkAnswers(questionIndex) {
-			var questionDBId = questions[questionIndex].id;
-			responses.answered[questionDBId] = setAnsweredByQuestion(questionIndex);
-			if(!responses.answered[questionDBId]) {	//If there are any unanswered questions...
+		function checkAnswers(questionId) {
+			responses.answered[questionId] = setAnsweredByQuestion(questionId);
+			if(!responses.answered[questionId]) {	//If there are any unanswered questions...
 				//var notAnsweredMessage = "Please attempt all question parts before checking your answers."; 
 			}
 			else {
 				//API: Save responses (answers, score) to DB
-				var score = setScoreByQuestion(questionIndex);
+				var score = setScoreByQuestion(questionId);
 				var deferred = $q.defer();
 				var QuestionsCall = $resource('../../question_answers/save', {});
-				QuestionsCall.save({}, {attemptId: ATTEMPT_ID, questionId: questionDBId, answers: responses.answers[questionDBId], score: score}, function(result) {
+				QuestionsCall.save({}, {attemptId: ATTEMPT_ID, questionId: questionId, answers: responses.answers[questionId], score: score}, function(result) {
 					var message = result.message;
 					if(result.message === "success") {
-						responses.scores[questionDBId] = score;
+						responses.scores[questionId] = score;
 						//setQuestionsComplete();
 					}
 					else {
@@ -76,23 +76,40 @@
 			}
 		}
 
-		function clearAnswers(questionIndex) {
-			var questionDBId = questions[questionIndex].id;
-			if(!(responses.scores[questionDBId] > -1)) {	//If question has not been answered...
-				var stems = questions[questionIndex].question_stems;
+		function clearAnswers(questionId) {
+			if(!(responses.scores[questionId] > -1)) {	//If question has not been answered...
+				var stems = questions[questionId].question_stems;
 				for(var s = 0; s < stems.length; s++) {
-					responses.answers[questionDBId][stems[s].id] = null;
+					responses.answers[questionId][stems[s].id] = null;
 				}
 			}
-			responses.answered[questionDBId] = setAnsweredByQuestion(questionIndex);
+			responses.answered[questionId] = setAnsweredByQuestion(questionId);
 		}
 
-		function getCurrentQuestionIndex() { 
-			return currentQuestionIndex; 
+		function getCurrentQuestionId() { 
+			return currentQuestionId; 
 		}
 		
 		function getLoaded() { 
 			return loaded;
+		}
+		
+		function getNextOrPrev(questionId, direction) {
+			//var order = questions[questionId].order;
+			var nextQuestionId = questionId;
+			if(direction === 'next') {
+				//if(order >= (questionOrders.length-1)) {
+				if(!questions[questionId].last) {
+					nextQuestionId = questionId+1;
+				}
+			}
+			if(direction === 'prev') {
+				//if(order <= 1) {
+				if(!questions[questionId].first) {
+					nextQuestionId = questionId-1;
+				}
+			}
+			return nextQuestionId;
 		}
 		
 		function getNotAnswered() { 
@@ -101,6 +118,10 @@
 		
 		function getQuestions() { 
 			return questions; 
+		}
+		
+		function getQuestionOrders() { 
+			return questionOrders; 
 		}
 		
 		function getResponses() { 
@@ -124,6 +145,16 @@
 			var QuestionsCall = $resource('../../questions/load.json', {});
 			QuestionsCall.get({}, function(result) {
 				questions = result.questions;
+				/*questionOrders = [];*/
+				var first = true;
+				for(var questionId in questions) {
+					if(first) {	//Set first to true for the first question
+						questions[questionId].first = true;
+						first = false;
+					}
+					//questionOrders[questions[questionId].order] = questionId;
+				}
+				questions[questionId].last = true;	//questionId will now be that of the last question, so set last to true
 				deferred.resolve('Questions loaded');
 				deferred.reject('Questions not loaded');
 			});
@@ -175,24 +206,24 @@
 		
 		function setAnswered() {
 			responses.answered = [];
-			for(var questionIndex = 0; questionIndex < questions.length; questionIndex++) {
-				responses.answered[questions[questionIndex].id] = setAnsweredByQuestion(questionIndex);
+			for(var questionId in questions) {
+				responses.answered[questionId] = setAnsweredByQuestion(questionId);
 			}
 			//return answered;
 		}
 		
-		function setAnsweredByQuestion(questionIndex) {
+		function setAnsweredByQuestion(questionId) {
 			var answered = true;
 			
 			//If there are no answers at all for this question, then it is unanswered
-			if(!responses.answers[questions[questionIndex].id]) {
+			if(!responses.answers[questions[questionId].id]) {
 				answered = false;
 			} 
 			else {
 				//If there is no answer for any of the stems, then the question is unanswered
-				for(var s = 0; s < questions[questionIndex].question_stems.length; s++) {
-					var stemId = questions[questionIndex].question_stems[s].id;
-					if(!responses.answers[questions[questionIndex].id][stemId]) {
+				for(var s = 0; s < questions[questionId].question_stems.length; s++) {
+					var stemId = questions[questionId].question_stems[s].id;
+					if(!responses.answers[questionId][stemId]) {
 						answered = false;
 						break;
 					}
@@ -201,8 +232,8 @@
 			return answered;
 		}
 		
-		function setCurrentQuestionIndex(questionIndex) { 
-			currentQuestionIndex = questionIndex; 
+		function setCurrentQuestionId(questionId) { 
+			currentQuestionId = questionId; 
 		}
 		
 		function setLoaded() { 
@@ -210,8 +241,8 @@
 		}
 		
 		function setQuestionsComplete() {
-			for(var questionIndex = 0; questionIndex < questions.length; questionIndex++) {
-				if(!(responses.scores[questions[questionIndex].id] > -1)) {
+			for(var questionId in questions) {
+				if(!(responses.scores[questionId] > -1)) {
 					return false;
 				}
 			}
@@ -219,15 +250,15 @@
 			return lockFactory.setComplete('questions');
 		}
 
-		function setSaving(questionIndex, value) { 
-			saving[questionIndex] = value;
+		function setSaving(questionId, value) { 
+			saving[questionId] = value;
 		}
 		
-		function setScoreByQuestion(questionIndex) {
+		function setScoreByQuestion(questionId) {
 			var score = 0;
-			for(var s = 0; s < questions[questionIndex].question_stems.length; s++) {
-				var stem = questions[questionIndex].question_stems[s];
-				if(responses.answers[questions[questionIndex].id][stem.id] === stem.question_option.id) {
+			for(var s = 0; s < questions[questionId].question_stems.length; s++) {
+				var stem = questions[questionId].question_stems[s];
+				if(responses.answers[questionId][stem.id] === stem.question_option.id) {
 					score++;
 				}
 			}

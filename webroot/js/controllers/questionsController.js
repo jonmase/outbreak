@@ -38,7 +38,7 @@
 		
 		function setup() {
 			vm.subsections = questionFactory.getQuestions();
-			vm.currentQuestionIndex = questionFactory.getCurrentQuestionIndex();
+			vm.currentQuestionId = questionFactory.getCurrentQuestionId();
 			vm.romans = questionFactory.getRomans();
 			questionFactory.setAnswered();	//Set whether each question has been answered
 			vm.responses = questionFactory.getResponses();
@@ -51,10 +51,11 @@
 			vm.check = check;
 			vm.clear = clear;
 			vm.complete = complete;
-			vm.change = change;
+			vm.next = next;
+			vm.prev = prev;
 			
 			//Actions on arrival
-			vm.setSubsection(vm.currentQuestionIndex);	//Set the subsection
+			vm.setSubsection(vm.currentQuestionId);	//Set the subsection
 			//For Development, set to complete as soon as you go to the questions page
 			//Note that this still gets called even if user is redirected home by checkLock - doesn't really matter, as won't just unlock page on first visit.
 			//lockFactory.setComplete(sectionId);	//Set the progress for this section to complete
@@ -62,13 +63,13 @@
 		}
 		
 		//Functions
-		function checkAllAnswered(questionIndex) {
-			questionFactory.checkAllAnswered(questionIndex);
+		function checkAllAnswered(questionId) {
+			questionFactory.checkAllAnswered(questionId);
 		}
 		
-		function check(questionIndex) {
-			questionFactory.setSaving(questionIndex, true);
-			var questionPromise = questionFactory.checkAnswers(questionIndex);
+		function check(questionId) {
+			questionFactory.setSaving(questionId, true);
+			var questionPromise = questionFactory.checkAnswers(questionId);
 			//var completePromise = questionFactory.setQuestionsComplete();
 			questionPromise.then(
 				function(result) {
@@ -76,7 +77,7 @@
 					if(completePromise) {	//If complete promise is not false, then all questions have been completed and we need to wait for progress to be saved
 						completePromise.then(
 							function(result) {
-								questionFactory.setSaving(questionIndex, false);
+								questionFactory.setSaving(questionId, false);
 								console.log(result);
 							}, 
 							function(reason) {
@@ -85,7 +86,7 @@
 						);
 					}
 					else {
-						questionFactory.setSaving(questionIndex, false);
+						questionFactory.setSaving(questionId, false);
 					}
 				}, 
 				function(reason) {
@@ -94,25 +95,41 @@
 			);
 		}
 		
-		function clear(questionIndex) {
-			questionFactory.clearAnswers(questionIndex);			
+		function clear(questionId) {
+			questionFactory.clearAnswers(questionId);			
 		}
 		
 		function complete() {
 			lockFactory.setComplete('questions');
 		}
 		
-		function change(changeBy) {
-			var newQuestionId = vm.currentQuestionIndex + changeBy;
+		/*function change(changeBy) {
+			var newQuestionId = vm.currentQuestionId + changeBy;
+			vm.subsections[newQuestionId].active = true;
+			document.body.scrollTop = 0;
+			setSubsection(newQuestionId);
+		}*/
+		
+		function next() {
+			nextOrPrev('next');
+		}
+		
+		function prev() {
+			nextOrPrev('prev');
+		}
+		
+		function nextOrPrev(direction) {
+			var newQuestionId = questionFactory.getNextOrPrev(vm.currentQuestionId, direction);
+			/*var newQuestionId = vm.currentQuestionId + changeBy;*/
 			vm.subsections[newQuestionId].active = true;
 			document.body.scrollTop = 0;
 			setSubsection(newQuestionId);
 		}
 		
-		function setSubsection(questionIndex) {
-			questionFactory.setCurrentQuestionIndex(questionIndex);
-			vm.currentQuestionIndex = questionIndex;
-			vm.currentQuestion = vm.subsections[questionIndex];
+		function setSubsection(questionId) {
+			questionFactory.setCurrentQuestionId(questionId);
+			vm.currentQuestionId = questionId;
+			//vm.currentQuestion = vm.subsections[questionId];
 		};
 	}
 })();
