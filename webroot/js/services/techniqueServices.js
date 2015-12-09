@@ -129,7 +129,7 @@
 		}
 		
 		function readLabTechniques() { 
-			var labTechniques = readTechniques(false, true);	//Include lab only but not revision only
+			var labTechniques = angular.copy(readTechniques(false, true));	//Include lab only but not revision only
 			//labTechniques.push(readFluExtra());
 			labTechniques.xflu = readFluExtra();
 			return labTechniques;
@@ -153,7 +153,7 @@
 		}
 		
 		function readRevisionTechniques() { 
-			var revisionTechniques = readTechniques(true, false);	//Include revision only but not lab only
+			var revisionTechniques = angular.copy(readTechniques(true, false));	//Include revision only but not lab only
 			//revisionTechniques.push(readRevisionExtra());
 			revisionTechniques.xrevision = readRevisionExtra();
 			return revisionTechniques;

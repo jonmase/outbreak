@@ -161,7 +161,7 @@
 		}
 		
 		function readNoteTechniques() {
-			var techniques = techniqueFactory.readTechniques(false, true);
+			var techniques = angular.copy(techniqueFactory.readTechniques(false, true));
 			techniques.push(resultFactory.readQuickVue());	//Add additional info
 			return techniques;
 		}

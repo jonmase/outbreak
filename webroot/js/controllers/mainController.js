@@ -42,6 +42,7 @@
 				vm.resources = progressFactory.getResources();
 				sampleFactory.setup();
 				assayFactory.setup();
+				resultFactory.setup();
 				vm.locks = lockFactory.setLocks();
 				vm.checkLockOnClick = checkLockOnClick;
 				vm.loading = false;

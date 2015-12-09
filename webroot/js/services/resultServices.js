@@ -6,15 +6,7 @@
 		
 	function resultFactory(schoolFactory, techniqueFactory, assayFactory) {
 		//Variables
-		var sections = readSections();
-		var assays = assayFactory.getAssays();
-		//var results = readResults();
-		var notes = readNotes();
-		var defaultInitialTechnique = 'quickvue';
-		var currentTechniqueId = angular.copy(defaultInitialTechnique);
-		var techniqueChangedManually = false;
-		setDisabledTechniques();
-		sections[defaultInitialTechnique].active = true;
+		var sections, assays, notes, defaultInitialTechnique, currentTechniqueId, techniqueChangedManually
 		
 		//Exposed Methods
 		var factory = {
@@ -25,11 +17,23 @@
 			readQuickVue: readQuickVue,
 			setCurrentTechniqueId: setCurrentTechniqueId,
 			setDisabledTechniques: setDisabledTechniques,
+			setup: setup,
 		}
 		return factory;
 		
 		//Methods
-
+		function setup() {
+			sections = readSections();
+			assays = assayFactory.getAssays();
+			//var results = readResults();
+			notes = readNotes();
+			defaultInitialTechnique = 'quickvue';
+			currentTechniqueId = angular.copy(defaultInitialTechnique);
+			techniqueChangedManually = false;
+			setDisabledTechniques(true);
+			sections[currentTechniqueId].active = true;
+		}
+		
 		function getCurrentTechniqueId() {
 			return currentTechniqueId;
 		}
@@ -63,7 +67,7 @@
 		}
 
 		function readSections() {
-			var sections = techniqueFactory.readTechniques(false,true);	//Get lab only but not revision only techniques
+			var sections = angular.copy(techniqueFactory.readTechniques(false,true));	//Get lab only but not revision only techniques
 			sections.quickvue = readQuickVue();
 			sections.xflu = techniqueFactory.getFluExtra();	//Add additional info
 			
@@ -77,24 +81,28 @@
 		
 		function setDisabledTechniques(setCurrentTechnique) {
 			var initialTechniqueId = angular.copy(defaultInitialTechnique);
-			for(var i = 0; i < sections.length; i++) {
-				if(typeof(assays.saved.counts[i]) !== "undefined") {
-					if(assays.saved.counts[i].total > 0) {
-						sections[i].disabled = false;	//Make sure section is not disabled
-						//If this section has results, make it the initial technique, if initial technique has not already been changed
+			//for(var i = 0; i < sections.length; i++) {
+			for(var techniqueId in sections) {
+				if(typeof(assays.saved.counts[techniqueId]) !== "undefined") {
+					//If this section has results, make it the initial technique, if initial technique has not already been changed
+					if(assays.saved.counts[techniqueId].total > 0) {
+						sections[techniqueId].disabled = false;	//Make sure section is not disabled
 						if(!techniqueChangedManually && initialTechniqueId === defaultInitialTechnique) {
-							for(var j = 0; j < sections.length; j++) {
-								sections[j].active = false;	//Set all sections to inactive
+							//Set all sections to inactive
+							for(var t = 0; t < sections.length; t++) {
+								sections[t].active = false;
 							}
-							sections[i].active = true;	//Set this section to active
-							initialTechniqueId = angular.copy(i);
-							currentTechniqueId = angular.copy(i);
+							sections[techniqueId].active = true;	//Set this section to active
+							initialTechniqueId = angular.copy(techniqueId);	//Update the initial technique, so it is no longer equal to defaultInitialTechnique, so we never get here again
+							if(setCurrentTechnique) {
+								currentTechniqueId = angular.copy(techniqueId);
+							}
 						}
 					}
 					else {
 						//Disable normal technique sections (i.e. those with results defined in the technique) with no results
-						if(typeof(sections[i].results) !== "undefined") {
-							sections[i].disabled = true;
+						if(typeof(sections[techniqueId].technique_results) !== "undefined") {
+							sections[techniqueId].disabled = true;
 						}
 					}
 				}
