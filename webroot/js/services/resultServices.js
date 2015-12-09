@@ -18,6 +18,7 @@
 			readQuickVue: readQuickVue,
 			setCurrentTechniqueId: setCurrentTechniqueId,
 			setDisabledTechniques: setDisabledTechniques,
+			setNote: setNote,
 			setup: setup,
 		}
 		return factory;
@@ -121,9 +122,17 @@
 			}
 		}
 		
-		function setNotes() {
+		function setNote(techniqueId) {
 			//API: Save notes to DB
 			//TODO: Call this - autosave? on blur? save button? 
+			var deferred = $q.defer();
+			var NotesCall = $resource('../../notes/save', {});
+			NotesCall.save({}, {attemptId: ATTEMPT_ID, techniqueId: techniqueId, note: notes[techniqueId].note}, function(result) {
+				var message = result.message;
+				deferred.resolve(message);
+				deferred.reject("Error: " + message);
+			});
+			return deferred.promise;
 		}
 		
 		/*function readResults() {

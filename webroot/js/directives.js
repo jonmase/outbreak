@@ -102,6 +102,8 @@
 			templateUrl: "../../partials/elements/notes-input.html",
 			scope: {
 				model: '=',
+				techniqueId: '=',
+				blur: '&onBlur',
 			}
 		};
 	}

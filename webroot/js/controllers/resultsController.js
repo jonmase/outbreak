@@ -14,11 +14,10 @@
 		}
 		$scope.$parent.currentSectionId = sectionId;	//Make sure the section ID is set correctly in Main Controller
 
-		//Bindable Members
+		//Bindable Members - variables
 		vm.section = sectionFactory.getSection(sectionId);	//Get the section details
 		vm.subsections = resultFactory.getSections();
 		vm.currentTechniqueId = resultFactory.getCurrentTechniqueId();
-		vm.setSubsection = setSubsection;
 		vm.progress = progressFactory.getProgress();
 		vm.sites = siteFactory.getSites();
 		vm.schools = schoolFactory.getSchools();
@@ -31,12 +30,27 @@
 		vm.assays = assayFactory.getAssays();
 		vm.requiredTests = assayFactory.getRequiredTests();
 		
+		//Bindable Members - methods
+		vm.setNote = setNote;
+		vm.setSubsection = setSubsection;
 		//Actions
 		//vm.setSubsection(initialTechnique);
 		//resultFactory.setDisabledTechniques();
 		//resultFactory.setCurrentTechniqueId(vm.currentTechniqueId);
 		
 		//Functions
+		function setNote(techniqueId) {
+			var notesPromise = resultFactory.setNote(techniqueId);	//Set the assays and save them to the DB, along with the reduced resources
+			notesPromise.then(
+				function(result) {
+					console.log(result);
+				}, 
+				function(reason) {
+					console.log("Error:" + reason);
+				}
+			);
+		}
+		
 		function setSubsection(techniqueId) {
 			if(!vm.subsections[techniqueId].disabled) {
 				resultFactory.setCurrentTechniqueId(techniqueId);
