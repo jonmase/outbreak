@@ -33,9 +33,8 @@
 			//Update time and money
 			var moneyCost = vm.technique.money * vm.assays.temp.counts[currentTechniqueId].total;
 			var timeCost = vm.technique.time;
-			progressFactory.subtractResources(moneyCost, timeCost);	//Subtract the resources (but not API call)
 			
-			var assayPromise = assayFactory.setAssays(currentTechniqueId);	//Set the assays and save them to the DB, along with the reduced resources
+			var assayPromise = assayFactory.setAssays(currentTechniqueId, moneyCost, timeCost);	//Set the assays and save them to the DB, along with the reduced resources
 			$q.all([assayPromise]).then(
 				function(result) {
 					console.log(result);
@@ -44,7 +43,7 @@
 						completePromise.then(
 							function(result) {
 								console.log(result);
-								success();
+								success(moneyCost, timeCost);
 								
 								//If both H and N have been identified, show modal saying they have sufficient info to write report
 								if(progressFactory.checkProgress('hidentified') && progressFactory.checkProgress('nidentified')) {
@@ -63,7 +62,7 @@
 						);
 					}
 					else {
-						success();
+						success(moneyCost, timeCost);
 					}
 				}, 
 				function(reason) {
@@ -72,15 +71,16 @@
 			);
 		}
 		
-		function success() {
-			resultFactory.setDisabledTechniques();
-			assayFactory.setTab(currentTechniqueId, 'results');
+		function success(moneyCost, timeCost) {
 			$uibModalInstance.close();
+			assayFactory.setTab(currentTechniqueId, 'results');
+			progressFactory.subtractResources(moneyCost, timeCost);	//Subtract the resources (but not API call)
+			resultFactory.setDisabledTechniques();
 			vm.saving = false;
 		}
 		
 		function fail() {
-			progressFactory.subtractResources(-moneyCost, -timeCost);	//Add the costs back on to the remaining resources
+			//progressFactory.subtractResources(-moneyCost, -timeCost);	//Add the costs back on to the remaining resources
 			alert("Assay failed, please try again. If you continue to experience problems, please refresh the page and try again. Contact msdlt@medsci.ox.ac.uk if this does not fix it");
 			console.log("Error: " + reason);
 			vm.saving = false;

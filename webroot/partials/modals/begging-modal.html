@@ -10,5 +10,11 @@
 	<p>Remember, don't waste resources on unproductive tests and, while you can obtain the information you need in multiple ways, you need to find the way that minimises the amount of time and money you spend.</p>
 </div>
 <div class="modal-footer">
+	<div ng-hide="BeggingModalCtrl.saving">
 	<button type="button" class="btn btn-primary" ng-click="BeggingModalCtrl.confirm()">Continue</button>
+	</div>
+	<div ng-show="BeggingModalCtrl.saving">
+		<loader></loader>
+		Resetting {{BeggingModalCtrl.resourceTitle}}
+	</div>
 </div>

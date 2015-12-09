@@ -105,15 +105,38 @@
 		}
 		
 		//Reset the user's resources to the initial values (e.g. if they beg for more)
-		function resetResources() {
+		function resetResources(resetMoney, resetTime) {
 			//API: Reset resources in DB
 			//resources = angular.copy(startingResources);
-			if(resources.money < moneyCutoff) {
-				resources.money = startingMoney;
+			var money = null;
+			var time = null;
+			if(resetMoney) {
+				var money = startingMoney;
 			}
-			if(resources.time < timeCutoff) {
-				resources.time = startingTime;
+			if(resetTime) {
+				var time = startingTime;
 			}
+			var deferred = $q.defer();
+			var ResourcesCall = $resource('../../attempts/saveResources', {});
+			ResourcesCall.save({}, {attemptId: ATTEMPT_ID, money: money, time: time}, function(result) {
+				var message = result.message;
+				if(result.message === "success") {
+					console.log('Resources reset saved');
+					if(resetMoney) {
+						resources.money = money;
+					}
+					if(resetTime) {
+						resources.time = time;
+					}
+				}
+				else {
+					console.log('Resources reset error');
+					//Deal with error
+				}
+				deferred.resolve(message);
+				deferred.reject("Error: " + message);
+			});
+			return deferred.promise;
 		}
 		
 		//Update the user's progress in a section. Completed = 1 or 0.

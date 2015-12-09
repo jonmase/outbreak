@@ -79,18 +79,18 @@ class AttemptsController extends AppController
 			$money = $this->request->data['money'];
 			$time = $this->request->data['time'];
 			
-			if($attemptId && (!is_null($money) && !is_null($time)) && $this->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
+			if($attemptId && (!is_null($money) || !is_null($time)) && $this->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
 				$attempt = $this->Attempts->get($attemptId);
 				if(!is_null($money)) {
 					$attempt->money = $money;
 				}
 				if(!is_null($time)) {
-					$attempt->money = $time;
+					$attempt->time = $time;
 				}
 				//pr($attempt);
 				//exit;
 				if ($this->Attempts->save($attempt)) {
-					$this->set('message', 'Resources save succeeded');
+					$this->set('message', 'success');
 				} else {
 					$this->set('message', 'Resources save failed');
 				}

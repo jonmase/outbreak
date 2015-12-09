@@ -382,11 +382,11 @@
 			}
 		}
 		
-		function setAssays(techniqueId) {
+		function setAssays(techniqueId, moneyCost, timeCost) {
 			//API: Save assays performed
 			var deferred = $q.defer();
 			var AssaysCall = $resource('../../assays/save', {});
-			AssaysCall.save({}, {attemptId: ATTEMPT_ID, techniqueId: techniqueId, assays: assays.temp.samples[techniqueId], standardAssays: assays.temp.standards[techniqueId], money: resources.money, time: resources.time}, function(result) {
+			AssaysCall.save({}, {attemptId: ATTEMPT_ID, techniqueId: techniqueId, assays: assays.temp.samples[techniqueId], standardAssays: assays.temp.standards[techniqueId], money: (resources.money - moneyCost), time: (resources.time - timeCost)}, function(result) {
 				var message = result.message;
 				
 				if(result.message === "success") {
