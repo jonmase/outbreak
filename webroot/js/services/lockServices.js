@@ -2,11 +2,11 @@
 	angular.module('flu')
 		.factory('lockFactory', lockFactory);
 	
-	lockFactory.$inject = ['$location', 'sectionsConstant', 'progressFactory'];
+	lockFactory.$inject = ['$location', '$resource', '$q', 'sectionsConstant', 'progressFactory'];
 	
 	//Locks factory - deals with setting and checking the locks on sections
 	//NO API requirements
-	function lockFactory($location, sectionsConstant, progressFactory) {
+	function lockFactory($location, $resource, $q, sectionsConstant, progressFactory) {
 		//Variables
 		var locks = {};
 		var sections = sectionsConstant();
@@ -46,9 +46,17 @@
 			return locks[sectionId];
 		}
 		
-		function setComplete(sectionId, saveToDB) {
+		function setComplete(sections, saveToDB) {
 			if(typeof(saveToDB) === 'undefined') {	saveToDB = true; }
-			return setProgressAndLocks(sectionId, 1, saveToDB);	//Set the progress for this section to complete
+			//return setProgress(sectionId, 1, saveToDB);	//Set the progress for this section to complete
+			if(saveToDB) {
+				var progressPromise = saveProgress(sections, 1);	//save progress to DB and set locally
+				return progressPromise;
+			}
+			else {
+				setProgressAndLocks(sections, 1);	//Set progress locally only
+				return true;
+			}
 		}
 
 		function setLocks() {
@@ -74,18 +82,24 @@
 			return locks;
 		}
 
-		function setProgressAndLocks(sectionId, completed, saveToDB) {
-			progressFactory.setProgress(sectionId, completed);	//Set progress locally
+		//Update the user's progress in a section. Completed = 1 or 0.
+		function setProgressAndLocks(sections, completed) {
+			progressFactory.setProgress(sections, completed);
 			setLocks();
-			if(saveToDB) {
-				var progressPromise = progressFactory.saveProgress(sectionId, completed);	//save progress to DB
-				return progressPromise;
-			}
-			else {
-				return true;
-			}
-			//progress[sectionId] = completed;
-			//return setLocks();
+		}
+		
+		function saveProgress(sections, completed) {
+			//API: Update user's progress in DB
+			var deferred = $q.defer();
+			var ProgressCall = $resource('../saveProgress', {});
+			ProgressCall.save({}, {attemptId: ATTEMPT_ID, sections: sections, completed: completed}, function(result) {
+				console.log(result.message);
+				setProgressAndLocks(sections, completed);
+				deferred.resolve('Progress saved');
+				deferred.reject('Progress not saved');
+			});
+			return deferred.promise;
+			//return progress;
 		}
 	}
 })();

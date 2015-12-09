@@ -2,6 +2,7 @@
 namespace App\Controller;
 
 use App\Controller\AppController;
+use Cake\Datasource\ConnectionManager;
 
 /**
  * Assays Controller
@@ -34,6 +35,108 @@ class AssaysController extends AppController
 			pr('denied');
 		}
 	}
+	
+	public function save() {
+		if($this->request->is('post')) {
+			//pr($this->request->data);
+			$attemptId = $this->request->data['attemptId'];
+			$techniqueId = $this->request->data['techniqueId'];
+			$rawAssays = $this->request->data['assays'];
+			$rawStandardAssays = $this->request->data['standardAssays'];
+			$money = $this->request->data['money'];
+			$time = $this->request->data['time'];
+			
+			if($attemptId && $techniqueId && $this->Assays->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
+				$assays = [];
+				foreach($rawAssays as $siteId => $schools) {
+					foreach($schools as $schoolId => $children) {
+						foreach($children as $childId => $types) {
+							foreach($types as $typeId => $value) {
+								if($value) {
+									$assay = [
+										'attempt_id' => $attemptId,
+										'technique_id' => $techniqueId,
+										'site_id' => $siteId,
+										'school_id' => $schoolId,
+										'child_id' => $childId,
+										'sample_stage_id' => $typeId,
+										'before_submit' => 1
+									];
+									array_push($assays, $assay);
+								}
+							}
+						}
+					}
+				}
+				//Note: Always create new entries - should never already be saved entries
+				$assaysData = $this->Assays->newEntities($assays);
+				
+				$standardAssays = [];
+				foreach($rawStandardAssays as $standardId => $value) {
+					if($value) {
+						$assay = [
+							'attempt_id' => $attemptId,
+							'technique_id' => $techniqueId,
+							'standard_id' => $standardId,
+							'before_submit' => 1
+						];
+						array_push($standardAssays, $assay);
+					}
+				}
+				//Note: Always create new entries - should never already be saved entries
+				$standardAssaysData = $this->Assays->Attempts->StandardAssays->newEntities($standardAssays);
+
+				if(!is_null($money) || !is_null($time)) {
+					$attemptData = $this->Assays->Attempts->get($attemptId);
+					if(!is_null($money)) {
+						$attemptData->money = $money;
+					}
+					if(!is_null($time)) {
+						$attemptData->time = $time;
+					}
+				}
+				else {
+					$attemptData = null;
+				}
+				
+				//pr($assaysData);
+				//pr($attemptData);
+				//exit;
+				$connection = ConnectionManager::get('default');
+				//$this->QuestionAnswers->connection()->transactional(function () use ($answers) {
+				$connection->transactional(function () use ($assaysData, $standardAssaysData, $attemptData) {
+					foreach ($assaysData as $assay) {
+						//pr($sample);
+						if(!$this->Assays->save($assay)) {
+							$this->set('message', 'Assay save error');
+							return false;
+						}
+					}
+					foreach ($standardAssaysData as $assay) {
+						//pr($sample);
+						if(!$this->Assays->Attempts->StandardAssays->save($assay)) {
+							$this->set('message', 'Assay save error');
+							return false;
+						}
+					}
+					if(!is_null($attemptData) && !$this->Assays->Attempts->save($attemptData)) {
+						$this->set('message', 'Assay save error');
+						return false;
+					}
+					$this->set('message', 'success');
+				});
+			}
+			else {
+				$this->set('message', 'Assay save denied');
+			}
+		}
+		else {
+			$this->set('message', 'Assay save not POST');
+		}
+		$this->viewBuilder()->layout('ajax');
+		$this->render('/Element/ajaxmessage');
+	}
+
 
     /**
      * Index method

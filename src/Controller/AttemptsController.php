@@ -26,12 +26,19 @@ class AttemptsController extends AppController
 		if($this->request->is('post')) {
 			//pr($this->request->data);
 			$attemptId = $this->request->data['attemptId'];
-			$sectionId = $this->request->data['sectionId'];
+			$sections = $this->request->data['sections'];
 			$completed = $this->request->data['completed'];
 			
-			if($attemptId && $sectionId && $this->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
+			if($attemptId && $this->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
 				$attempt = $this->Attempts->get($attemptId);
-				$attempt->$sectionId = $completed;
+				if(is_string($sections)) {
+					$attempt->$sections = $completed;
+				}
+				else if(is_array($sections)) {
+					foreach($sections as $section) {
+						$attempt->$section = $completed;
+					}
+				}
 				//pr($attempt);
 				//exit;
 				if ($this->Attempts->save($attempt)) {
@@ -63,6 +70,42 @@ class AttemptsController extends AppController
 		else {
 			pr('denied');
 		}
+	}
+	
+	public function saveResources() {
+		if($this->request->is('post')) {
+			//pr($this->request->data);
+			$attemptId = $this->request->data['attemptId'];
+			$money = $this->request->data['money'];
+			$time = $this->request->data['time'];
+			
+			if($attemptId && (!is_null($money) && !is_null($time)) && $this->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
+				$attempt = $this->Attempts->get($attemptId);
+				if(!is_null($money)) {
+					$attempt->money = $money;
+				}
+				if(!is_null($time)) {
+					$attempt->money = $time;
+				}
+				//pr($attempt);
+				//exit;
+				if ($this->Attempts->save($attempt)) {
+					$this->set('message', 'Resources save succeeded');
+				} else {
+					$this->set('message', 'Resources save failed');
+				}
+				//$this->Attempts->save($attempt);
+				//pr($attempt);
+			}
+			else {
+				$this->set('message', 'Resources save denied');
+			}
+		}
+		else {
+			$this->set('message', 'Resources save not POST');
+		}
+		$this->viewBuilder()->layout('ajax');
+		$this->render('/Element/ajaxmessage');
 	}
 	
 	public function loadHappiness($attemptId = null) {

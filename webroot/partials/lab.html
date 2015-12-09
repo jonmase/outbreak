@@ -14,7 +14,7 @@
 					<uib-tab heading="Assay" ng-repeat-start="technique in labCtrl.subsections" ng-show="labCtrl.currentTechniqueId === technique.id" ng-if="!technique.infoOnly" active="labCtrl.activeTabs[technique.id].assay">
 						<div>
 							<h4>{{technique.menu}} - Choose Samples</h4>
-							<p>Tick the boxes for samples that you wish to include in this assay, then click the button to perform the assay. Samples that are available, but that you have not collected, are shown but cannot be selected. To include these samples in the assay, you must first <a href="#samples" title="Collect more samples">collect them</a>.</p>
+							<p>Tick the boxes for samples that you wish to include in this assay, then click the button to perform the assay. Samples that are available, but that you have not collected, are shown but cannot be selected. To include these samples in the assay, you must first <a href="#sampling" title="Collect more samples">collect them</a>.</p>
 						</div>
 						<div class="panel panel-default">
 							<div class="panel-body">

@@ -42,7 +42,6 @@ class SamplesController extends AppController
 			$attemptId = $this->request->data['attemptId'];
 			$rawSamples = $this->request->data['samples'];
 			$happiness = $this->request->data['happiness'];
-
 			
 			if($attemptId && $rawSamples && $this->Samples->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
 				$samples = [];

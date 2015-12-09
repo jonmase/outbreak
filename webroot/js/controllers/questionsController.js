@@ -73,6 +73,7 @@
 			//var completePromise = questionFactory.setQuestionsComplete();
 			questionPromise.then(
 				function(result) {
+					console.log(result);
 					var completePromise = questionFactory.setQuestionsComplete();
 					if(completePromise) {	//If complete promise is not false, then all questions have been completed and we need to wait for progress to be saved
 						completePromise.then(

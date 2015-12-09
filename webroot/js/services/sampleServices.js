@@ -566,11 +566,10 @@
 		}
 		
 		function tooLate(schoolId) {
-			schools[schoolId].acuteDisabled = true;
-			
 			//API: Set this in the DB
 			var TooLateCall = $resource('../../schools/tooLate', {});
-			TooLateCall.save({}, {attemptId: ATTEMPT_ID}, function(result) {
+			TooLateCall.save({}, {attemptId: ATTEMPT_ID, schoolId: schoolId}, function(result) {
+				schools[schoolId].acuteDisabled = true;
 				var message = result.message;
 				if(result.message === "success") {
 					console.log = 'Too late saved';

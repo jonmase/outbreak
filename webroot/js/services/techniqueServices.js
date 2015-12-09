@@ -2,9 +2,9 @@
 	angular.module('flu.techniques')
 		.factory('techniqueFactory', techniqueFactory);
 		
-	techniqueFactory.$inject = ['lockFactory', '$resource', '$q'];
+	techniqueFactory.$inject = ['progressFactory', 'lockFactory', '$resource', '$q'];
 
-	function techniqueFactory(lockFactory, $resource, $q) {
+	function techniqueFactory(progressFactory, lockFactory, $resource, $q) {
 		//Variables
 		var fluExtra = readFluExtra();
 		var techniques, labTechniques, researchTechniques, revisionTechniques, usefulTechniques;
@@ -194,15 +194,20 @@
 		
 		function setRevisionComplete() {
 			var sectionId = 'revision';
-			for(var techniqueId in revisionTechniques) {
-				//if(techniques[techniqueId].level <= vm.levelThreshold) {
-					if(!revisionTechniques[techniqueId].infoOnly && typeof(usefulTechniques[techniqueId]) === "undefined" || usefulTechniques[techniqueId] === null) {
-						//lockFactory.setProgressAndLocks(sectionId, 0);	//Set the progress for this section to incomplete (unnecessary, will already be so)
-						return true; //Exit the check, don't need to do anything more
-					}
-				//}
+			if(progressFactory.checkProgress(sectionId)) {	//If progress is already set, don't need to set it again
+				return 'Revision already complete';
 			}
-			return lockFactory.setComplete(sectionId);	//Set the progress for this section to complete
+			else {
+				for(var techniqueId in revisionTechniques) {
+					//if(techniques[techniqueId].level <= vm.levelThreshold) {
+						if(!revisionTechniques[techniqueId].infoOnly && typeof(usefulTechniques[techniqueId]) === "undefined" || usefulTechniques[techniqueId] === null) {
+							//lockFactory.setProgressAndLocks(sectionId, 0);	//Set the progress for this section to incomplete (unnecessary, will already be so)
+							return 'Revision not yet completed'; //Exit the check, don't need to do anything more
+						}
+					//}
+				}
+				return lockFactory.setComplete(sectionId);	//Set the progress for this section to complete
+			}
 		};
 		
 		function setUsefulTechnique(techniqueId, usefulness) { 

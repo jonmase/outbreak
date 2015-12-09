@@ -33,8 +33,9 @@ class SchoolsController extends AppController
 			'contain' => $contain,
 		]);
 		$rawSchools = $query->all();
-		//pr($schools->toArray());
+		//pr($rawSchools->toArray());
 		$schools = [];
+		
 		foreach($rawSchools as $school) {
 			if(!empty($school->attempts_schools)) {
 				$school->acuteDisabled = $school->attempts_schools[0]->acuteDisabled;
@@ -63,10 +64,18 @@ class SchoolsController extends AppController
 		if($this->request->is('post')) {
 			//pr($this->request->data);
 			$attemptId = $this->request->data['attemptId'];
+			$schoolId = $this->request->data['schoolId'];
 			
 			if($attemptId && $this->Schools->AttemptsSchools->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
 				$attemptSchoolQuery = $this->Schools->AttemptsSchools->find('all', ['conditions' => ['attempt_id' => $attemptId]]);
-				$attemptSchool = $attemptSchoolQuery->first();
+				if($attemptSchoolQuery->isEmpty()) {
+					$attemptSchool = $this->Schools->AttemptsSchools->newEntity();
+					$attemptSchool->attempt_id = $attemptId;
+					$attemptSchool->school_id = $schoolId;
+				}
+				else {
+					$attemptSchool = $attemptSchoolQuery->first();
+				}
 				$attemptSchool->acuteDisabled = 1;
 				//pr($attempt);
 				//exit;

@@ -50,6 +50,12 @@
 	</div>
 </div>
 <div class="modal-footer">
-	<button type="button" class="btn btn-default" ng-click="LabModalCtrl.cancel()">Cancel</button>
-	<button type="button" class="btn btn-primary" ng-click="LabModalCtrl.confirm()">Confirm</button>
+	<div ng-hide="LabModalCtrl.saving">
+		<button type="button" class="btn btn-default" ng-click="LabModalCtrl.cancel()">Cancel</button>
+		<button type="button" class="btn btn-primary" ng-click="LabModalCtrl.confirm()">Confirm</button>
+	</div>
+	<div ng-show="LabModalCtrl.saving">
+		<loader></loader>
+		Performing Assay
+	</div>
 </div>

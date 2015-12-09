@@ -9,9 +9,9 @@
 		.factory('progressFactory', progressFactory);
 
 		
-	progressFactory.$inject = ['moneyCutoff', 'timeCutoff', '$http', '$resource', '$q'];
+	progressFactory.$inject = ['moneyCutoff', 'timeCutoff', '$resource', '$q'];
 
-	function progressFactory(moneyCutoff, timeCutoff, $http, $resource, $q) {
+	function progressFactory(moneyCutoff, timeCutoff, $resource, $q) {
 		//Variables
 		var startingMoney = 200;
 		var startingTime = 48;
@@ -29,7 +29,7 @@
 			loadResources: loadResources,
 			resetResources: resetResources,
 			setProgress: setProgress,
-			saveProgress: saveProgress,
+			//saveProgress: saveProgress,	//Now done in lockFactory as need to set locks afterwards and can't do from here due to circular factory reference
 			subtractResources: subtractResources,
 		}
 		return factory;
@@ -117,22 +117,30 @@
 		}
 		
 		//Update the user's progress in a section. Completed = 1 or 0.
-		function setProgress(sectionId, completed) {
-			progress[sectionId] = completed;
+		function setProgress(sections, completed) {
+			if(angular.isString(sections)) {
+				progress[sections] = completed;
+			}
+			if(angular.isArray(sections)) {
+				for(var i = 0; i < sections.length; i++) {
+					progress[sections[i]] = completed;
+				}
+			}		
 		}
 		
-		function saveProgress(sectionId, completed) {
-			//API: Update user's progress in DB. Just set the changed value?
+		/*function saveProgress(sectionId, completed) {
+			//API: Update user's progress in DB
 			var deferred = $q.defer();
 			var ProgressCall = $resource('../saveProgress', {});
 			ProgressCall.save({}, {attemptId: ATTEMPT_ID, sectionId: sectionId, completed: completed}, function(result) {
 				//console.log(result.message);
+				setProgress(sectionId, completed)
 				deferred.resolve('Progress saved');
 				deferred.reject('Progress not saved');
 			});
 			return deferred.promise;
 			//return progress;
-		}
+		}*/
 		
 		function subtractResources(money, time) {
 			//API: Subtract resources in DB
