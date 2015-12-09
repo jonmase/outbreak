@@ -35,7 +35,10 @@
 		var assaysPromise = assayFactory.loadAssays();
 		var standardsPromise = assayFactory.loadStandards();
 		var standardAssaysPromise = assayFactory.loadStandardAssays();
-		$q.all([progressPromise, resourcePromise, techniquesPromise, researchTechniquesPromise, usefulPromise, questionsPromise, responsesPromise, sitesPromise, schoolsPromise, typesPromise, samplesPromise, happinessPromise, assaysPromise, standardsPromise, standardAssaysPromise]).then(
+		
+		var notesPromise = resultFactory.loadNotes();
+		
+		$q.all([progressPromise, resourcePromise, techniquesPromise, researchTechniquesPromise, usefulPromise, questionsPromise, responsesPromise, sitesPromise, schoolsPromise, typesPromise, samplesPromise, happinessPromise, assaysPromise, standardsPromise, standardAssaysPromise, notesPromise]).then(
 			function(result) {
 				console.log(result);
 				vm.progress = progressFactory.getProgress();

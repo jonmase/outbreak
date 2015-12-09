@@ -2,9 +2,9 @@
 	angular.module('flu.results')
 		.factory('resultFactory', resultFactory);
 		
-	resultFactory.$inject = ['schoolFactory', 'techniqueFactory', 'assayFactory'];
+	resultFactory.$inject = ['schoolFactory', 'techniqueFactory', 'assayFactory', '$resource', '$q'];
 		
-	function resultFactory(schoolFactory, techniqueFactory, assayFactory) {
+	function resultFactory(schoolFactory, techniqueFactory, assayFactory, $resource, $q) {
 		//Variables
 		var sections, assays, notes, defaultInitialTechnique, currentTechniqueId, techniqueChangedManually
 		
@@ -14,6 +14,7 @@
 			getNotes: getNotes,
 			//getResults: getResults,
 			getSections: getSections,
+			loadNotes: loadNotes,
 			readQuickVue: readQuickVue,
 			setCurrentTechniqueId: setCurrentTechniqueId,
 			setDisabledTechniques: setDisabledTechniques,
@@ -26,7 +27,7 @@
 			sections = readSections();
 			assays = assayFactory.getAssays();
 			//var results = readResults();
-			notes = readNotes();
+			//notes = readNotes();
 			defaultInitialTechnique = 8;	//QuickVue
 			currentTechniqueId = angular.copy(defaultInitialTechnique);
 			techniqueChangedManually = false;
@@ -47,14 +48,25 @@
 			return sections;
 		}
 		
-		function readNotes() {
+		function loadNotes() {
+			var deferred = $q.defer();
+			var NotesCall = $resource('../../notes/load/:attemptId.json', {attemptId: '@id'});
+			NotesCall.get({attemptId: ATTEMPT_ID}, function(result) {
+				notes = result.notes;
+				deferred.resolve('Notes loaded');
+				deferred.reject('Notes not loaded');
+			});
+			return deferred.promise;
+		}
+		
+		/*function readNotes() {
 			//API: Get these from the DB
 			var notes = {};
 			for(var i = 0; i < sections.length; i++) {
 				notes[sections[i].id] = "";
 			}
 			return notes;
-		}
+		}*/
 		
 		//Add quickvue
 		function readQuickVue() {

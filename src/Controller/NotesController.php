@@ -10,13 +10,31 @@ use App\Controller\AppController;
  */
 class NotesController extends AppController
 {
+	public function load($attemptId = null) {
+		if($attemptId && $this->Notes->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
+			$query = $this->Notes->find('all', [
+				'order' => ['Notes.technique_id' => 'ASC'],
+			]);
+			$rawNotes = $query->all();
+			//pr($rawNotes->toArray());
+			$notes = [];
+			
+			foreach($rawNotes as $note) {
+				$notes[$note->technique_id] = $note;
+			}
+		}
+		
+		$this->set(compact('notes'));
+		$this->set('_serialize', ['notes']);
+		//pr($sites->toArray());
+	}
 
     /**
      * Index method
      *
      * @return void
      */
-    public function index()
+    /*public function index()
     {
         $this->paginate = [
             'contain' => ['Attempts', 'Techniques']
@@ -32,7 +50,7 @@ class NotesController extends AppController
      * @return void
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
-    public function view($id = null)
+    /*public function view($id = null)
     {
         $note = $this->Notes->get($id, [
             'contain' => ['Attempts', 'Techniques']
@@ -46,7 +64,7 @@ class NotesController extends AppController
      *
      * @return void Redirects on successful add, renders view otherwise.
      */
-    public function add()
+    /*public function add()
     {
         $note = $this->Notes->newEntity();
         if ($this->request->is('post')) {
@@ -71,7 +89,7 @@ class NotesController extends AppController
      * @return void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
-    public function edit($id = null)
+    /*public function edit($id = null)
     {
         $note = $this->Notes->get($id, [
             'contain' => []
@@ -98,7 +116,7 @@ class NotesController extends AppController
      * @return \Cake\Network\Response|null Redirects to index.
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
-    public function delete($id = null)
+    /*public function delete($id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
         $note = $this->Notes->get($id);
@@ -108,5 +126,5 @@ class NotesController extends AppController
             $this->Flash->error(__('The note could not be deleted. Please, try again.'));
         }
         return $this->redirect(['action' => 'index']);
-    }
+    }*/
 }
