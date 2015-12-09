@@ -129,7 +129,7 @@
 		}
 		
 		function readLabTechniques() { 
-			var labTechniques = angular.copy(readTechniques(false, true));	//Include lab only but not revision only
+			var labTechniques = angular.copy(readTechniques('lab'));	//Include lab only but not revision only
 			//labTechniques.push(readFluExtra());
 			labTechniques.xflu = readFluExtra();
 			return labTechniques;
@@ -153,16 +153,16 @@
 		}
 		
 		function readRevisionTechniques() { 
-			var revisionTechniques = angular.copy(readTechniques(true, false));	//Include revision only but not lab only
+			var revisionTechniques = angular.copy(readTechniques('revision'));	//Include revision only but not lab only
 			//revisionTechniques.push(readRevisionExtra());
 			revisionTechniques.xrevision = readRevisionExtra();
 			return revisionTechniques;
 		}
 
-		function readTechniques(showRevisionOnly, showLabOnly) { 
+		function readTechniques(section) { 
 				//Ensure showRevisionOnly and labOnly are booleans, defaulting to false if not set
-				if(showRevisionOnly) { showRevisionOnly = true; } else { showRevisionOnly = false; }
-				if(showLabOnly) { showLabOnly = true; } else { showLabOnly = false; }
+				//if(showRevisionOnly) { showRevisionOnly = true; } else { showRevisionOnly = false; }
+				//if(showLabOnly) { showLabOnly = true; } else { showLabOnly = false; }
 				
 				var returnTechniques = {};
 				//for(var i = 0; i < techniques.length; i++) {
@@ -170,12 +170,12 @@
 					//If technique is neither revision only or lab only return it
 					//Or If technique is revision only and showRevisionOnly is true, return it
 					//Or If technique is lab only and showLabOnly is true, return it
-					if((!techniques[techniqueId].revision_only && !techniques[techniqueId].lab_only) || ((techniques[techniqueId].revision_only === showRevisionOnly) && (techniques[techniqueId].lab_only === showLabOnly))) {
+					//if((!techniques[techniqueId].revision_only && !techniques[techniqueId].lab_only) || ((techniques[techniqueId].revision_only === showRevisionOnly) && (techniques[techniqueId].lab_only === showLabOnly))) {
+					if(techniques[techniqueId][section]) {
 						//returnTechniques.push(techniques[techniqueId]);
 						returnTechniques[techniqueId] = techniques[techniqueId];
 					}
 				}
-				
 				return returnTechniques;
 		}
 		
