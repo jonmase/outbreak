@@ -31,10 +31,8 @@ class SectionsTable extends Table
 
         $this->addBehavior('Timestamp');
 
-        $this->belongsToMany('Reports', [
+        $this->hasMany('ReportsSections', [
             'foreignKey' => 'section_id',
-            'targetForeignKey' => 'report_id',
-            'joinTable' => 'reports_sections'
         ]);
     }
 

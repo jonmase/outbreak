@@ -2,9 +2,9 @@
 	angular.module('flu.report', [])
 		.controller('ReportController', ReportController);
 
-	ReportController.$inject = ['$scope', '$sce', '$scope', '$uibModal', 'dateFilter', 'sectionFactory', 'lockFactory', 'reportFactory', 'resultFactory', 'techniqueFactory'];
+	ReportController.$inject = ['$scope', '$sce', '$uibModal', 'dateFilter', 'sectionFactory', 'lockFactory', 'reportFactory', 'resultFactory', 'techniqueFactory'];
 		
-	function ReportController($scope, $sce, $scope, $uibModal, dateFilter, sectionFactory, lockFactory, reportFactory, resultFactory, techniqueFactory) {
+	function ReportController($scope, $sce, $uibModal, dateFilter, sectionFactory, lockFactory, reportFactory, resultFactory, techniqueFactory) {
 		var vm = this;
 		var sectionId = 'report';
 		
@@ -20,7 +20,8 @@
 		vm.section = sectionFactory.getSection(sectionId);	//Get the section details
 		vm.boxes = reportFactory.getBoxes();
 		vm.date = reportFactory.getDate();
-		vm.report = reportFactory.getReport();
+		vm.reportxyz = reportFactory.getReport();
+		vm.testabcd = reportFactory.getTest();
 		vm.lastSaved = reportFactory.getLastSaved();
 		vm.submitted = reportFactory.getSubmitted();
 		vm.notes = resultFactory.getNotes();
@@ -41,8 +42,16 @@
 
 		//Functions
 		function save() {
-			reportFactory.save();
-			vm.lastSaved = reportFactory.getLastSaved();
+			var reportPromise = reportFactory.save('save');
+			reportPromise.then(
+				function(result) {
+					console.log(result);
+					vm.lastSaved = reportFactory.getLastSaved();
+				}, 
+				function(reason) {
+					console.log("Error: " + reason);
+				}
+			);
 		}
 		
 		function submit() {
@@ -55,7 +64,7 @@
 				controllerAs: 'SubmitModalCtrl',
 			});
 			
-			modalInstance.result.then(function (savedSubmitted) {
+			modalInstance.result.then(function () {
 				vm.lastSaved = reportFactory.getLastSaved();
 				vm.submitted = reportFactory.getSubmitted();
 			});

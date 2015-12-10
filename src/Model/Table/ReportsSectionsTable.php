@@ -49,6 +49,10 @@ class ReportsSectionsTable extends Table
     public function validationDefault(Validator $validator)
     {
         $validator
+            ->add('id', 'valid', ['rule' => 'numeric'])
+            ->allowEmpty('id', 'create');
+
+        $validator
             ->allowEmpty('text');
 
         return $validator;

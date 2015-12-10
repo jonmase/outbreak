@@ -2,16 +2,11 @@
 	angular.module('flu.report')
 		.factory('reportFactory', reportFactory);
 		
-	reportFactory.$inject = ['techniqueFactory', 'resultFactory'];
+	reportFactory.$inject = ['techniqueFactory', 'resultFactory', '$resource', '$q'];
 	
-	function reportFactory(techniqueFactory, resultFactory) {
+	function reportFactory(techniqueFactory, resultFactory, $resource, $q) {
 		//Variables
-		var boxes = readBoxes();
-		var editorOptions = readEditorOptions();
-		var report = readReport();
-		var lastSaved = readLastSaved();
-		var submitted = readSubmitted();
-		var noteTechniques = readNoteTechniques(); 
+		var boxes, editorOptions, reportxyz, lastSaved, submitted, noteTechniques, testabcd; 
 		
 		//Exposed Methods
 		var factory = {
@@ -23,25 +18,42 @@
 			getLastSaved: getLastSaved,
 			getNoteTechniques: getNoteTechniques,
 			getReport: getReport,
+			getTest: getTest,
 			getSubmitted: getSubmitted,
+			loadReport: loadReport,
 			save: save,
-			submit: submit,
+			setup: setup,
+			//submit: submit,
 		}
 		return factory;
 		
 		//Methods
-
+		function setup() {
+			//boxes = readBoxes();
+			editorOptions = readEditorOptions();
+			//testabcd = 'starting test text';
+			testabcd = null;
+			//report = readReport();
+			//lastSaved = readLastSaved();
+			//submitted = readSubmitted();
+			noteTechniques = readNoteTechniques(); 
+		}
+		
 		function getAllNotesEmpty() {
 			var allNotesEmpty = true;
 			var notes = resultFactory.getNotes();
-			for(var i = 0; i < noteTechniques.length; i++) {
-				if(notes[noteTechniques[i].id] != '') {
-					//alert(noteTechniques[i]);
+			for(var techniqueId in noteTechniques) {
+				if(notes[techniqueId] != '') {
+					//alert(noteTechniques[techniqueId]);
 					allNotesEmpty = false;
 					break;
 				}
 			}
 			return allNotesEmpty;
+		}
+		
+		function getTest() {
+			return testabcd;
 		}
 		
 		function getBoxes() {
@@ -82,13 +94,86 @@
 		}
 		
 		function getReport() {
-			return report;
+			return reportxyz;
 		}
 		
 		function getSubmitted() {
 			return submitted;
 		}
 		
+		function loadReport() {
+			var deferred = $q.defer();
+			var ReportCall = $resource('../../reports/load/:attemptId.json', {attemptId: '@id'});
+			ReportCall.get({attemptId: ATTEMPT_ID}, function(result) {
+				reportxyz = result.report;
+				boxes = result.sections;
+				if(reportxyz) {
+					submitted = reportxyz.type === 'submit';
+					lastSaved = reportxyz.modified;
+				}
+				else {
+					submitted = false;
+					lastSaved = 'not yet saved';
+				}
+				deferred.resolve('Report loaded');
+				deferred.reject('Report not loaded');
+			});
+			return deferred.promise;
+		}
+		
+		function readEditorOptions() {
+			var editorOptions = {
+				language: 'en',
+				height: '200px',
+				toolbar: [ //jshint ignore:line
+					{name: 'format', items: ['Format'] },
+					{name: 'basicstyles', items: ['Bold', 'Italic', 'Strike', 'Underline', 'Subscript', 'Superscript']},
+					{name: 'paragraph', items: ['BulletedList', 'NumberedList']},
+					{name: 'forms', items: ['Outdent', 'Indent']},
+					{name: 'editing', items: ['JustifyLeft', 'JustifyCenter', 'JustifyRight']},
+					{name: 'links', items: ['Link', 'Unlink']},
+					{name: 'insert', items: ['Table']},
+					{name: 'tools', items: ['Maximize']},
+					//'/',
+					{name: 'styles',items: ['PasteText', 'PasteFromWord', 'RemoveFormat']},
+					{name: 'clipboard', items: ['Undo', 'Redo']},
+					//{name: 'document', items: ['PageBreak', 'Source']}
+				],
+				extraPlugins: 'wordcount',
+				wordcount: {
+					showParagraphs: false,
+					showWordCount: true,
+					showCharCount: false,
+				}
+			};
+			return editorOptions;
+		}
+		
+		function readNoteTechniques() {
+			var techniques = angular.copy(techniqueFactory.readTechniques('results'));
+			//techniques.push(resultFactory.readQuickVue());	//Add additional info
+			return techniques;
+		}
+		
+		function save(type) {
+			if(!type) { type = 'save'; }
+			//API: Save report
+			var deferred = $q.defer();
+			var ReportCall = $resource('../../reports/save', {});
+			ReportCall.save({}, {attemptId: ATTEMPT_ID, report: reportxyz, type: type}, function(result) {
+				var message = result.message;
+				lastSaved = getDate();
+				if(type === 'submit') {
+					submitted = true;
+				}
+				deferred.resolve(message);
+				deferred.reject("Error: " + message);
+			});
+			return deferred.promise;
+			//return now;
+		}
+		
+		/*
 		function readBoxes() {
 			//API: Get these from DB
 			var boxes = [
@@ -124,74 +209,27 @@
 				},
 			]
 			return boxes;
-		}
+		}*/
 		
-		function readEditorOptions() {
-			var editorOptions = {
-				language: 'en',
-				height: '200px',
-				toolbar: [ //jshint ignore:line
-					{name: 'format', items: ['Format'] },
-					{name: 'basicstyles', items: ['Bold', 'Italic', 'Strike', 'Underline', 'Subscript', 'Superscript']},
-					{name: 'paragraph', items: ['BulletedList', 'NumberedList']},
-					{name: 'forms', items: ['Outdent', 'Indent']},
-					{name: 'editing', items: ['JustifyLeft', 'JustifyCenter', 'JustifyRight']},
-					{name: 'links', items: ['Link', 'Unlink']},
-					{name: 'insert', items: ['Table']},
-					{name: 'tools', items: ['Maximize']},
-					//'/',
-					{name: 'styles',items: ['PasteText', 'PasteFromWord', 'RemoveFormat']},
-					{name: 'clipboard', items: ['Undo', 'Redo']},
-					//{name: 'document', items: ['PageBreak', 'Source']}
-				],
-				extraPlugins: 'wordcount',
-				wordcount: {
-					showParagraphs: false,
-					showWordCount: true,
-					showCharCount: false,
-				}
-			};
-			return editorOptions;
-		}
-		
-		function readLastSaved() {
-			//API: get last saved date/time from DB
-			var lastSaved = 'not yet saved';
-			return lastSaved;
-		}
-		
-		function readNoteTechniques() {
-			var techniques = angular.copy(techniqueFactory.readTechniques('results'));
-			//techniques.push(resultFactory.readQuickVue());	//Add additional info
-			return techniques;
-		}
-		
-		function readReport() {
+		/*function readReport() {
 			//API: Get the user's report from the DB
 			var report = [];
 			for(var i = 0; i < boxes.length; i++) {
 				report[i] = "";
 			}
 			return report;
+		}*/
+		
+		/*function readLastSaved() {
+			//API: get last saved date/time from DB
+			var lastSaved = 'not yet saved';
+			return lastSaved;
 		}
 		
 		function readSubmitted() {
 			//API: read submitted status from DB
 			var submitted = false;
 			return submitted;
-		}
-		
-		function save() {
-			//API: Save report
-			lastSaved = getDate();
-			//return now;
-		}
-		
-		function submit() {
-			save();
-			//API: Set submitted to true in DB
-			submitted = true;
-			//return submitted;
-		}
+		}*/
 	}
 })();

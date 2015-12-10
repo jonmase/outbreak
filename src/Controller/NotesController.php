@@ -13,6 +13,7 @@ class NotesController extends AppController
 	public function load($attemptId = null) {
 		if($attemptId && $this->Notes->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
 			$query = $this->Notes->find('all', [
+				'conditions' => ['Notes.attempt_id' => $attemptId],
 				'order' => ['Notes.technique_id' => 'ASC'],
 			]);
 			$rawNotes = $query->all();
@@ -50,7 +51,7 @@ class NotesController extends AppController
 				//pr(noteData);
 				//exit;
 				if ($this->Notes->save($noteData)) {
-					$this->set('message', 'Note save succeeded');
+					$this->set('message', 'success');
 				} else {
 					$this->set('message', 'Note save failed');
 				}

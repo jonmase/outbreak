@@ -57,7 +57,7 @@
 								}
 							}, 
 							function(reason) {
-								console.log("Error: " + reason);
+								fail(reason);
 							}
 						);
 					}

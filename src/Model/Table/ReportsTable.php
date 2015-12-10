@@ -36,10 +36,8 @@ class ReportsTable extends Table
             'foreignKey' => 'attempt_id',
             'joinType' => 'INNER'
         ]);
-        $this->belongsToMany('Sections', [
+        $this->hasMany('ReportsSections', [
             'foreignKey' => 'report_id',
-            'targetForeignKey' => 'section_id',
-            'joinTable' => 'reports_sections'
         ]);
     }
 

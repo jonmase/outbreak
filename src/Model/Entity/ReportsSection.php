@@ -6,6 +6,7 @@ use Cake\ORM\Entity;
 /**
  * ReportsSection Entity.
  *
+ * @property int $id
  * @property int $report_id
  * @property \App\Model\Entity\Report $report
  * @property int $section_id

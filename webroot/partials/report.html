@@ -7,13 +7,17 @@
 <div class="row">
 	<div class="col-md-8">
 		<p class="no-margin"><strong>Date:</strong> {{reportCtrl.date | date:'d MMM yyyy'}}</p>
-		<div ng-repeat="(boxId, box) in reportCtrl.boxes">
+		{{reportCtrl.reportxyz}}
+		{{reportCtrl.testabcd}}
+		<input ng-model="reportCtrl.testabcd" type="text" />
+		<div ng-repeat="box in reportCtrl.boxes">
 			<div class="report-box">
 				<h5>{{box.label}}</h5>
 				<div class="page-content" ng-bind-html="box.instructions | unsafe"></div>
 				<!--text-angular ng-model="reportCtrl.report[boxId]" id="report_{{boxId}}"></text-angular-->
 				<!--div ckeditor="editorOptions" ng-model="reportCtrl.report[boxId]" ng-class="{fixed: reportCtrl.submitted}"></div-->
-				<div ckeditor="editorOptions" ng-model="reportCtrl.report[boxId]"></div>
+				<!--div ckeditor="editorOptions" ng-model="reportCtrl.report[box.id]"></div-->
+				<textarea ng-model="reportCtrl.reportxyz[box.id]"></textarea>
 			</div>
 			<!--div ng-if="boxId%2 === 1" class="clearfix"></div-->
 		</div>
@@ -30,11 +34,12 @@
 		<h4>
 			Notes
 		</h4>
-		<p ng-if="reportCtrl.allNotesEmpty">You have not made any notes yet. Notes you make in the Results section will be shown here.</p>
+		<p ng-if="reportCtrl.allNotesEmpty">You have not made any notes yet. Notes you make in the <a href="#results" title="View Results and add Notes">Results section</a> will be shown here.</p>
 		<uib-accordion ng-if="!reportCtrl.allNotesEmpty" close-others="false">
-			<uib-accordion-group ng-repeat="(techniqueId, technique) in reportCtrl.techniques" is-open="true" ng-show="reportCtrl.notes[technique.id] !== ''">
+			<uib-accordion-group ng-repeat="technique in reportCtrl.techniques" is-open="true" ng-show="reportCtrl.notes[technique.id] && reportCtrl.notes[technique.id].note !== ''">
 				<uib-accordion-heading>{{technique.name}}</uib-accordion-heading>
-				<div ng-bind-html="reportCtrl.notes[technique.id] | lineBreaksFilter | unsafe"></div>
+				<div ng-bind-html="reportCtrl.notes[technique.id].note | lineBreaksFilter | unsafe"></div>
+				<!--div ng-bind-html="reportCtrl.notes[technique.id].note | unsafe"></div-->
 			</uib-accordion-group>
 		</uib-accordion>
 	</div>

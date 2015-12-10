@@ -10,13 +10,107 @@ use App\Controller\AppController;
  */
 class ReportsController extends AppController
 {
+	public function load($attemptId = null) {
+		if($attemptId && $this->Reports->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
+			$reportsQuery = $this->Reports->find('all', [
+				'conditions' => ['Reports.attempt_id' => $attemptId, 'Reports.revision' => 0],
+				'order' => ['created' => 'DESC'],
+				'contain' => 'ReportsSections',
+				'fields' => ['id', 'attempt_id', 'revision', 'type', 'created', 'modified'],
+			]);
+			$report = $reportsQuery->first();
+			
+			$sectionsQuery = $this->Reports->ReportsSections->Sections->find('all');
+			$rawSections = $sectionsQuery->all();
+			$sections = [];
+			
+			foreach($rawSections as $section) {
+				$sections[$section->id] = $section;
+			}
+			
+			//pr($report);
+			//pr($sections);
+			//exit;
+		}
+		
+		$this->set(compact('report', 'sections'));
+		$this->set('_serialize', ['report', 'sections']);
+		//pr($sites->toArray());
+	}
+
+	public function save() {
+		if($this->request->is('post')) {
+			//pr($this->request->data);
+			$attemptId = $this->request->data['attemptId'];
+			$report = $this->request->data['report'];
+			//$status = $this->request->data['status'];	//'revision', 'draft' or 'submitted'
+			$type = $this->request->data['type'];	//'save', 'autosave', 'submit'
+			
+			if($attemptId && $this->Reports->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
+				$reportQuery = $this->Reports->find('all', [
+					'conditions' => ['Reports.attempt_id' => $attemptId, 'Reports.revision' => 0],
+					'order' => ['created' => 'DESC'],
+				]);
+				$lastSavedReport = $reportQuery->first();
+				if(!$reportQuery->isEmpty() && $lastSavedReport->type === 'submit') {
+					//Report has already been submitted, so can't save over the top
+					$this->set('message', 'Report already submitted');
+				}
+				else {
+					$sectionsQuery = $this->Reports->ReportsSections->Sections->find('all');
+					$sections = $sectionsQuery->all();
+					
+					if(!$reportQuery->isEmpty()) {
+						//Change old version to a revision
+						//$oldReportData = $this->Reports->newEntity();
+						$oldReportData = lastSavedReport;
+						$oldReportData->revision = 1;
+					}
+					
+					$reportData = $this->Reports->newEntity();
+					$reportData->attempt_id = $attemptId;
+					$reportData->revision = 0;
+					$reportData->type = $type;
+					$reportData->serialised = serialize($report);
+					
+					$sectionsData = [];
+					foreach($sections as $section) {
+						$sectionData = $this->Reports->ReportsSections->newEntity();
+						$sectionData->section_id = $section->id;
+						$sectionData->text = $report[$section->id];
+						$sectionsData[] = $sectionData;
+					}
+					$reportData->reports_sections = $sectionsData;
+					
+					pr($reportData);
+					exit;
+					/*if ($this->Notes->save($noteData)) {
+						$this->set('message', 'success');
+					} else {
+						$this->set('message', 'Report save failed');
+					}*/
+					//$this->Attempts->save($attempt);
+					//pr($attempt);
+				}
+			}
+			else {
+				$this->set('message', 'Report save denied');
+			}
+		}
+		else {
+			$this->set('message', 'Report save not POST');
+		}
+		$this->viewBuilder()->layout('ajax');
+		$this->render('/Element/ajaxmessage');
+	}
+	
 
     /**
      * Index method
      *
      * @return void
      */
-    public function index()
+    /*public function index()
     {
         $this->paginate = [
             'contain' => ['Attempts']
@@ -32,7 +126,7 @@ class ReportsController extends AppController
      * @return void
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
-    public function view($id = null)
+    /*public function view($id = null)
     {
         $report = $this->Reports->get($id, [
             'contain' => ['Attempts', 'Sections']
@@ -46,7 +140,7 @@ class ReportsController extends AppController
      *
      * @return void Redirects on successful add, renders view otherwise.
      */
-    public function add()
+    /*public function add()
     {
         $report = $this->Reports->newEntity();
         if ($this->request->is('post')) {
@@ -71,7 +165,7 @@ class ReportsController extends AppController
      * @return void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
-    public function edit($id = null)
+    /*public function edit($id = null)
     {
         $report = $this->Reports->get($id, [
             'contain' => ['Sections']
@@ -98,7 +192,7 @@ class ReportsController extends AppController
      * @return \Cake\Network\Response|null Redirects to index.
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
-    public function delete($id = null)
+    /*public function delete($id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
         $report = $this->Reports->get($id);
@@ -108,5 +202,5 @@ class ReportsController extends AppController
             $this->Flash->error(__('The report could not be deleted. Please, try again.'));
         }
         return $this->redirect(['action' => 'index']);
-    }
+    }*/
 }
