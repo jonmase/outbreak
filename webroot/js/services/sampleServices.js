@@ -254,6 +254,9 @@
 			var SamplesCall = $resource('../../Samples/load/:attemptId.json', {attemptId: '@id'});
 			SamplesCall.get({attemptId: ATTEMPT_ID}, function(result) {
 				savedSamples = result.samples;
+				if(savedSamples.length === 0) {
+					savedSamples = {};
+				}
 				deferred.resolve('Samples loaded');
 				deferred.reject('Samples not loaded');
 			});
