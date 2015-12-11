@@ -183,7 +183,6 @@ class AttemptsController extends AppController
 		
         $this->set('attemptId', $id);
 		$this->viewBuilder()->layout('angular');
-		$this->set('title', 'Viral Outbreak');
     }
 
     /**
