@@ -2,9 +2,9 @@
 	angular.module('flu')
 		.controller('MainController', MainController);
 
-	MainController.$inject = ['$scope', '$location', '$uibModal', '$q', 'sectionsConstant', 'progressFactory', 'lockFactory', 'mediaFactory', 'modalFactory', 'techniqueFactory', 'questionFactory', 'siteFactory', 'schoolFactory', 'sampleFactory', 'assayFactory', 'resultFactory', 'reportFactory'];
+	MainController.$inject = ['$scope', '$location', '$uibModal', '$q', '$resource', 'sectionsConstant', 'progressFactory', 'lockFactory', 'mediaFactory', 'modalFactory', 'techniqueFactory', 'questionFactory', 'siteFactory', 'schoolFactory', 'sampleFactory', 'assayFactory', 'resultFactory', 'reportFactory'];
 	
-	function MainController($scope, $location, $uibModal, $q, sectionsConstant, progressFactory, lockFactory, mediaFactory, modalFactory, techniqueFactory, questionFactory, siteFactory, schoolFactory, sampleFactory, assayFactory, resultFactory, reportFactory) {
+	function MainController($scope, $location, $uibModal, $q, $resource, sectionsConstant, progressFactory, lockFactory, mediaFactory, modalFactory, techniqueFactory, questionFactory, siteFactory, schoolFactory, sampleFactory, assayFactory, resultFactory, reportFactory) {
 		var vm = this;
 		vm.loading = true;
 		
@@ -14,6 +14,14 @@
 		$scope.currentSectionId = getSectionFromPath();
 
 		//Actions
+		/*var loadPromise = $q.defer();
+		var loadCall = $resource('../load/:attemptId.json', {attemptId: '@id'});
+		loadCall.get({attemptId: ATTEMPT_ID}, function(result) {
+			progress = result.progress;
+			loadPromise.resolve('Progress loaded');
+			loadPromise.reject('Progress not loaded');
+		});*/
+
 		var progressPromise = progressFactory.loadProgress();
 		var resourcePromise = progressFactory.loadResources();
 		
@@ -38,6 +46,7 @@
 		var reportPromise = reportFactory.loadReport();
 		
 		$q.all([progressPromise, resourcePromise, techniquesPromise, researchTechniquesPromise, usefulPromise, questionsPromise, responsesPromise, sitesPromise, schoolsPromise, typesPromise, samplesPromise, happinessPromise, assaysPromise, standardsPromise, standardAssaysPromise, notesPromise, reportPromise]).then(
+		//loadPromise.then(
 			function(result) {
 				console.log(result);
 				vm.progress = progressFactory.getProgress();

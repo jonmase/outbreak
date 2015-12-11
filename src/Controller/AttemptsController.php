@@ -2,7 +2,8 @@
 namespace App\Controller;
 
 use App\Controller\AppController;
-
+use Cake\View\Helper;
+use Cake\View\Helper\HtmlHelper;
 /**
  * Attempts Controller
  *
@@ -11,6 +12,11 @@ use App\Controller\AppController;
 class AttemptsController extends AppController
 {
 	public $helpers = ['Time'];
+	
+	/*public funciton load($attemptId = null) {
+		if($attemptId && $this->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
+	
+	}*/
 	
 	public function loadProgress($attemptId = null) {
 		if($attemptId && $this->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
@@ -166,6 +172,15 @@ class AttemptsController extends AppController
         $this->set('attempt', $attempt);
         $this->set('_serialize', ['attempt']);*/
 		
+		if(!$this->Attempts->checkUserAttempt($this->Auth->user('id'), $id)) {
+			//$view = new View($this);
+			//$Html = $view->loadHelper('Html');
+			//$emailLink = $html->link('msdlt@medsci.ox.ac.uk', 'mailto:msdlt@medsci.ox.ac.uk');
+			//$this->Flash->error(__('You do not have permission to view this attempt. If this is an error, please contact ' . $emailLink));
+			$this->Flash->error(__('You do not have permission to view this attempt. If you think you should be able to, please contact msdlt@medsci.ox.ac.uk, giving your SSO username and this attempt ID: '. $id));
+			return $this->redirect(['action' => 'index']);
+		}
+		
         $this->set('attemptId', $id);
 		$this->viewBuilder()->layout('angular');
 		$this->set('title', 'Viral Outbreak');
@@ -191,11 +206,12 @@ class AttemptsController extends AppController
 			//$this->Flash->success(__('The attempt has been saved.'));
 			return $this->redirect(['action' => 'view', $attempt->id]);
 		} else {
-			$view = new View($this);
-			$Html = $view->loadHelper('Html');
-			$emailLink = $html->link('msdlt@medsci.ox.ac.uk', 'mailto:msdlt@medsci.ox.ac.uk');
-			$this->Flash->error(__('The attempt could not be started. Please, try again. If problems persist, please contact ' . $emailLink));
-			return $this->redirect(['action' => 'view', $attempt->id]);
+			//$view = new View($this);
+			//$Html = $view->loadHelper('Html');
+			//$emailLink = $html->link('msdlt@medsci.ox.ac.uk', 'mailto:msdlt@medsci.ox.ac.uk');
+			//$this->Flash->error(__('The attempt could not be started. Please, try again. If problems persist, please contact ' . $emailLink));
+			$this->Flash->error(__('You do not have permission to view this attempt. If this is an error, please contact msdlt@medsci.ox.ac.uk'));
+			return $this->redirect(['action' => 'index']);
 		}
     }
     /* public function add()

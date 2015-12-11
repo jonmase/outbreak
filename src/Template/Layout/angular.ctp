@@ -25,8 +25,9 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
     </title>
     <?= $this->Html->meta('icon') ?>
     <?= $this->Html->css('bootstrap.min.css') ?>
+	<?= $this->Html->css('awesome-bootstrap-checkbox.css') ?>
+	<?= $this->Html->css('fonts/font-awesome/css/font-awesome.min.css') ?>
     <?= $this->Html->css('influenza.css') ?>
-	<?= $this->Html->css('fonts/font-awesome/css/font-awesome.min.css', ['block' => true]) ?>
 
     <?= $this->fetch('meta') ?>
     <?= $this->fetch('css') ?>

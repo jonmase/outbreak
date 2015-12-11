@@ -106,7 +106,7 @@ class ReportsController extends AppController
 							$this->set('message', 'Report save error (new report)');
 							return false;
 						}
-						if(is_null($oldReportData) || !$this->Reports->save($oldReportData)) {
+						if(!is_null($oldReportData) && !$this->Reports->save($oldReportData)) {
 							$this->set('message', 'Report save error (revision report)');
 							return false;
 						}

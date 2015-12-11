@@ -1,4 +1,3 @@
-<?= $this->Html->css('awesome-bootstrap-checkbox.css', ['block' => true]) ?>
 <div ng-controller="MainController as mainCtrl" style="width: 100%; height: 100%">
 	<div ng-show="mainCtrl.loading" style="height: 100%; width: 100%; text-align: center; display: table; position: absolute;">
 		<div style="display: table-cell; vertical-align: middle;">

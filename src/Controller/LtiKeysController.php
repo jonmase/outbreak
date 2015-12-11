@@ -157,7 +157,15 @@ class LtiKeysController extends AppController
 
 			//Add/update the lti user data
 			$userData->lti_eid = $context->info['lis_person_sourcedid'];
-			$userData->lti_displayid = $context->info['ext_sakai_provider_displayid'];
+			if(isset($context->info['ext_sakai_provider_displayid'])) {
+				$userData->lti_displayid = $context->info['ext_sakai_provider_displayid'];
+			}
+			else if(isset($context->info['lis_person_sourcedid'])) {
+				$userData->lti_displayid = $context->info['lis_person_sourcedid'];
+			}
+			else {
+				$userData->lti_displayid = null;
+			}
 			$userData->lti_roles = $context->info['roles'];
 			$userData->lti_sakai_role = $context->info['ext_sakai_role'];
 			$userData->lti_lis_person_contact_email_primary = $context->info['lis_person_contact_email_primary'];
