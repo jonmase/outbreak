@@ -178,18 +178,24 @@ class AttemptsController extends AppController
      */
     public function add()
     {
-		$user = $this->request->session()->read('User');
+		$user = $this->Auth->user();
         $attempt = $this->Attempts->newEntity();
-		$attempt->lti_user_id = $user->id;
+		//pr($user);
+		$attempt->lti_user_id = $user['id'];
+		//pr($attempt);
 		//$attempt->time = 48;
 		//$attempt->money = 200;
 		//$attempt->happiness = 3;
 		
 		if ($this->Attempts->save($attempt)) {
-			$this->Flash->success(__('The attempt has been saved.'));
+			//$this->Flash->success(__('The attempt has been saved.'));
 			return $this->redirect(['action' => 'view', $attempt->id]);
 		} else {
-			$this->Flash->error(__('The attempt could not be saved. Please, try again.'));
+			$view = new View($this);
+			$Html = $view->loadHelper('Html');
+			$emailLink = $html->link('msdlt@medsci.ox.ac.uk', 'mailto:msdlt@medsci.ox.ac.uk');
+			$this->Flash->error(__('The attempt could not be started. Please, try again. If problems persist, please contact ' . $emailLink));
+			return $this->redirect(['action' => 'view', $attempt->id]);
 		}
     }
     /* public function add()

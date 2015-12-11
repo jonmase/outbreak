@@ -1,4 +1,7 @@
+<?= $this->Html->css('bootstrap.min.css', ['block' => true]) ?>
+<?= $this->Html->css('fonts/font-awesome/css/font-awesome.min.css', ['block' => true]) ?>
 <?= $this->Html->css('awesome-bootstrap-checkbox.css', ['block' => true]) ?>
+<?= $this->Html->css('influenza.css', ['block' => true]) ?>
 <div ng-controller="MainController as mainCtrl" style="width: 100%; height: 100%">
 	<!--bootstrap-modal></bootstrap-modal-->
 	<div ng-show="mainCtrl.loading">
