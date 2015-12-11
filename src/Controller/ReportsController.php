@@ -2,6 +2,7 @@
 namespace App\Controller;
 
 use App\Controller\AppController;
+use Cake\Datasource\ConnectionManager;
 
 /**
  * Reports Controller
@@ -18,7 +19,18 @@ class ReportsController extends AppController
 				'contain' => 'ReportsSections',
 				'fields' => ['id', 'attempt_id', 'revision', 'type', 'created', 'modified'],
 			]);
+			/*if($reportsQuery->isEmpty()) {
+				
+			}*/
 			$report = $reportsQuery->first();
+			//pr($report->reports_sections);
+			if(!empty($report)) {
+				$reports_sections = [];
+				foreach($report->reports_sections as $section) {
+					$reports_sections[$section->section_id] = $section->text;
+				}
+				$report->reports_sections = $reports_sections;
+			}
 			
 			$sectionsQuery = $this->Reports->ReportsSections->Sections->find('all');
 			$rawSections = $sectionsQuery->all();
@@ -63,13 +75,16 @@ class ReportsController extends AppController
 					if(!$reportQuery->isEmpty()) {
 						//Change old version to a revision
 						//$oldReportData = $this->Reports->newEntity();
-						$oldReportData = lastSavedReport;
-						$oldReportData->revision = 1;
+						$oldReportData = $lastSavedReport;
+						$oldReportData->revision = true;
+					}
+					else {
+						$oldReportData = null;
 					}
 					
 					$reportData = $this->Reports->newEntity();
 					$reportData->attempt_id = $attemptId;
-					$reportData->revision = 0;
+					$reportData->revision = false;
 					$reportData->type = $type;
 					$reportData->serialised = serialize($report);
 					
@@ -82,15 +97,21 @@ class ReportsController extends AppController
 					}
 					$reportData->reports_sections = $sectionsData;
 					
-					pr($reportData);
-					exit;
-					/*if ($this->Notes->save($noteData)) {
+					//pr($reportData);
+					//pr($oldReportData);
+					//exit;
+					$connection = ConnectionManager::get('default');
+					$connection->transactional(function () use ($reportData, $oldReportData) {
+						if(!$this->Reports->save($reportData)) {
+							$this->set('message', 'Report save error (new report)');
+							return false;
+						}
+						if(is_null($oldReportData) || !$this->Reports->save($oldReportData)) {
+							$this->set('message', 'Report save error (revision report)');
+							return false;
+						}
 						$this->set('message', 'success');
-					} else {
-						$this->set('message', 'Report save failed');
-					}*/
-					//$this->Attempts->save($attempt);
-					//pr($attempt);
+					});
 				}
 			}
 			else {

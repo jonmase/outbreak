@@ -16,11 +16,7 @@
 		vm.cancel = cancel;
 
 		function confirm() {
-			var editors = CKEDITOR.instances;	//Get all of the editors
-			angular.forEach(editors, function(editor) {
-				//editor.destroy();
-				editor.setReadOnly();	//Set the editors to readOnly
-			});
+			reportFactory.setEditorsReadOnly(true);
 			//vm.failed = false;
 			vm.saving = true;
 			
@@ -48,9 +44,6 @@
 					fail(reason);
 				}
 			);
-			
-			lockFactory.setComplete('report');
-			$uibModalInstance.close();
 		}
 		
 		function success() {

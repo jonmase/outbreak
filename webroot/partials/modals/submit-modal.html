@@ -8,6 +8,12 @@
 	<p>Remember that you can use the Save button to save your report and return to it later.</p>
 </div>
 <div class="modal-footer">
-	<button type="button" class="btn btn-default" ng-click="SubmitModalCtrl.cancel()">Cancel</button>
-	<button type="button" class="btn btn-primary" ng-click="SubmitModalCtrl.confirm()">Submit</button>
+	<div ng-hide="SubmitModalCtrl.saving">
+		<button type="button" class="btn btn-default" ng-click="SubmitModalCtrl.cancel()">Cancel</button>
+		<button type="button" class="btn btn-primary" ng-click="SubmitModalCtrl.confirm()">Submit</button>
+	</div>
+	<div ng-show="SubmitModalCtrl.saving">
+		<loader></loader>
+		Submitting Report
+	</div>
 </div>

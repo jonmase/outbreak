@@ -7,26 +7,34 @@
 <div class="row">
 	<div class="col-md-8">
 		<p class="no-margin"><strong>Date:</strong> {{reportCtrl.date | date:'d MMM yyyy'}}</p>
-		{{reportCtrl.reportxyz}}
-		{{reportCtrl.testabcd}}
-		<input ng-model="reportCtrl.testabcd" type="text" />
 		<div ng-repeat="box in reportCtrl.boxes">
 			<div class="report-box">
 				<h5>{{box.label}}</h5>
 				<div class="page-content" ng-bind-html="box.instructions | unsafe"></div>
 				<!--text-angular ng-model="reportCtrl.report[boxId]" id="report_{{boxId}}"></text-angular-->
 				<!--div ckeditor="editorOptions" ng-model="reportCtrl.report[boxId]" ng-class="{fixed: reportCtrl.submitted}"></div-->
-				<!--div ckeditor="editorOptions" ng-model="reportCtrl.report[box.id]"></div-->
-				<textarea ng-model="reportCtrl.reportxyz[box.id]"></textarea>
+				<div ckeditor="editorOptions" ng-model="reportCtrl.report.reports_sections[box.id]"></div>
+				<!--textarea ng-model="reportCtrl.report.reports_sections[box.id]"></textarea-->
 			</div>
 			<!--div ng-if="boxId%2 === 1" class="clearfix"></div-->
 		</div>
 		<div class="align-center-full-width" style="margin-top: 10px;">
 			<div>
+			</div>
+			<div ng-hide="reportCtrl.saving">
 				<button class="btn btn-primary" type="submit" ng-click="reportCtrl.save()" ng-disabled="reportCtrl.submitted">Save</button>
 				<button class="btn btn-success" type="submit" ng-click="reportCtrl.submit()" ng-disabled="reportCtrl.submitted">Submit</button>
 			</div>
-			<div><span ng-if="!reportCtrl.submitted">Last Saved</span><span ng-if="reportCtrl.submitted">Submitted</span>: {{reportCtrl.lastSaved | date: 'H:mm:ss on d MMM yyyy' }}</div>
+			<div ng-hide="reportCtrl.saving">
+				<span ng-if="!reportCtrl.submitted">Last Saved</span><span ng-if="reportCtrl.submitted">Submitted</span>: {{reportCtrl.lastSaved | date: 'H:mm:ss on d MMM yyyy' }}
+				<span ng-show="reportCtrl.lastSaveType === 'auto'">(Auto save)</span>
+				<span ng-show="reportCtrl.lastSaveType === 'save'">(Manual save)</span>
+				<span ng-show="reportCtrl.lastSaveType === 'leave'">(Saved on page exit)</span>
+			</div>
+			<div ng-show="reportCtrl.saving">
+				<loader></loader>
+				Saving Report
+			</div>
 		</div>
 	</div>
 	

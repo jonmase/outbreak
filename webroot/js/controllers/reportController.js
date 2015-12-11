@@ -2,11 +2,12 @@
 	angular.module('flu.report', [])
 		.controller('ReportController', ReportController);
 
-	ReportController.$inject = ['$scope', '$sce', '$uibModal', 'dateFilter', 'sectionFactory', 'lockFactory', 'reportFactory', 'resultFactory', 'techniqueFactory'];
+	ReportController.$inject = ['$scope', '$sce', '$uibModal', '$timeout', 'dateFilter', 'sectionFactory', 'lockFactory', 'reportFactory', 'resultFactory', 'techniqueFactory'];
 		
-	function ReportController($scope, $sce, $uibModal, dateFilter, sectionFactory, lockFactory, reportFactory, resultFactory, techniqueFactory) {
+	function ReportController($scope, $sce, $uibModal, $timeout, dateFilter, sectionFactory, lockFactory, reportFactory, resultFactory, techniqueFactory) {
 		var vm = this;
 		var sectionId = 'report';
+		var autoSaveTimeout;
 		
 		//Check whether the section is locked
 		if(!lockFactory.checkLock(sectionId)) {	
@@ -20,9 +21,9 @@
 		vm.section = sectionFactory.getSection(sectionId);	//Get the section details
 		vm.boxes = reportFactory.getBoxes();
 		vm.date = reportFactory.getDate();
-		vm.reportxyz = reportFactory.getReport();
-		vm.testabcd = reportFactory.getTest();
+		vm.report = reportFactory.getReport();
 		vm.lastSaved = reportFactory.getLastSaved();
+		vm.lastSaveType = reportFactory.getLastSaveType();
 		vm.submitted = reportFactory.getSubmitted();
 		vm.notes = resultFactory.getNotes();
 		//vm.firstNote = reportFactory.getFirstNote();
@@ -32,21 +33,65 @@
 		//This only seems to work (using the ng-ckeditor plugin) using scope, not with vm and 'controller as' syntax
 		//The editors will be set to readOnly mode if vm.submitted is true
 		$scope.editorOptions = reportFactory.getEditorOptions(vm.submitted);	
+		vm.saving = false;
 		
 		//Bindable Members - methods
 		vm.save = save;
 		vm.submit = submit;
 		
-		//Actions
 		
-
+		
+		//Actions
+		//Initialise autosave
+		setAutosaveTimeout();
+		//Cancel autosave timeout when elaving page
+		$scope.$on("$destroy", function() { 
+			cancelAutosaveTimeout();
+			reportFactory.save('leave');
+		});
+		
 		//Functions
+		function autosave() {
+			var reportPromise = reportFactory.save('auto');
+			reportPromise.then(
+				function(result) {
+					console.log(result);
+					vm.lastSaved = reportFactory.getLastSaved();
+					vm.lastSaveType = reportFactory.getLastSaveType();
+					setAutosaveTimeout();
+				}, 
+				function(reason) {
+					console.log("Error: " + reason);
+				}
+			);
+		}
+		
+		function cancelAutosaveTimeout() {
+			$timeout.cancel(autoSaveTimeout);
+		}
+		
+		function setAutosaveTimeout() {
+			autoSaveTimeout = $timeout(
+				function() { autosave() },
+				60000	//every minute
+			);
+		}
+		
 		function save() {
+			reportFactory.setEditorsReadOnly(true);
+			vm.saving = true;
+			if(autoSaveTimeout) {
+				cancelAutosaveTimeout();
+			}
 			var reportPromise = reportFactory.save('save');
 			reportPromise.then(
 				function(result) {
 					console.log(result);
 					vm.lastSaved = reportFactory.getLastSaved();
+					vm.lastSaveType = reportFactory.getLastSaveType();
+					vm.saving = false;
+					reportFactory.setEditorsReadOnly(false);
+					setAutosaveTimeout();
 				}, 
 				function(reason) {
 					console.log("Error: " + reason);
@@ -66,6 +111,7 @@
 			
 			modalInstance.result.then(function () {
 				vm.lastSaved = reportFactory.getLastSaved();
+				vm.lastSaveType = reportFactory.getLastSaveType();
 				vm.submitted = reportFactory.getSubmitted();
 			});
 		}

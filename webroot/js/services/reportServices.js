@@ -6,23 +6,26 @@
 	
 	function reportFactory(techniqueFactory, resultFactory, $resource, $q) {
 		//Variables
-		var boxes, editorOptions, reportxyz, lastSaved, submitted, noteTechniques, testabcd; 
+		var boxes, editorOptions, lastSaved, lastSaveType, noteTechniques, report, submitted; 
 		
 		//Exposed Methods
 		var factory = {
+			//cancelAutosaveTimeout: cancelAutosaveTimeout,
+			setup: setup,
 			getAllNotesEmpty: getAllNotesEmpty,
 			getBoxes: getBoxes,
 			getDate: getDate,
 			getEditorOptions: getEditorOptions,
 			getFirstNote: getFirstNote,
 			getLastSaved: getLastSaved,
+			getLastSaveType: getLastSaveType,
 			getNoteTechniques: getNoteTechniques,
 			getReport: getReport,
-			getTest: getTest,
 			getSubmitted: getSubmitted,
 			loadReport: loadReport,
 			save: save,
-			setup: setup,
+			//setAutosaveTimeout: setAutosaveTimeout,
+			setEditorsReadOnly: setEditorsReadOnly,
 			//submit: submit,
 		}
 		return factory;
@@ -31,8 +34,6 @@
 		function setup() {
 			//boxes = readBoxes();
 			editorOptions = readEditorOptions();
-			//testabcd = 'starting test text';
-			testabcd = null;
 			//report = readReport();
 			//lastSaved = readLastSaved();
 			//submitted = readSubmitted();
@@ -50,10 +51,6 @@
 				}
 			}
 			return allNotesEmpty;
-		}
-		
-		function getTest() {
-			return testabcd;
 		}
 		
 		function getBoxes() {
@@ -89,12 +86,16 @@
 			return lastSaved;
 		}
 		
+		function getLastSaveType() {
+			return lastSaveType;
+		}
+		
 		function getNoteTechniques() {
 			return noteTechniques;
 		}
 		
 		function getReport() {
-			return reportxyz;
+			return report;
 		}
 		
 		function getSubmitted() {
@@ -105,15 +106,22 @@
 			var deferred = $q.defer();
 			var ReportCall = $resource('../../reports/load/:attemptId.json', {attemptId: '@id'});
 			ReportCall.get({attemptId: ATTEMPT_ID}, function(result) {
-				reportxyz = result.report;
+				report = result.report;
 				boxes = result.sections;
-				if(reportxyz) {
-					submitted = reportxyz.type === 'submit';
-					lastSaved = reportxyz.modified;
+				if(report) {
+					lastSaveType = report.type;
+					submitted = report.type === 'submit';
+					lastSaved = report.modified;
 				}
 				else {
+					report = {};
+					report.reports_sections = {};
+					for(var box in boxes) {
+						report.reports_sections[box] = '';
+					}
 					submitted = false;
 					lastSaved = 'not yet saved';
+					lastSaveType = 'none';
 				}
 				deferred.resolve('Report loaded');
 				deferred.reject('Report not loaded');
@@ -160,9 +168,10 @@
 			//API: Save report
 			var deferred = $q.defer();
 			var ReportCall = $resource('../../reports/save', {});
-			ReportCall.save({}, {attemptId: ATTEMPT_ID, report: reportxyz, type: type}, function(result) {
+			ReportCall.save({}, {attemptId: ATTEMPT_ID, report: report.reports_sections, type: type}, function(result) {
 				var message = result.message;
 				lastSaved = getDate();
+				lastSaveType = type;
 				if(type === 'submit') {
 					submitted = true;
 				}
@@ -171,6 +180,15 @@
 			});
 			return deferred.promise;
 			//return now;
+		}
+		
+		//Set the CKEditors to read only (readOnly = true) or editable (readOnly = false)
+		function setEditorsReadOnly(readOnly) {
+			var editors = CKEDITOR.instances;	//Get all of the editors
+			angular.forEach(editors, function(editor) {
+				//editor.destroy();
+				editor.setReadOnly(readOnly);	//Set the editors to readOnly/editable
+			});
 		}
 		
 		/*
