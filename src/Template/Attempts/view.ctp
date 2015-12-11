@@ -1,11 +1,12 @@
-<?= $this->Html->css('bootstrap.min.css', ['block' => true]) ?>
-<?= $this->Html->css('fonts/font-awesome/css/font-awesome.min.css', ['block' => true]) ?>
 <?= $this->Html->css('awesome-bootstrap-checkbox.css', ['block' => true]) ?>
-<?= $this->Html->css('influenza.css', ['block' => true]) ?>
 <div ng-controller="MainController as mainCtrl" style="width: 100%; height: 100%">
-	<!--bootstrap-modal></bootstrap-modal-->
-	<div ng-show="mainCtrl.loading">
-		<i class="fa fa-5x fa-circle-o-notch fa-spin"></i>
+	<div ng-show="mainCtrl.loading" style="height: 100%; width: 100%; text-align: center; display: table; position: absolute;">
+		<div style="display: table-cell; vertical-align: middle;">
+			<span style="line-height: 45px; vertical-align: middle; display: inline-block">
+				<i class="fa fa-3x fa-circle-o-notch fa-spin"></i>&nbsp;
+				<span style="vertical-align: text-bottom; font-size: 1.8em;">Your attempt is loading. Sorry for the wait, it shouldn't take long...</span>
+			</span>
+		</div>
 	</div>
 	<div id="content" class="container-fluid" ng-hide="mainCtrl.loading">
 		<div id="icon-bar">
