@@ -61,7 +61,7 @@ class Attempt extends Entity
 			return "Viral serotype identified"; 
 		}
 		if($this->_properties['lab']) {
-			return "Lab visited"; 
+			return "Working in the Lab"; 
 		}
 		if($this->_properties['sampling']) {
 			return "Samples collected"; 
@@ -81,5 +81,35 @@ class Attempt extends Entity
 		else {
 			return "Not started"; 
 		}
+		/*if($this->_properties['research']) {
+			return 9; 
+		}
+		if($this->_properties['report']) {
+			return 8; 
+		}
+		if($this->_properties['hidentified'] && $this->_properties['nidentified']) {
+			return 7; 
+		}
+		if($this->_properties['lab']) {
+			return 6; 
+		}
+		if($this->_properties['sampling']) {
+			return 5; 
+		}
+		if($this->_properties['questions']) {
+			return 4; 
+		}
+		if($this->_properties['revision']) {
+			return 3; 
+		}
+		if($this->_properties['alert']) {
+			return 2; 
+		}
+		if($this->_properties['start']) {
+			return 1; 
+		}
+		else {
+			return 0; 
+		}*/
 	}
 }

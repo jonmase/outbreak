@@ -10,6 +10,8 @@ use App\Controller\AppController;
  */
 class AttemptsController extends AppController
 {
+	public $helpers = ['Time'];
+	
 	public function loadProgress($attemptId = null) {
 		if($attemptId && $this->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
 			$progress = $this->Attempts->get($attemptId, ['fields' => ['start', 'alert', 'revision', 'questions', 'sampling', 'lab', 'hidentified', 'nidentified', 'report', 'research']]);
@@ -132,9 +134,13 @@ class AttemptsController extends AppController
 		$user = $this->Auth->user();
 		$conditions = ['lti_user_id' => $user['id']];
         $this->paginate = [
-            'conditions' => $conditions
+            'conditions' => $conditions,
+			'order' => ['modified' => 'DESC'],
+			'limit' => 10,
         ];
-        $this->set('attempts', $this->paginate($this->Attempts));
+		$attempts = $this->paginate($this->Attempts);
+		//pr($attempts->toArray());
+        $this->set('attempts', $attempts);
 		//$attemptsQuery = $this->Attempts->find('all', ['conditions' => $conditions]);
 		//$attempts = $attemptsQuery->all();
 		//$this->set(compact('attempts'));
