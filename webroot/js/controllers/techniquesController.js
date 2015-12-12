@@ -54,7 +54,7 @@
 			
 			//Actions
 			vm.setSubsection(vm.currentTechniqueId);
-			if(sectionId === 'research') {	//For research section, only show research techniques
+			if(sectionId === 'research' && !progressFactory.checkProgress(sectionId)) {	//For research section, only show research techniques
 				lockFactory.setComplete(sectionId);
 			}
 			vm.usefulDisabled = [];

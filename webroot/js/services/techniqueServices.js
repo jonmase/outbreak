@@ -199,12 +199,9 @@
 			}
 			else {
 				for(var techniqueId in revisionTechniques) {
-					//if(techniques[techniqueId].level <= vm.levelThreshold) {
-						if(!revisionTechniques[techniqueId].infoOnly && typeof(usefulTechniques[techniqueId]) === "undefined" || usefulTechniques[techniqueId] === null) {
-							//lockFactory.setProgressAndLocks(sectionId, 0);	//Set the progress for this section to incomplete (unnecessary, will already be so)
-							return 'Revision not yet completed'; //Exit the check, don't need to do anything more
-						}
-					//}
+					if(!revisionTechniques[techniqueId].infoOnly && typeof(usefulTechniques[techniqueId]) === "undefined" || usefulTechniques[techniqueId] === null) {
+						return 'Revision not yet completed'; //Exit the check, don't need to do anything more
+					}
 				}
 				return lockFactory.setComplete(sectionId);	//Set the progress for this section to complete
 			}

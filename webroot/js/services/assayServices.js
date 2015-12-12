@@ -511,7 +511,7 @@
 				return lockFactory.setComplete(sectionsToSave);
 			}
 			else {
-				return false;
+				return 'No Lab progress to save';
 			}
 		};
 		

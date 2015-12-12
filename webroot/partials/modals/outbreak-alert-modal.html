@@ -7,5 +7,10 @@
 	<info-on-home></info-on-home>
 </div>
 <div class="modal-footer">
-	<button type="button" class="btn btn-primary" ng-click="OutbreakAlertModalCtrl.confirm()">Continue</button>
+	<div ng-hide="OutbreakAlertModalCtrl.saving">
+		<button type="button" class="btn btn-primary" ng-click="OutbreakAlertModalCtrl.confirm()">Continue</button>
+	</div>
+	<div ng-show="OutbreakAlertModalCtrl.saving">
+		<loader></loader> Saving Progress
+	</div>
 </div>

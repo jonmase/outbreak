@@ -36,7 +36,6 @@
 		vm.setSubsection = setSubsection;
 		vm.setTab = setTab;
 		vm.performAssay = performAssay;
-		vm.setLabComplete = setLabComplete;
 		vm.selectAllOrNoneBySite = selectAllOrNoneBySite;
 		vm.selectAllOrNoneByType = selectAllOrNoneByType;
 		
@@ -53,7 +52,7 @@
 				controller: 'FluAlertModalController',
 				controllerAs: 'FluAlertModalCtrl',
 			});
-			lockFactory.setComplete('lab');
+			//lockFactory.setComplete('lab');
 		}
 
 		//Functions
@@ -115,10 +114,6 @@
 			assayFactory.setAssayCount(vm.currentTechniqueId);
 		}
 		
-		function setLabComplete() {
-			assayFactory.setLabComplete(vm.currentTechniqueId);
-		}
-
 		function setSubsection(techniqueId) {
 			assayFactory.setCurrentTechniqueId(techniqueId);
 			vm.currentTechniqueId = techniqueId;

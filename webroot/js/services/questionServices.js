@@ -241,13 +241,19 @@
 		}
 		
 		function setQuestionsComplete() {
-			for(var questionId in questions) {
-				if(!(responses.scores[questionId] > -1)) {
-					return false;
-				}
+			var sectionId = 'questions';
+			if(progressFactory.checkProgress(sectionId)) {	//If progress is already set, don't need to set it again
+				return 'Questions already complete';
 			}
-			//If we've got here, none of the questions are unscored (and therefore unchecked), so set the section to complete
-			return lockFactory.setComplete('questions');
+			else {
+				for(var questionId in questions) {
+					if(!(responses.scores[questionId] > -1)) {
+						return 'Questions not yet complete';
+					}
+				}
+				//If we've got here, none of the questions are unscored (and therefore unchecked), so set the section to complete
+				return lockFactory.setComplete(sectionId);
+			}
 		}
 
 		function setSaving(questionId, value) { 

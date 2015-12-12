@@ -35,7 +35,7 @@
 			var timeCost = vm.technique.time;
 			
 			var assayPromise = assayFactory.setAssays(currentTechniqueId, moneyCost, timeCost);	//Set the assays and save them to the DB, along with the reduced resources
-			$q.all([assayPromise]).then(
+			assayPromise.then(
 				function(result) {
 					console.log(result);
 					var completePromise = assayFactory.setLabComplete(vm.currentTechniqueId);
