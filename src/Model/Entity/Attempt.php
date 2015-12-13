@@ -51,7 +51,7 @@ class Attempt extends Entity
     ];
 	
 	protected function _getProgress() {
-		if($this->_properties['research']) {
+		if($this->_properties['research'] && $this->_properties['report']) {
 			return "Completed"; 
 		}
 		if($this->_properties['report']) {

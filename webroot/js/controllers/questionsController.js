@@ -102,6 +102,7 @@
 			questionFactory.clearAnswers(questionId);			
 		}
 		
+		//Dev only: set section to complete
 		function complete() {
 			lockFactory.setComplete('questions');
 		}

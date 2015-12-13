@@ -49,7 +49,9 @@
 			// Save, and cancel autosave timeout, when leaving page
 			$scope.$on("$destroy", function() { 
 				cancelAutosaveTimeout();
-				reportFactory.save('leave');
+				if(!vm.submitted) {
+					reportFactory.save('leave');
+				}
 			});
 		}
 		
@@ -81,7 +83,7 @@
 		}
 		
 		function save() {
-			if(submitted) {
+			if(vm.submitted) {
 				console.log('Report already saved');
 				return false;
 			}
@@ -107,7 +109,7 @@
 		}
 		
 		function submit() {
-			if(submitted) {
+			if(vm.submitted) {
 				console.log('Report already saved');
 				return false;
 			}

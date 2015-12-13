@@ -3,7 +3,7 @@
 	<h4 class="modal-title">Collect Samples</h4>
 </div>
 <div class="modal-body">
-	<p>The samples you have selected are shown below. If you wish to go ahead and collect these samples, please select Confirm to continue.</p><p>Alternatively, please select Cancel and you can add or remove samples before collecting. You do have the opportunity to return to collect more samples, but this may affect the happiness of the children.</p>
+	<p>The samples you have selected are shown below. If you wish to go ahead and collect these samples, please select Confirm to continue.</p><p>Alternatively, please select Cancel and you can add or remove samples before collecting. You can also return later and collect more samples if you need to.<!--You do have the opportunity to return to collect more samples, but this may affect the happiness of the children.--></p>
 	<show-samples status="'temp'"></show-samples>
 	<div class="alert alert-danger no-margin" role="alert" ng-if="SamplesModalCtrl.samples.temp.counts.sites[SamplesModalCtrl.siteIds['csf']] > 0">You are about to collect CSF samples, which is particularly intrusive and painful for the children. Consider whether this is really necessary before continuing.</div>
 </div>

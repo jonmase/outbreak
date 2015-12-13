@@ -2,9 +2,9 @@
 	angular.module('flu.samples')
 		.controller('SamplesModalController', SamplesModalController);
 
-	SamplesModalController.$inject = ['$uibModalInstance', '$q', 'progressFactory', 'lockFactory', 'sampleFactory', 'siteFactory'];
+	SamplesModalController.$inject = ['$uibModalInstance', 'progressFactory', 'lockFactory', 'sampleFactory', 'siteFactory'];
 
-	function SamplesModalController($uibModalInstance, $q, progressFactory, lockFactory, sampleFactory, siteFactory) {
+	function SamplesModalController($uibModalInstance, progressFactory, lockFactory, sampleFactory, siteFactory) {
 		var vm = this;
 		var sectionId = 'sampling';
 		vm.confirm = confirm;
@@ -18,7 +18,7 @@
 			vm.saving = true;
 			
 			var samplesPromise = sampleFactory.setSamples();
-			$q.all([samplesPromise]).then(
+			samplesPromise.then(
 				function(result) {
 					console.log(result);
 					//Only need to set progress locally - progress is saved to DB as part of samples saving

@@ -55,7 +55,15 @@
 			//Actions
 			vm.setSubsection(vm.currentTechniqueId);
 			if(sectionId === 'research' && !progressFactory.checkProgress(sectionId)) {	//For research section, only show research techniques
-				lockFactory.setComplete(sectionId);
+				var completePromise = lockFactory.setComplete(sectionId);	//Set progress to complete
+				completePromise.then(
+					function(result) {
+						console.log(result);
+					}, 
+					function(reason) {
+						console.log("Error: " + reason);
+					}
+				);
 			}
 			vm.usefulDisabled = [];
 			vm.loading = false;

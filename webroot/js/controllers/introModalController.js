@@ -17,7 +17,15 @@
 		
 		function start() {
 			$uibModalInstance.close();
-			lockFactory.setComplete('start');	//Set start progress to complete
+			var completePromise = lockFactory.setComplete('start');	//Set start progress to complete
+			completePromise.then(
+				function(result) {
+					console.log(result);
+				}, 
+				function(reason) {
+					console.log("Error: " + reason);
+				}
+			);
 			
 			$uibModal.open(modalFactory.getOutbreakAlertModalOptions());
 		};

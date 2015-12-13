@@ -21,7 +21,7 @@
 		
 		function confirm() {
 			vm.saving = true;
-			//Set all acute swab samples as collected, and makr lab section as complete
+			//Set all acute swab samples as collected, and mark lab section as complete
 			var collectPromise = sampleFactory.collectAllAcuteSwabSamples();
 			var completePromise = lockFactory.setComplete('lab');	//Set lab progress to complete
 			$q.all([collectPromise, completePromise]).then(
