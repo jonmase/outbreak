@@ -15,28 +15,15 @@ class TechniqueUsefulnessController extends AppController
 			$usefulQuery = $this->TechniqueUsefulness->find('list', ['conditions' => ['attempt_id' => $attemptId], 'order' => ['technique_id' => 'ASC'], 'keyField' => 'technique_id', 'valueField' => 'useful']);
 			$usefulness = $usefulQuery->toArray();
 			
-			//$techniqueQuery = $this->TechniqueUsefulness->Techniques->find('list', ['conditions' => ['lab_only' => 0], 'order' => ['id' => 'ASC'], 'valueField' => 'code']);
-			//$revisionTechniques = $techniqueQuery->toArray();
-			
-			/*$usefulness = [];
-			foreach($revisionTechniques as $id => $code) {
-				if(isset($rawUsefulness[$id])) {
-					$usefulness[$id] = $rawUsefulness[$id];
-				}
-				else {
-					$usefulness[$id] = null;
-				}
-			}*/
-			//pr($revisionTechniques);
-			//pr($usefulness);
-			
-			$this->set(compact('usefulness'));
-			$this->set('_serialize', ['usefulness']);
-			//pr($techniques->toArray());
+			$status = 'success';
+			$this->log("Technique Usefulness Loaded. Attempt: " . $attemptId, 'info');
 		}
 		else {
-			pr('denied');
+			$status = 'denied';
+			$this->log("Technique Usefulness Load denied. Attempt: " . $attemptId, 'info');
 		}
+		$this->set(compact('usefulness', 'status'));
+		$this->set('_serialize', ['usefulness', 'status']);
 	}
 	
 	public function save() {
@@ -45,6 +32,7 @@ class TechniqueUsefulnessController extends AppController
 			$attemptId = $this->request->data['attemptId'];
 			$techniqueId = $this->request->data['techniqueId'];
 			$usefulness = $this->request->data['usefulness'];
+			$this->log("Useful Techniques Save attempted. Attempt: " . $attemptId . "; Technique: " . $techniqueId . "; Usefulness: " . $usefulness, 'info');
 			
 			if($attemptId && $techniqueId && $this->TechniqueUsefulness->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
 				$usefulQuery = $this->TechniqueUsefulness->find('all', ['conditions' => ['attempt_id' => $attemptId, 'technique_id' => $techniqueId]]);
@@ -58,17 +46,21 @@ class TechniqueUsefulnessController extends AppController
 				$useful->useful = $usefulness;
 
 				if ($this->TechniqueUsefulness->save($useful)) {
-					$this->set('message', 'Useful techniques save succeeded');
+					$this->set('status', 'success');
+					$this->log("Useful Techniques Save succeeded. Attempt: " . $attemptId . "; Technique: " . $techniqueId, 'info');
 				} else {
-					$this->set('message', 'Useful techniques save failed');
+					$this->set('status', 'failed');
+					$this->log("Useful Techniques Save failed. Attempt: " . $attemptId . "; Technique: " . $techniqueId, 'info');
 				}
 			}
 			else {
-				$this->set('message', 'Useful techniques save denied');
+				$this->set('status', 'denied');
+				$this->log("Useful Techniques Save denied. Attempt: " . $attemptId . "; Technique: " . $techniqueId, 'info');
 			}
 		}
 		else {
-			$this->set('message', 'Useful techniques save not POST');
+			$this->set('status', 'notpost');
+			$this->log("Useful Techniques Save not POST", 'info');
 		}
 		$this->viewBuilder()->layout('ajax');
 		$this->render('/Element/ajaxmessage');

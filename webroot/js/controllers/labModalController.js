@@ -18,6 +18,7 @@
 		vm.standards = assayFactory.getStandards();
 		vm.resources = progressFactory.getResources();
 		vm.saving = false;
+		vm.error = false;
 		
 		//Bindable Members - methods
 		vm.confirm = confirm;
@@ -29,6 +30,7 @@
 		
 		function confirm() {
 			vm.saving = true;
+			vm.error = false;
 			
 			//Update time and money
 			var moneyCost = vm.technique.money * vm.assays.temp.counts[currentTechniqueId].total;
@@ -39,7 +41,12 @@
 				function(result) {
 					console.log(result);
 					var completePromise = assayFactory.setLabComplete(vm.currentTechniqueId);
-					if(completePromise) {	//If complete promise is not false, then all questions have been completed and we need to wait for progress to be saved
+					//If complete promise is a string, then we don't need to save any progress
+					if(angular.isString(completePromise) ) {
+						success(moneyCost, timeCost);
+						console.log(completePromise);
+					}
+					else {
 						completePromise.then(
 							function(result) {
 								console.log(result);
@@ -61,9 +68,6 @@
 							}
 						);
 					}
-					else {
-						success(moneyCost, timeCost);
-					}
 				}, 
 				function(reason) {
 					fail(reason);
@@ -77,12 +81,14 @@
 			progressFactory.subtractResources(moneyCost, timeCost);	//Subtract the resources (but not API call)
 			resultFactory.setDisabledTechniques();
 			vm.saving = false;
+			vm.error = false;
 		}
 		
-		function fail() {
+		function fail(reason) {
 			//progressFactory.subtractResources(-moneyCost, -timeCost);	//Add the costs back on to the remaining resources
-			alert("Assay failed, please try again. If you continue to experience problems, please refresh the page and try again. Contact msdlt@medsci.ox.ac.uk if this does not fix it");
+			//alert("Assay failed, please try again. If you continue to experience problems, please refresh the page and try again. Contact msdlt@medsci.ox.ac.uk if this does not fix it");
 			console.log("Error: " + reason);
+			vm.error = true;
 			vm.saving = false;
 		}
 		

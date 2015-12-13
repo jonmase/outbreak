@@ -1,14 +1,7 @@
 (function() {
 	angular.module('flu')
-		/*.factory('Progress', ['$resource',
-		  function($resource){
-			return $resource('../getProgress/:attemptId.json', {}, {
-			  //query: {method:'GET', params:{phoneId:'phones'}, isArray:true}
-			});
-		  }])*/
 		.factory('progressFactory', progressFactory);
 
-		
 	progressFactory.$inject = ['moneyCutoff', 'timeCutoff', '$resource', '$q'];
 
 	function progressFactory(moneyCutoff, timeCutoff, $resource, $q) {
@@ -51,11 +44,20 @@
 			//API: Get user's progress from DB
 			var deferred = $q.defer();
 			var ProgressCall = $resource('../loadProgress/:attemptId.json', {attemptId: '@id'});
-			ProgressCall.get({attemptId: ATTEMPT_ID}, function(result) {
-				progress = result.progress;
-				deferred.resolve('Progress loaded');
-				deferred.reject('Progress not loaded');
-			});
+			ProgressCall.get({attemptId: ATTEMPT_ID}, 
+				function(result) {
+					if(typeof(result.status) !== "undefined" && result.status === 'success') {
+						progress = result.progress;
+						deferred.resolve('Progress loaded');
+					}
+					else {
+						deferred.reject('Progress load failed (' + result.status + ")");
+					}
+				},
+				function(result) {
+					deferred.reject('Progress load error (' + result.status + ')');
+				}
+			);
 			return deferred.promise;
 		
 			/*
@@ -89,12 +91,21 @@
 		function loadResources() { 
 			//API: Get user's resources from DB
 			var deferred = $q.defer();
-			var Resources = $resource('../loadResources/:attemptId.json', {attemptId: '@id'});
-			Resources.get({attemptId: ATTEMPT_ID}, function(result) {
-				resources = result.resources;
-				deferred.resolve('Resources loaded');
-				deferred.reject('Resources not loaded');
-			});
+			var ResourcesCall = $resource('../loadResources/:attemptId.json', {attemptId: '@id'});
+			ResourcesCall.get({attemptId: ATTEMPT_ID},
+				function(result) {
+					if(typeof(result.status) !== "undefined" && result.status === 'success') {
+						resources = result.resources;
+						deferred.resolve('Resources loaded');
+					}
+					else {
+						deferred.reject('Resources load failed (' + result.status + ")");
+					}
+				},
+				function(result) {
+					deferred.reject('Resources load error (' + result.status + ')');
+				}
+			);
 			return deferred.promise;
 
 			/*var resources = {
@@ -118,24 +129,25 @@
 			}
 			var deferred = $q.defer();
 			var ResourcesCall = $resource('../../attempts/saveResources', {});
-			ResourcesCall.save({}, {attemptId: ATTEMPT_ID, money: money, time: time}, function(result) {
-				var message = result.message;
-				if(result.message === "success") {
-					console.log('Resources reset saved');
-					if(resetMoney) {
-						resources.money = money;
+			ResourcesCall.save({}, {attemptId: ATTEMPT_ID, money: money, time: time},
+				function(result) {
+					if(typeof(result.status) !== "undefined" && result.status === 'success') {
+						if(resetMoney) {
+							resources.money = money;
+						}
+						if(resetTime) {
+							resources.time = time;
+						}
+						deferred.resolve('Resources reset');
 					}
-					if(resetTime) {
-						resources.time = time;
+					else {
+						deferred.reject('Resources reset failed (' + result.status + ")");
 					}
+				},
+				function(result) {
+					deferred.reject('Resources reset error (' + result.status + ')');
 				}
-				else {
-					console.log('Resources reset error');
-					//Deal with error
-				}
-				deferred.resolve(message);
-				deferred.reject("Error: " + message);
-			});
+			);
 			return deferred.promise;
 		}
 		

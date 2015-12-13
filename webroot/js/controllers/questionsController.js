@@ -75,7 +75,12 @@
 				function(result) {
 					console.log(result);
 					var completePromise = questionFactory.setQuestionsComplete();
-					if(completePromise) {	//If complete promise is not false, then all questions have been completed and we need to wait for progress to be saved
+					//If complete promise is a string, then we don't need to save any progress
+					if(angular.isString(completePromise) ) {
+						questionFactory.setSaving(questionId, false);
+						console.log(completePromise);
+					}
+					else {
 						completePromise.then(
 							function(result) {
 								questionFactory.setSaving(questionId, false);
@@ -85,9 +90,6 @@
 								console.log("Error: " + reason);
 							}
 						);
-					}
-					else {
-						questionFactory.setSaving(questionId, false);
 					}
 				}, 
 				function(reason) {

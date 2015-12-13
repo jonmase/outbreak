@@ -44,11 +44,20 @@
 		function loadSites() {
 			var deferred = $q.defer();
 			var SitesCall = $resource('../../sites/load.json', {});
-			SitesCall.get({}, function(result) {
-				sites = result.sites;
-				deferred.resolve('Sites loaded');
-				deferred.reject('Sites not loaded');
-			});
+			SitesCall.get({},
+				function(result) {
+					if(typeof(result.status) !== "undefined" && result.status === 'success') {
+						sites = result.sites;
+						deferred.resolve('Sites loaded');
+					}
+					else {
+						deferred.reject('Sites load failed (' + result.status + ")");
+					}
+				},
+				function(result) {
+					deferred.reject('Sites load error (' + result.status + ')');
+				}
+			);
 			return deferred.promise;
 		}
 		

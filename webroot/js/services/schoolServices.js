@@ -25,11 +25,20 @@
 		function loadSchools() {
 			var deferred = $q.defer();
 			var SchoolsCall = $resource('../../schools/load/:attemptId.json', {attemptId: '@id'});
-			SchoolsCall.get({attemptId: ATTEMPT_ID}, function(result) {
-				schools = result.schools;
-				deferred.resolve('Schools loaded');
-				deferred.reject('Schools not loaded');
-			});
+			SchoolsCall.get({attemptId: ATTEMPT_ID},
+				function(result) {
+					if(typeof(result.status) !== "undefined" && result.status === 'success') {
+						schools = result.schools;
+						deferred.resolve('Schools loaded');
+					}
+					else {
+						deferred.reject('Schools load failed (' + result.status + ")");
+					}
+				},
+				function(result) {
+					deferred.reject('Schools load error (' + result.status + ')');
+				}
+			);
 			return deferred.promise;
 		}
 		

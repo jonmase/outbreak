@@ -26,8 +26,9 @@ class QuestionsController extends AppController
 		foreach($rawQuestions as $question) {
 			$questions[$question->id] = $question;
 		}
-		$this->set(compact('questions'));
-		$this->set('_serialize', ['questions']);
-		//pr($questions->toArray());
+		$status = 'success';
+		$this->log("Questions Loaded", 'info');
+		$this->set(compact('questions', 'status'));
+		$this->set('_serialize', ['questions', 'status']);
 	}
 }

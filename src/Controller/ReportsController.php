@@ -19,9 +19,7 @@ class ReportsController extends AppController
 				'contain' => 'ReportsSections',
 				'fields' => ['id', 'attempt_id', 'revision', 'type', 'created', 'modified'],
 			]);
-			/*if($reportsQuery->isEmpty()) {
-				
-			}*/
+
 			$report = $reportsQuery->first();
 			//pr($report->reports_sections);
 			if(!empty($report)) {
@@ -40,14 +38,15 @@ class ReportsController extends AppController
 				$sections[$section->id] = $section;
 			}
 			
-			//pr($report);
-			//pr($sections);
-			//exit;
+			$status = 'success';
+			$this->log("Report Loaded. Attempt: " . $attemptId, 'info');
 		}
-		
-		$this->set(compact('report', 'sections'));
-		$this->set('_serialize', ['report', 'sections']);
-		//pr($sites->toArray());
+		else {
+			$status = 'denied';
+			$this->log("Report Load denied. Attempt: " . $attemptId, 'info');
+		}
+		$this->set(compact('report', 'sections', 'status'));
+		$this->set('_serialize', ['report', 'sections', 'status']);
 	}
 
 	public function save() {
@@ -57,6 +56,7 @@ class ReportsController extends AppController
 			$report = $this->request->data['report'];
 			//$status = $this->request->data['status'];	//'revision', 'draft' or 'submitted'
 			$type = $this->request->data['type'];	//'save', 'autosave', 'submit'
+			$this->log("Report Save attempted. Attempt: " . $attemptId . "; Type: " . $type . "; Report: " . serialize($report), 'info');
 			
 			if($attemptId && $this->Reports->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
 				$reportQuery = $this->Reports->find('all', [
@@ -66,7 +66,8 @@ class ReportsController extends AppController
 				$lastSavedReport = $reportQuery->first();
 				if(!$reportQuery->isEmpty() && $lastSavedReport->type === 'submit') {
 					//Report has already been submitted, so can't save over the top
-					$this->set('message', 'Report already submitted');
+					$this->set('status', 'Report already submitted');
+					$this->log("Report Save rejected - report already submitted. Attempt: " . $attemptId . "; Type: " . $type, 'info');
 				}
 				else {
 					$sectionsQuery = $this->Reports->ReportsSections->Sections->find('all');
@@ -101,25 +102,30 @@ class ReportsController extends AppController
 					//pr($oldReportData);
 					//exit;
 					$connection = ConnectionManager::get('default');
-					$connection->transactional(function () use ($reportData, $oldReportData) {
+					$connection->transactional(function () use ($reportData, $oldReportData, $attemptId, $type) {
 						if(!$this->Reports->save($reportData)) {
-							$this->set('message', 'Report save error (new report)');
+							$this->set('status', 'failed');
+							$this->log("Report Save failed (new report). Attempt: " . $attemptId . "; Type: " . $type, 'info');
 							return false;
 						}
 						if(!is_null($oldReportData) && !$this->Reports->save($oldReportData)) {
-							$this->set('message', 'Report save error (revision report)');
+							$this->set('status', 'failed');
+							$this->log("Report Save failed (old report). Attempt: " . $attemptId . "; Type: " . $type, 'info');
 							return false;
 						}
-						$this->set('message', 'success');
+						$this->set('status', 'success');
+						$this->log("Report Save succeeded. Attempt: " . $attemptId . "; Type: " . $type, 'info');
 					});
 				}
 			}
 			else {
-				$this->set('message', 'Report save denied');
+				$this->set('status', 'denied');
+				$this->log("Report Save denied. Attempt: " . $attemptId . "; Type: " . $type, 'info');
 			}
 		}
 		else {
-			$this->set('message', 'Report save not POST');
+			$this->set('status', 'notpost');
+			$this->log("Report Save not POST ", 'info');
 		}
 		$this->viewBuilder()->layout('ajax');
 		$this->render('/Element/ajaxmessage');

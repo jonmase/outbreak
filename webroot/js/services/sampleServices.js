@@ -124,18 +124,19 @@
 				
 				var deferred = $q.defer();
 				var SamplesCall = $resource('../../samples/save', {});
-				SamplesCall.save({}, {attemptId: ATTEMPT_ID, samples: samplesToSave, happiness: null}, function(result) {
-					var message = result.message;
-					if(result.message === "success") {
-						//Nothing to do here
+				SamplesCall.save({}, {attemptId: ATTEMPT_ID, samples: samplesToSave, happiness: null},
+					function(result) {
+						if(typeof(result.status) !== "undefined" && result.status === 'success') {
+							deferred.resolve('Acute samples collected');
+						}
+						else {
+							deferred.reject('Acute samples collection failed (' + result.status + ")");
+						}
+					},
+					function(result) {
+						deferred.reject('Acute samples collection error (' + result.status + ')');
 					}
-					else {
-						//Deal with error
-					}
-					
-					deferred.resolve(message);
-					deferred.reject('Error: ' + message);
-				});
+				);
 				return deferred.promise;
 			}
 			return 'No extra samples collected';
@@ -241,36 +242,63 @@
 		function loadHappiness() {
 			var deferred = $q.defer();
 			var HappinessCall = $resource('../../Attempts/loadHappiness/:attemptId.json', {attemptId: '@id'});
-			HappinessCall.get({attemptId: ATTEMPT_ID}, function(result) {
-				savedHappiness = result.happiness;
-				deferred.resolve('Happiness loaded');
-				deferred.reject('Happiness not loaded');
-			});
+			HappinessCall.get({attemptId: ATTEMPT_ID},
+				function(result) {
+					if(typeof(result.status) !== "undefined" && result.status === 'success') {
+						savedHappiness = result.happiness;
+						deferred.resolve('Happiness loaded');
+					}
+					else {
+						deferred.reject('Happiness load failed (' + result.status + ")");
+					}
+				},
+				function(result) {
+					deferred.reject('Happiness load error (' + result.status + ')');
+				}
+			);
 			return deferred.promise;
 		}
 
 		function loadSamples() {
 			var deferred = $q.defer();
 			var SamplesCall = $resource('../../Samples/load/:attemptId.json', {attemptId: '@id'});
-			SamplesCall.get({attemptId: ATTEMPT_ID}, function(result) {
-				savedSamples = result.samples;
-				if(savedSamples.length === 0) {
-					savedSamples = {};
+			SamplesCall.get({attemptId: ATTEMPT_ID},
+				function(result) {
+					if(typeof(result.status) !== "undefined" && result.status === 'success') {
+						savedSamples = result.samples;
+						if(savedSamples.length === 0) {
+							savedSamples = {};
+						}
+						deferred.resolve('Samples loaded');
+					}
+					else {
+						deferred.reject('Samples load failed (' + result.status + ")");
+					}
+				},
+				function(result) {
+					deferred.reject('Samples load error (' + result.status + ')');
 				}
-				deferred.resolve('Samples loaded');
-				deferred.reject('Samples not loaded');
-			});
+			);
 			return deferred.promise;
 		}
 
 		function loadTypes() {
 			var deferred = $q.defer();
 			var TypesCall = $resource('../../SampleStages/load.json', {});
-			TypesCall.get({}, function(result) {
-				types = result.stages;
-				deferred.resolve('Types loaded');
-				deferred.reject('Types not loaded');
-			});
+			TypesCall.get({},
+				function(result) {
+					if(typeof(result.status) !== "undefined" && result.status === 'success') {
+						types = result.stages;
+						deferred.resolve('Types loaded');
+					}
+					else {
+						deferred.reject('Types load failed (' + result.status + ")");
+					}
+				},
+				function(result) {
+					deferred.reject('Types load error (' + result.status + ')');
+				}
+			);
 			return deferred.promise;
 		}
 
@@ -458,28 +486,63 @@
 			//API Save samples and happiness to DB, plus acutesDisabled
 			var deferred = $q.defer();
 			var SamplesCall = $resource('../../samples/save', {});
-			SamplesCall.save({}, {attemptId: ATTEMPT_ID, samples: samples.temp.samples, happiness: happiness}, function(result) {
-				var message = result.message;
-				if(result.message === "success") {
-					setSampleCounts('temp', 'saved', true);	//Set the saved counts based on the temp samples, and add the new samples to the saved samples array
-					savedHappiness = angular.copy(happiness);
-					acuteSwabSamplesCollected = setAcuteSwabSamplesCollected();
+			SamplesCall.save({}, {attemptId: ATTEMPT_ID, samples: samples.temp.samples, happiness: happiness}, 
+				function(result) {
+					if(typeof(result.status) !== "undefined" && result.status === 'success') {
+						setSampleCounts('temp', 'saved', true);	//Set the saved counts based on the temp samples, and add the new samples to the saved samples array
+						savedHappiness = angular.copy(happiness);
+						acuteSwabSamplesCollected = setAcuteSwabSamplesCollected();
 
-					samples.temp.samples = angular.copy(emptySamples);	//Clear the temp samples array
-					
-					//samples.counts.saved = updateSavedCounts();	//Update the saved counts
-					samples.temp.counts = angular.copy(emptySamplesCounts);	//Reset the temp counts
+						samples.temp.samples = angular.copy(emptySamples);	//Clear the temp samples array
+						
+						//samples.counts.saved = updateSavedCounts();	//Update the saved counts
+						samples.temp.counts = angular.copy(emptySamplesCounts);	//Reset the temp counts
+						deferred.resolve('Samples collected');
+					}
+					else {
+						deferred.reject('Samples collection failed (' + result.status + ")");
+					}
+				},
+				function(result) {
+					deferred.reject('Samples collection error (' + result.status + ')');
 				}
-				else {
-					//Deal with error
-				}
-				
-				deferred.resolve(message);
-				deferred.reject('Error: ' + message);
-			});
+			);
 			return deferred.promise;
 		}
 
+		function tooLate(schoolId) {
+			//API: Set this in the DB
+			//var deferred = $q.defer();
+			var TooLateCall = $resource('../../schools/tooLate', {});
+			TooLateCall.save({}, {attemptId: ATTEMPT_ID, schoolId: schoolId},
+				function(result) {
+					if(typeof(result.status) !== "undefined" && result.status === 'success') {
+						schools[schoolId].acuteDisabled = true;
+						console.log('Too late saved');
+						//deferred.resolve('Too late saved');
+					}
+					else {
+						console.log('Too late save failed (' + result.status + ")");
+						//deferred.reject('Too late save failed (' + result.status + ")");
+					}
+				},
+				function(result) {
+					console.log('Too late save error (' + result.status + ')');
+					//deferred.reject('Too late save error (' + result.status + ')');
+				}
+			);
+			
+			//alert(tooLateMessage);
+			$uibModal.open({
+				animation: true,
+				size: 'md',
+				backdrop: 'static',
+				templateUrl: '../../partials/modals/too-late-modal.html',
+				controller: 'tooLateModalController',
+				controllerAs: 'tooLateModalCtrl',
+			});
+		}
+	
 		function getTestSamples() {
 			var testSamples = [
 				[	//np
@@ -568,31 +631,6 @@
 			return testSamples;
 		}
 		
-		function tooLate(schoolId) {
-			//API: Set this in the DB
-			var TooLateCall = $resource('../../schools/tooLate', {});
-			TooLateCall.save({}, {attemptId: ATTEMPT_ID, schoolId: schoolId}, function(result) {
-				schools[schoolId].acuteDisabled = true;
-				var message = result.message;
-				if(result.message === "success") {
-					console.log = 'Too late saved';
-				}
-				else {
-					//Deal with error
-				}
-			});
-			
-			//alert(tooLateMessage);
-			$uibModal.open({
-				animation: true,
-				size: 'md',
-				backdrop: 'static',
-				templateUrl: '../../partials/modals/too-late-modal.html',
-				controller: 'tooLateModalController',
-				controllerAs: 'tooLateModalCtrl',
-			});
-		}
-	
 		/*
 		//Update the sample counts - old version
 		function setCounts(siteId, schoolId, type, action) {

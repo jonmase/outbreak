@@ -19,6 +19,7 @@ class SchoolsController extends AppController
 	public function load($attemptId = null) {
 		$contain = array('Children');
 		//If there is an attemptId, get school-related info for this attempt
+		$message = "Schools Loaded";
 		if($attemptId && $this->Schools->AttemptsSchools->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
 			//$contain[] = 'AttemptsSchools';
 			$contain['AttemptsSchools'] = function ($q) use ($attemptId) {
@@ -26,6 +27,7 @@ class SchoolsController extends AppController
 					->select(['id', 'attempt_id', 'school_id', 'acuteDisabled'])
 					->where(['AttemptsSchools.attempt_id' => $attemptId]);
 			};
+			$message .= ". Attempt: " . $attemptId;
 		}
 
 		$query = $this->Schools->find('all', [
@@ -55,9 +57,10 @@ class SchoolsController extends AppController
 			$schools[$school->id] = $school;
 		}
 		
-		$this->set(compact('schools'));
-		$this->set('_serialize', ['schools']);
-		//pr($sites->toArray());
+		$status = 'success';
+		$this->log($message, 'info');
+		$this->set(compact('schools', 'status'));
+		$this->set('_serialize', ['schools', 'status']);
 	}
 
 	public function tooLate() {
@@ -65,6 +68,7 @@ class SchoolsController extends AppController
 			//pr($this->request->data);
 			$attemptId = $this->request->data['attemptId'];
 			$schoolId = $this->request->data['schoolId'];
+			$this->log("Too Late Save attempted. Attempt: " . $attemptId . "; School: " . $schoolId, 'info');
 			
 			if($attemptId && $this->Schools->AttemptsSchools->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
 				$attemptSchoolQuery = $this->Schools->AttemptsSchools->find('all', ['conditions' => ['attempt_id' => $attemptId]]);
@@ -80,19 +84,21 @@ class SchoolsController extends AppController
 				//pr($attempt);
 				//exit;
 				if ($this->Schools->AttemptsSchools->save($attemptSchool)) {
-					$this->set('message', 'Too late save succeeded');
+					$this->set('status', 'success');
+					$this->log("Too Late Save succeedded. Attempt: " . $attemptId . "; School: " . $schoolId, 'info');
 				} else {
-					$this->set('message', 'Too late save failed');
+					$this->set('status', 'failed');
+					$this->log("Too Late Save failed. Attempt: " . $attemptId . "; School: " . $schoolId, 'info');
 				}
-				//$this->Attempts->save($attempt);
-				//pr($attempt);
 			}
 			else {
-				$this->set('message', 'Too late save denied');
+				$this->set('status', 'denied');
+					$this->log("Too Late Save denied. Attempt: " . $attemptId . "; School: " . $schoolId, 'info');
 			}
 		}
 		else {
-			$this->set('message', 'Too late save not POST');
+			$this->set('status', 'notpost');
+			$this->log("Too Late Save not POST", 'info');
 		}
 		$this->viewBuilder()->layout('ajax');
 		$this->render('/Element/ajaxmessage');		

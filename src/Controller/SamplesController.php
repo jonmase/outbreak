@@ -27,13 +27,17 @@ class SamplesController extends AppController
 
 				$samples[$sample->site_id][$sample->school_id][$sample->child_id][$sample->sample_stage_id] = 1;
 			}
-			$this->set(compact('samples'));
-			$this->set('_serialize', ['samples']);
+			
+			$status = 'success';
+			$this->log("Samples Loaded. Attempt: " . $attemptId, 'info');
 			//pr($resources);
 		}
 		else {
-			pr('denied');
+			$status = 'denied';
+			$this->log("Samples Load denied. Attempt: " . $attemptId, 'info');
 		}
+		$this->set(compact('samples', 'status'));
+		$this->set('_serialize', ['samples', 'status']);
 	}
 	
 	public function save() {
@@ -42,6 +46,7 @@ class SamplesController extends AppController
 			$attemptId = $this->request->data['attemptId'];
 			$rawSamples = $this->request->data['samples'];
 			$happiness = $this->request->data['happiness'];
+			$this->log("Samples Save attempted. Attempt: " . $attemptId . "; Happiness: " . $happiness . "; Samples: " . serialize($rawSamples), 'info');
 			
 			if($attemptId && $rawSamples && $this->Samples->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
 				$samples = [];
@@ -82,27 +87,32 @@ class SamplesController extends AppController
 				//exit;
 				$connection = ConnectionManager::get('default');
 				//$this->QuestionAnswers->connection()->transactional(function () use ($answers) {
-				$connection->transactional(function () use ($samplesData, $attempt) {
+				$connection->transactional(function () use ($samplesData, $attempt, $attemptId) {
 					foreach ($samplesData as $sample) {
 						//pr($sample);
 						if(!$this->Samples->save($sample)) {
-							$this->set('message', 'Sample save error');
+							$this->set('status', 'failed');
+							$this->log("Samples Save failed Attempt: " . $attemptId, 'info');
 							return false;
 						}
 					}
 					if(!is_null($attempt) && !$this->Samples->Attempts->save($attempt)) {
-						$this->set('message', 'Sample save error');
+						$this->set('status', 'failed');
+						$this->log("Samples Save failed Attempt: " . $attemptId, 'info');
 						return false;
 					}
-					$this->set('message', 'success');
+					$this->set('status', 'success');
+					$this->log("Samples Save succeeded. Attempt: " . $attemptId, 'info');
 				});
 			}
 			else {
-				$this->set('message', 'Samples save denied');
+				$this->set('status', 'denied');
+				$this->log("Samples Save denied. Attempt: " . $attemptId, 'info');
 			}
 		}
 		else {
-			$this->set('message', 'Samples save not POST');
+			$this->set('status', 'notpost');
+			$this->log("Samples Save not POST ", 'info');
 		}
 		$this->viewBuilder()->layout('ajax');
 		$this->render('/Element/ajaxmessage');

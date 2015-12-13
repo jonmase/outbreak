@@ -73,13 +73,22 @@
 			//API: get these from the DB? [constant]
 			var deferred = $q.defer();
 			var Techniques = $resource('../../techniques/load.json', {});
-			Techniques.get({}, function(result) {
-				techniques = result.techniques;
-				labTechniques = readLabTechniques();
-				revisionTechniques = readRevisionTechniques();
-				deferred.resolve('Techniques loaded');
-				deferred.reject('Techniques not loaded');
-			});
+			Techniques.get({},
+				function(result) {
+					if(typeof(result.status) !== "undefined" && result.status === 'success') {
+						techniques = result.techniques;
+						labTechniques = readLabTechniques();
+						revisionTechniques = readRevisionTechniques();
+						deferred.resolve('Techniques loaded');
+					}
+					else {
+						deferred.reject('Techniques load failed (' + result.status + ")");
+					}
+				},
+				function(result) {
+					deferred.reject('Techniques load error (' + result.status + ')');
+				}
+			);
 			return deferred.promise;
 		}
 		
@@ -87,13 +96,21 @@
 			//API: get these from the DB? [constant]
 			var deferred = $q.defer();
 			var Techniques = $resource('../../researchTechniques/load.json', {});
-			Techniques.get({}, function(result) {
-				researchTechniques = result.techniques;
-				//researchTechniques.push(fluExtra);
-				researchTechniques.xflu = fluExtra;
-				deferred.resolve('Research Techniques loaded');
-				deferred.reject('Research Techniques not loaded');
-			});
+			Techniques.get({},
+				function(result) {
+					if(typeof(result.status) !== "undefined" && result.status === 'success') {
+						researchTechniques = result.techniques;
+						researchTechniques.xflu = fluExtra;
+						deferred.resolve('Research Techniques loaded');
+					}
+					else {
+						deferred.reject('Research Techniques load failed (' + result.status + ")");
+					}
+				},
+				function(result) {
+					deferred.reject('Research Techniques load error (' + result.status + ')');
+				}
+			);
 			return deferred.promise;
 		}
 		
@@ -101,11 +118,20 @@
 			//API: get this from the DB - this will be saved for each attempt
 			var deferred = $q.defer();
 			var Useful = $resource('../../techniqueUsefulness/load/:attemptId.json', {attemptId: '@id'});
-			Useful.get({attemptId: ATTEMPT_ID}, function(result) {
+			Useful.get({attemptId: ATTEMPT_ID},
+				function(result) {
+					if(typeof(result.status) !== "undefined" && result.status === 'success') {
 				usefulTechniques = result.usefulness;
-				deferred.resolve('Technique Usefulness loaded');
-				deferred.reject('Technique Usefulness not loaded');
-			});
+						deferred.resolve('Techniques Usefulness loaded');
+					}
+					else {
+						deferred.reject('Techniques Usefulness load failed (' + result.status + ")");
+					}
+				},
+				function(result) {
+					deferred.reject('Techniques Usefulness load error (' + result.status + ')');
+				}
+			);
 			return deferred.promise;
 			
 			//Development: start with an empty array
@@ -211,13 +237,20 @@
 			//API: save useful technique update to DB
 			var deferred = $q.defer();
 			var Useful = $resource('../../techniqueUsefulness/save', {});
-			Useful.save({}, {attemptId: ATTEMPT_ID, techniqueId: techniqueId, usefulness: usefulness}, function(result) {
-				var message = result.message;
-				deferred.resolve(message);
-				deferred.reject("Error: " + message);
-			});
+			Useful.save({}, {attemptId: ATTEMPT_ID, techniqueId: techniqueId, usefulness: usefulness},
+				function(result) {
+					if(typeof(result.status) !== "undefined" && result.status === 'success') {
+						deferred.resolve('Useful technique saved');
+					}
+					else {
+						deferred.reject('Useful technique save failed (' + result.status + ")");
+					}
+				},
+				function(result) {
+					deferred.reject('Useful technique save error (' + result.status + ')');
+				}
+			);
 			return deferred.promise;
-			
 		}
 	}
 })();

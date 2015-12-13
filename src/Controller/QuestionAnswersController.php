@@ -29,13 +29,15 @@ class QuestionAnswersController extends AppController
 				'scores' => $scores->toArray(),
 			];
 			
-			$this->set(compact('responses'));
-			$this->set('_serialize', ['responses']);
-			//pr($responses);
+			$status = 'success';
+			$this->log("Responses Loaded. Attempt: " . $attemptId, 'info');
 		}
 		else {
-			pr('denied');
+			$status = 'denied';
+			$this->log("Responses Load denied. Attempt: " . $attemptId, 'info');
 		}
+		$this->set(compact('responses', 'status'));
+		$this->set('_serialize', ['responses', 'status']);
 	}
 	
 	public function save() {
@@ -45,6 +47,7 @@ class QuestionAnswersController extends AppController
 			$questionId = $this->request->data['questionId'];
 			$rawAnswers = $this->request->data['answers'];
 			$score = $this->request->data['score'];
+			$this->log("Response Save attempted. Attempt: " . $attemptId . "; Question: " . $questionId . "; Score: " . $score . "; Answers: " . serialize($rawAnswers), 'info');
 			
 			if($attemptId && $questionId && !is_null($rawAnswers) && !is_null($score) && $this->QuestionAnswers->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
 				$answers = [];
@@ -70,21 +73,32 @@ class QuestionAnswersController extends AppController
 				//exit;
 				$connection = ConnectionManager::get('default');
 				//$this->QuestionAnswers->connection()->transactional(function () use ($answers) {
-				$connection->transactional(function () use ($answersData, $scoreData) {
+				$connection->transactional(function () use ($answersData, $scoreData, $attemptId, $questionId) {
 					foreach ($answersData as $answer) {
-						$this->QuestionAnswers->save($answer);
+						if(!$this->QuestionAnswers->save($answer)) {
+							$this->set('status', 'failed');
+							$this->log("Response Save failed. Attempt: " . $attemptId . "; Question: " . $questionId, 'info');
+							return false;
+						}
 					}
-					$this->QuestionAnswers->Attempts->QuestionScores->save($scoreData);
+					if(!$this->QuestionAnswers->Attempts->QuestionScores->save($scoreData)) {
+						$this->set('status', 'failed');
+						$this->log("Response Save failed. Attempt: " . $attemptId . "; Question: " . $questionId, 'info');
+						return false;
+					}
+					$this->set('status', 'success');
+					$this->log("Response Save succeeded. Attempt: " . $attemptId . "; Question: " . $questionId, 'info');
 				});
 				
-				$this->set('message', 'success');
 			}
 			else {
-				$this->set('message', 'Response save denied');
+				$this->set('status', 'denied');
+				$this->log("Response Save denied. Attempt: " . $attemptId . "; Question: " . $questionId, 'info');
 			}
 		}
 		else {
-			$this->set('message', 'Response save not POST');
+			$this->set('status', 'notpost');
+			$this->log("Response Save not POST ", 'info');
 		}
 		$this->viewBuilder()->layout('ajax');
 		$this->render('/Element/ajaxmessage');

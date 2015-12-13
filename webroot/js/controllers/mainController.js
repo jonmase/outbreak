@@ -14,14 +14,6 @@
 		$scope.currentSectionId = getSectionFromPath();
 
 		//Actions
-		/*var loadPromise = $q.defer();
-		var loadCall = $resource('../load/:attemptId.json', {attemptId: '@id'});
-		loadCall.get({attemptId: ATTEMPT_ID}, function(result) {
-			progress = result.progress;
-			loadPromise.resolve('Progress loaded');
-			loadPromise.reject('Progress not loaded');
-		});*/
-
 		var progressPromise = progressFactory.loadProgress();
 		var resourcePromise = progressFactory.loadResources();
 		
@@ -46,6 +38,8 @@
 		var reportPromise = reportFactory.loadReport();
 		
 		$q.all([progressPromise, resourcePromise, techniquesPromise, researchTechniquesPromise, usefulPromise, questionsPromise, responsesPromise, sitesPromise, schoolsPromise, typesPromise, samplesPromise, happinessPromise, assaysPromise, standardsPromise, standardAssaysPromise, notesPromise, reportPromise]).then(
+		//$q.all([progressPromise, resourcePromise]).then(
+		//progressPromise.then(
 		//loadPromise.then(
 			function(result) {
 				console.log(result);

@@ -23,11 +23,16 @@ class NotesController extends AppController
 			foreach($rawNotes as $note) {
 				$notes[$note->technique_id] = $note;
 			}
+			$status = 'success';
+			$this->log("Notes Loaded. Attempt: " . $attemptId, 'info');
+		}
+		else {
+			$status = 'denied';
+			$this->log("Notes Load denied. Attempt: " . $attemptId, 'info');
 		}
 		
-		$this->set(compact('notes'));
-		$this->set('_serialize', ['notes']);
-		//pr($sites->toArray());
+		$this->set(compact('notes', 'status'));
+		$this->set('_serialize', ['notes', 'status']);
 	}
 
 	public function save() {
@@ -36,6 +41,7 @@ class NotesController extends AppController
 			$attemptId = $this->request->data['attemptId'];
 			$techniqueId = $this->request->data['techniqueId'];
 			$note = $this->request->data['note'];
+			$this->log("Note Save attempted. Attempt: " . $attemptId . "; Technique: " . $techniqueId . "; Note: " . serialize($note), 'info');
 			
 			if($attemptId && $techniqueId && $this->Notes->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
 				$noteQuery = $this->Notes->find('all', ['conditions' => ['attempt_id' => $attemptId, 'technique_id' => $techniqueId]]);
@@ -51,19 +57,21 @@ class NotesController extends AppController
 				//pr(noteData);
 				//exit;
 				if ($this->Notes->save($noteData)) {
-					$this->set('message', 'success');
+					$this->set('status', 'success');
+					$this->log("Note Save succeeded. Attempt: " . $attemptId . "; Technique: " . $techniqueId, 'info');
 				} else {
-					$this->set('message', 'Note save failed');
+					$this->set('status', 'failed');
+					$this->log("Note Save failed. Attempt: " . $attemptId . "; Technique: " . $techniqueId, 'info');
 				}
-				//$this->Attempts->save($attempt);
-				//pr($attempt);
 			}
 			else {
-				$this->set('message', 'Note save denied');
+				$this->set('status', 'denied');
+				$this->log("Note Save denied. Attempt: " . $attemptId . "; Technique: " . $techniqueId, 'info');
 			}
 		}
 		else {
-			$this->set('message', 'Note save not POST');
+			$this->set('status', 'notpost');
+			$this->log("Note Save not POST", 'info');
 		}
 		$this->viewBuilder()->layout('ajax');
 		$this->render('/Element/ajaxmessage');

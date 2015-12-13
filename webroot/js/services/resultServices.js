@@ -52,11 +52,20 @@
 		function loadNotes() {
 			var deferred = $q.defer();
 			var NotesCall = $resource('../../notes/load/:attemptId.json', {attemptId: '@id'});
-			NotesCall.get({attemptId: ATTEMPT_ID}, function(result) {
-				notes = result.notes;
-				deferred.resolve('Notes loaded');
-				deferred.reject('Notes not loaded');
-			});
+			NotesCall.get({attemptId: ATTEMPT_ID},
+				function(result) {
+					if(typeof(result.status) !== "undefined" && result.status === 'success') {
+						notes = result.notes;
+						deferred.resolve('Notes loaded');
+					}
+					else {
+						deferred.reject('Notes load failed (' + result.status + ")");
+					}
+				},
+				function(result) {
+					deferred.reject('Notes load error (' + result.status + ')');
+				}
+			);
 			return deferred.promise;
 		}
 		
@@ -123,15 +132,22 @@
 		}
 		
 		function setNote(techniqueId) {
-			//API: Save notes to DB
-			//TODO: Call this - autosave? on blur? save button? 
+			//API: Save notes to DB. Called on blur
 			var deferred = $q.defer();
 			var NotesCall = $resource('../../notes/save', {});
-			NotesCall.save({}, {attemptId: ATTEMPT_ID, techniqueId: techniqueId, note: notes[techniqueId].note}, function(result) {
-				var message = result.message;
-				deferred.resolve(message);
-				deferred.reject("Error: " + message);
-			});
+			NotesCall.save({}, {attemptId: ATTEMPT_ID, techniqueId: techniqueId, note: notes[techniqueId].note},
+				function(result) {
+					if(typeof(result.status) !== "undefined" && result.status === 'success') {
+						deferred.resolve('Notes saved');
+					}
+					else {
+						deferred.reject('Note save failed (' + result.status + ")");
+					}
+				},
+				function(result) {
+					deferred.reject('Note save error (' + result.status + ')');
+				}
+			);
 			return deferred.promise;
 		}
 		

@@ -105,27 +105,36 @@
 		function loadReport() {
 			var deferred = $q.defer();
 			var ReportCall = $resource('../../reports/load/:attemptId.json', {attemptId: '@id'});
-			ReportCall.get({attemptId: ATTEMPT_ID}, function(result) {
-				report = result.report;
-				boxes = result.sections;
-				if(report) {
-					lastSaveType = report.type;
-					submitted = report.type === 'submit';
-					lastSaved = report.modified;
-				}
-				else {
-					report = {};
-					report.reports_sections = {};
-					for(var box in boxes) {
-						report.reports_sections[box] = '';
+			ReportCall.get({attemptId: ATTEMPT_ID},
+				function(result) {
+					if(typeof(result.status) !== "undefined" && result.status === 'success') {
+						report = result.report;
+						boxes = result.sections;
+						if(report) {
+							lastSaveType = report.type;
+							submitted = report.type === 'submit';
+							lastSaved = report.modified;
+						}
+						else {
+							report = {};
+							report.reports_sections = {};
+							for(var box in boxes) {
+								report.reports_sections[box] = '';
+							}
+							submitted = false;
+							lastSaved = 'not yet saved';
+							lastSaveType = 'none';
+						}
+						deferred.resolve('Report loaded');
 					}
-					submitted = false;
-					lastSaved = 'not yet saved';
-					lastSaveType = 'none';
+					else {
+						deferred.reject('Report load failed (' + result.status + ")");
+					}
+				},
+				function(result) {
+					deferred.reject('Report load error (' + result.status + ')');
 				}
-				deferred.resolve('Report loaded');
-				deferred.reject('Report not loaded');
-			});
+			);
 			return deferred.promise;
 		}
 		
@@ -168,16 +177,24 @@
 			//API: Save report
 			var deferred = $q.defer();
 			var ReportCall = $resource('../../reports/save', {});
-			ReportCall.save({}, {attemptId: ATTEMPT_ID, report: report.reports_sections, type: type}, function(result) {
-				var message = result.message;
-				lastSaved = getDate();
-				lastSaveType = type;
-				if(type === 'submit') {
-					submitted = true;
+			ReportCall.save({}, {attemptId: ATTEMPT_ID, report: report.reports_sections, type: type},
+				function(result) {
+					if(typeof(result.status) !== "undefined" && result.status === 'success') {
+						lastSaved = getDate();
+						lastSaveType = type;
+						if(type === 'submit') {
+							submitted = true;
+						}
+						deferred.resolve('Reports saved (' + type + ')');
+					}
+					else {
+						deferred.reject('Report save (' + type + ') failed (' + result.status + ")");
+					}
+				},
+				function(result) {
+					deferred.reject('Report save (' + type + ') error (' + result.status + ')');
 				}
-				deferred.resolve(message);
-				deferred.reject("Error: " + message);
-			});
+			);
 			return deferred.promise;
 			//return now;
 		}

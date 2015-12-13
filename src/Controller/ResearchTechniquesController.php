@@ -25,8 +25,9 @@ class ResearchTechniquesController extends AppController
 		foreach($rawTechniques as $technique) {
 			$techniques[$technique->id] = $technique;
 		}
-		$this->set(compact('techniques'));
-		$this->set('_serialize', ['techniques']);
-		//pr($techniques->toArray());
+		$status = 'success';
+		$this->log("Research Techniques Loaded", 'info');
+		$this->set(compact('techniques', 'status'));
+		$this->set('_serialize', ['techniques', 'status']);
 	}
 }

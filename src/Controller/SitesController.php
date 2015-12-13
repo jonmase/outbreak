@@ -25,8 +25,9 @@ class SitesController extends AppController
 		foreach($rawSites as $site) {
 			$sites[$site->id] = $site;
 		}
-		$this->set(compact('sites'));
-		$this->set('_serialize', ['sites']);
-		//pr($sites->toArray());
+		$status = 'success';
+		$this->log("Sites Loaded", 'info');
+		$this->set(compact('sites', 'status'));
+		$this->set('_serialize', ['sites', 'status']);
 	}
 }

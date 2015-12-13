@@ -27,13 +27,15 @@ class AssaysController extends AppController
 
 				$assays[$assay->technique_id][$assay->site_id][$assay->school_id][$assay->child_id][$assay->sample_stage_id] = 1;
 			}
-			$this->set(compact('assays'));
-			$this->set('_serialize', ['assays']);
-			//pr($assays);
+			$status = 'success';
+			$this->log("Assays Loaded. Attempt: " . $attemptId, 'info');
 		}
 		else {
-			pr('denied');
+			$status = 'denied';
+			$this->log("Assays Load denied. Attempt: " . $attemptId, 'info');
 		}
+		$this->set(compact('assays', 'status'));
+		$this->set('_serialize', ['assays', 'status']);
 	}
 	
 	public function save() {
@@ -45,6 +47,7 @@ class AssaysController extends AppController
 			$rawStandardAssays = $this->request->data['standardAssays'];
 			$money = $this->request->data['money'];
 			$time = $this->request->data['time'];
+			$this->log("Assays Save attempted. Attempt: " . $attemptId . "; Technique: " . $techniqueId . "; Money: " . $money . "; Time: " . $time . "; Assays: " . serialize($rawAssays) . "; Standard Assays: " . serialize($rawStandardAssays), 'info');
 			
 			if($attemptId && $techniqueId && $this->Assays->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
 				$assays = [];
@@ -104,34 +107,40 @@ class AssaysController extends AppController
 				//exit;
 				$connection = ConnectionManager::get('default');
 				//$this->QuestionAnswers->connection()->transactional(function () use ($answers) {
-				$connection->transactional(function () use ($assaysData, $standardAssaysData, $attemptData) {
+				$connection->transactional(function () use ($assaysData, $standardAssaysData, $attemptData, $attemptId, $techniqueId) {
 					foreach ($assaysData as $assay) {
 						//pr($sample);
 						if(!$this->Assays->save($assay)) {
-							$this->set('message', 'Assay save error');
+							$this->set('status', 'failed');
+							$this->log("Assays Save failed. Attempt: " . $attemptId . "; Technique: " . $techniqueId, 'info');
 							return false;
 						}
 					}
 					foreach ($standardAssaysData as $assay) {
 						//pr($sample);
 						if(!$this->Assays->Attempts->StandardAssays->save($assay)) {
-							$this->set('message', 'Assay save error');
+							$this->set('status', 'failed');
+							$this->log("Assays Save failed. Attempt: " . $attemptId . "; Technique: " . $techniqueId, 'info');
 							return false;
 						}
 					}
 					if(!is_null($attemptData) && !$this->Assays->Attempts->save($attemptData)) {
-						$this->set('message', 'Assay save error');
+						$this->set('status', 'failed');
+						$this->log("Assays Save failed. Attempt: " . $attemptId . "; Technique: " . $techniqueId, 'info');
 						return false;
 					}
-					$this->set('message', 'success');
+					$this->set('status', 'success');
+					$this->log("Assays Save succeeded. Attempt: " . $attemptId . "; Technique: " . $techniqueId, 'info');
 				});
 			}
 			else {
-				$this->set('message', 'Assay save denied');
+				$this->set('status', 'denied');
+				$this->log("Assays Save denied. Attempt: " . $attemptId . "; Technique: " . $techniqueId, 'info');
 			}
 		}
 		else {
-			$this->set('message', 'Assay save not POST');
+			$this->set('status', 'notpost');
+			$this->log("Assays Save not POST", 'info');
 		}
 		$this->viewBuilder()->layout('ajax');
 		$this->render('/Element/ajaxmessage');

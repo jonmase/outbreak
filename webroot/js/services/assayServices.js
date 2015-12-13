@@ -195,33 +195,60 @@
 		function loadAssays() {
 			var deferred = $q.defer();
 			var AssaysCall = $resource('../../Assays/load/:attemptId.json', {attemptId: '@id'});
-			AssaysCall.get({attemptId: ATTEMPT_ID}, function(result) {
-				savedAssays = result.assays;
-				deferred.resolve('Assays loaded');
-				deferred.reject('Assays not loaded');
-			});
+			AssaysCall.get({attemptId: ATTEMPT_ID},
+				function(result) {
+					if(typeof(result.status) !== "undefined" && result.status === 'success') {
+						savedAssays = result.assays;
+						deferred.resolve('Assays loaded');
+					}
+					else {
+						deferred.reject('Assays load failed (' + result.status + ")");
+					}
+				},
+				function(result) {
+					deferred.reject('Assays load error (' + result.status + ')');
+				}
+			);
 			return deferred.promise;
 		}
 
 		function loadStandardAssays() {
 			var deferred = $q.defer();
 			var StandardAssaysCall = $resource('../../StandardAssays/load/:attemptId.json', {attemptId: '@id'});
-			StandardAssaysCall.get({attemptId: ATTEMPT_ID}, function(result) {
-				savedStandardAssays = result.standardAssays;
-				deferred.resolve('Standard Assays loaded');
-				deferred.reject('Standard Assays not loaded');
-			});
+			StandardAssaysCall.get({attemptId: ATTEMPT_ID},
+				function(result) {
+					if(typeof(result.status) !== "undefined" && result.status === 'success') {
+						savedStandardAssays = result.standardAssays;
+						deferred.resolve('Standard Assays loaded');
+					}
+					else {
+						deferred.reject('Standard Assays load failed (' + result.status + ")");
+					}
+				},
+				function(result) {
+					deferred.reject('Standard Assays load error (' + result.status + ')');
+				}
+			);
 			return deferred.promise;
 		}
 
 		function loadStandards() {
 			var deferred = $q.defer();
 			var StandardsCall = $resource('../../Standards/load.json', {});
-			StandardsCall.get({}, function(result) {
-				standards = result.standards;
-				deferred.resolve('Standards loaded');
-				deferred.reject('Standards not loaded');
-			});
+			StandardsCall.get({},
+				function(result) {
+					if(typeof(result.status) !== "undefined" && result.status === 'success') {
+						standards = result.standards;
+						deferred.resolve('Standards loaded');
+					}
+					else {
+						deferred.reject('Standards load failed (' + result.status + ")");
+					}
+				},
+				function(result) {
+					deferred.reject('Standards load error (' + result.status + ')');
+				}
+			);
 			return deferred.promise;
 		}
 				
@@ -386,75 +413,70 @@
 			//API: Save assays performed
 			var deferred = $q.defer();
 			var AssaysCall = $resource('../../assays/save', {});
-			AssaysCall.save({}, {attemptId: ATTEMPT_ID, techniqueId: techniqueId, assays: assays.temp.samples[techniqueId], standardAssays: assays.temp.standards[techniqueId], money: (resources.money - moneyCost), time: (resources.time - timeCost)}, function(result) {
-				var message = result.message;
-				
-				if(result.message === "success") {
-					//Add the tempCount to the permanent count and reset the tempCount for the technique
-					assays.saved.counts[techniqueId].total += assays.temp.counts[techniqueId].total;
-					assays.saved.counts[techniqueId].standards += assays.temp.counts[techniqueId].standards;
-					//for(var siteId = 0; siteId < sites.length; siteId++) {
-					for(var siteId in sites) {
-						assays.saved.counts[techniqueId].sites[siteId].total += assays.temp.counts[techniqueId].sites[siteId].total;
-						//for(var schoolId = 0; schoolId < schools.length; schoolId++) {
-						for(var schoolId in schools) {
-							assays.saved.counts[techniqueId].sites[siteId].schools[schoolId].total += assays.temp.counts[techniqueId].sites[siteId].schools[schoolId].total;
-							//for(var childId = 0; childId < schools[schoolId].children.length; childId++) {
-							for(var childId in schools[schoolId].children) {
-								assays.saved.counts[techniqueId].sites[siteId].schools[schoolId].children[childId] += assays.temp.counts[techniqueId].sites[siteId].schools[schoolId].children[childId];
-							}
-							//for(var typeId = 0; typeId < types.length; typeId++) {
-							for(var typeId in types) {
-								assays.saved.counts[techniqueId].sites[siteId].schools[schoolId].types[typeId] += assays.temp.counts[techniqueId].sites[siteId].schools[schoolId].types[typeId];
+			AssaysCall.save({}, {attemptId: ATTEMPT_ID, techniqueId: techniqueId, assays: assays.temp.samples[techniqueId], standardAssays: assays.temp.standards[techniqueId], money: (resources.money - moneyCost), time: (resources.time - timeCost)},
+				function(result) {
+					if(typeof(result.status) !== "undefined" && result.status === 'success') {
+						//Add the tempCount to the permanent count and reset the tempCount for the technique
+						assays.saved.counts[techniqueId].total += assays.temp.counts[techniqueId].total;
+						assays.saved.counts[techniqueId].standards += assays.temp.counts[techniqueId].standards;
+						//for(var siteId = 0; siteId < sites.length; siteId++) {
+						for(var siteId in sites) {
+							assays.saved.counts[techniqueId].sites[siteId].total += assays.temp.counts[techniqueId].sites[siteId].total;
+							//for(var schoolId = 0; schoolId < schools.length; schoolId++) {
+							for(var schoolId in schools) {
+								assays.saved.counts[techniqueId].sites[siteId].schools[schoolId].total += assays.temp.counts[techniqueId].sites[siteId].schools[schoolId].total;
+								//for(var childId = 0; childId < schools[schoolId].children.length; childId++) {
+								for(var childId in schools[schoolId].children) {
+									assays.saved.counts[techniqueId].sites[siteId].schools[schoolId].children[childId] += assays.temp.counts[techniqueId].sites[siteId].schools[schoolId].children[childId];
+								}
+								//for(var typeId = 0; typeId < types.length; typeId++) {
+								for(var typeId in types) {
+									assays.saved.counts[techniqueId].sites[siteId].schools[schoolId].types[typeId] += assays.temp.counts[techniqueId].sites[siteId].schools[schoolId].types[typeId];
+								}
 							}
 						}
-					}
-					assays.temp.counts[techniqueId] = angular.copy(emptyCountsForTechnique);
-					
-					//Loop through the assays.temp.samples array for this technique and add each to the assays.saved.samples array, then reset assays.temp.samples
-					//for(var siteId = 0; siteId < assays.temp.samples[techniqueId].length; siteId++) {
-					//	for(var schoolId = 0; schoolId < assays.temp.samples[techniqueId][siteId].length; schoolId++) {
-					//		for(var childId = 0; childId < assays.temp.samples[techniqueId][siteId][schoolId].length; childId++) {
-					//			for(var typeId = 0; typeId < assays.temp.samples[techniqueId][siteId][schoolId][childId].length; typeId++) {
-					for(var siteId in assays.temp.samples[techniqueId]) {
-						for(var schoolId in assays.temp.samples[techniqueId][siteId]) {
-							for(var childId in assays.temp.samples[techniqueId][siteId][schoolId]) {
-								for(var typeId in assays.temp.samples[techniqueId][siteId][schoolId][childId]) {
-									if(assays.temp.samples[techniqueId][siteId][schoolId][childId][typeId] === 1) {
-										assays.saved.samples[techniqueId][siteId][schoolId][childId][typeId] = 1;
-										
-										//Check whether this test is required, and if so, mark the required test as done
-										var requiredKey = "" + siteId + schoolId + childId + typeId;
-										if(typeof(requiredTests.h[techniqueId]) !== "undefined" && requiredTests.h[techniqueId].hasOwnProperty(requiredKey)) {
-											requiredTests.h[techniqueId][requiredKey] = 1;
-										}
-										if(typeof(requiredTests.n[techniqueId]) !== "undefined" && requiredTests.n[techniqueId].hasOwnProperty(requiredKey)) {
-											requiredTests.n[techniqueId][requiredKey] = 1;
+						assays.temp.counts[techniqueId] = angular.copy(emptyCountsForTechnique);
+						
+						//Loop through the assays.temp.samples array for this technique and add each to the assays.saved.samples array, then reset assays.temp.samples
+						for(var siteId in assays.temp.samples[techniqueId]) {
+							for(var schoolId in assays.temp.samples[techniqueId][siteId]) {
+								for(var childId in assays.temp.samples[techniqueId][siteId][schoolId]) {
+									for(var typeId in assays.temp.samples[techniqueId][siteId][schoolId][childId]) {
+										if(assays.temp.samples[techniqueId][siteId][schoolId][childId][typeId] === 1) {
+											assays.saved.samples[techniqueId][siteId][schoolId][childId][typeId] = 1;
+											
+											//Check whether this test is required, and if so, mark the required test as done
+											var requiredKey = "" + siteId + schoolId + childId + typeId;
+											if(typeof(requiredTests.h[techniqueId]) !== "undefined" && requiredTests.h[techniqueId].hasOwnProperty(requiredKey)) {
+												requiredTests.h[techniqueId][requiredKey] = 1;
+											}
+											if(typeof(requiredTests.n[techniqueId]) !== "undefined" && requiredTests.n[techniqueId].hasOwnProperty(requiredKey)) {
+												requiredTests.n[techniqueId][requiredKey] = 1;
+											}
 										}
 									}
 								}
 							}
 						}
-					}
-					assays.temp.samples[techniqueId] = angular.copy(emptyAssaysForTechnique);
-					
-					//Loop through the assays.temp.standards array and add each to the assays.saved.standards array
-					//for(var standardId = 0; standardId < assays.temp.standards[techniqueId].length; standardId++) {
-					for(var standardId in assays.temp.standards[techniqueId]) {
-						if(assays.temp.standards[techniqueId][standardId] === 1) {
-							assays.saved.standards[techniqueId][standardId] = 1;
+						assays.temp.samples[techniqueId] = angular.copy(emptyAssaysForTechnique);
+						
+						//Loop through the assays.temp.standards array and add each to the assays.saved.standards array
+						for(var standardId in assays.temp.standards[techniqueId]) {
+							if(assays.temp.standards[techniqueId][standardId] === 1) {
+								assays.saved.standards[techniqueId][standardId] = 1;
+							}
 						}
+						assays.temp.standards[techniqueId] = angular.copy(emptyStandardsForTechnique);
+						deferred.resolve('Assays saved');
 					}
-					assays.temp.standards[techniqueId] = angular.copy(emptyStandardsForTechnique);
+					else {
+						deferred.reject('Assay save failed (' + result.status + ")");
+					}
+				},
+				function(result) {
+					deferred.reject('Assay save error (' + result.status + ')');
 				}
-				else {
-					//Deal with error
-				}
-				
-				deferred.resolve(message);
-				deferred.reject('Error: ' + message);
-				
-			});
+			);
 			return deferred.promise;
 		}
 		

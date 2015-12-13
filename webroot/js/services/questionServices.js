@@ -2,9 +2,9 @@
 	angular.module('flu.questions')
 		.factory('questionFactory', questionFactory);
 		
-	questionFactory.$inject = ['lockFactory', '$resource', '$q'];
+	questionFactory.$inject = ['lockFactory', 'progressFactory', '$resource', '$q'];
 
-	function questionFactory(lockFactory, $resource, $q) {
+	function questionFactory(lockFactory, progressFactory, $resource, $q) {
 		//Variables
 		//var questions = readQuestions();
 		var questions, responses, questionOrders;
@@ -58,19 +58,20 @@
 				var score = setScoreByQuestion(questionId);
 				var deferred = $q.defer();
 				var QuestionsCall = $resource('../../question_answers/save', {});
-				QuestionsCall.save({}, {attemptId: ATTEMPT_ID, questionId: questionId, answers: responses.answers[questionId], score: score}, function(result) {
-					var message = result.message;
-					if(result.message === "success") {
-						responses.scores[questionId] = score;
-						//setQuestionsComplete();
+				QuestionsCall.save({}, {attemptId: ATTEMPT_ID, questionId: questionId, answers: responses.answers[questionId], score: score},
+					function(result) {
+						if(typeof(result.status) !== "undefined" && result.status === 'success') {
+							responses.scores[questionId] = score;
+							deferred.resolve('Question response saved');
+						}
+						else {
+							deferred.reject('Question response save failed (' + result.status + ")");
+						}
+					},
+					function(result) {
+						deferred.reject('Question response save error (' + result.status + ')');
 					}
-					else {
-						//Deal with error
-					}
-					
-					deferred.resolve(message);
-					deferred.reject('Error: ' + message);
-				});
+				);
 				return deferred.promise;
 
 			}
@@ -143,32 +144,48 @@
 		function loadQuestions() {
 			var deferred = $q.defer();
 			var QuestionsCall = $resource('../../questions/load.json', {});
-			QuestionsCall.get({}, function(result) {
-				questions = result.questions;
-				/*questionOrders = [];*/
-				var first = true;
-				for(var questionId in questions) {
-					if(first) {	//Set first to true for the first question
-						questions[questionId].first = true;
-						first = false;
+			QuestionsCall.get({},
+				function(result) {
+					if(typeof(result.status) !== "undefined" && result.status === 'success') {
+						questions = result.questions;
+						var first = true;
+						for(var questionId in questions) {
+							if(first) {	//Set first to true for the first question
+								questions[questionId].first = true;
+								first = false;
+							}
+						}
+						questions[questionId].last = true;	//questionId will now be that of the last question, so set last to true
+						deferred.resolve('Questions loaded');
 					}
-					//questionOrders[questions[questionId].order] = questionId;
+					else {
+						deferred.reject('Questions load failed (' + result.status + ")");
+					}
+				},
+				function(result) {
+					deferred.reject('Questions load error (' + result.status + ')');
 				}
-				questions[questionId].last = true;	//questionId will now be that of the last question, so set last to true
-				deferred.resolve('Questions loaded');
-				deferred.reject('Questions not loaded');
-			});
+			);
 			return deferred.promise;
 		}
 		
 		function loadResponses() {
 			var deferred = $q.defer();
 			var ResponsesCall = $resource('../../question_answers/load/:attemptId.json', {attemptId: '@id'});
-			ResponsesCall.get({attemptId: ATTEMPT_ID}, function(result) {
-				responses = result.responses;
-				deferred.resolve('Responses loaded');
-				deferred.reject('Responses not loaded');
-			});
+			ResponsesCall.get({attemptId: ATTEMPT_ID},
+				function(result) {
+					if(typeof(result.status) !== "undefined" && result.status === 'success') {
+						responses = result.responses;
+						deferred.resolve('Responses loaded');
+					}
+					else {
+						deferred.reject('Responses load failed (' + result.status + ")");
+					}
+				},
+				function(result) {
+					deferred.reject('Responses load error (' + result.status + ')');
+				}
+			);
 			return deferred.promise;
 		}
 		

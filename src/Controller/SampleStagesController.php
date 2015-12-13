@@ -25,8 +25,9 @@ class SampleStagesController extends AppController
 		foreach($rawStages as $stage) {
 			$stages[$stage->id] = $stage;
 		}
-		$this->set(compact('stages'));
-		$this->set('_serialize', ['stages']);
-		//pr($sites->toArray());
+		$status = 'success';
+		$this->log("Samples Stages Loaded", 'info');
+		$this->set(compact('stages', 'status'));
+		$this->set('_serialize', ['stages', 'status']);
 	}
 }

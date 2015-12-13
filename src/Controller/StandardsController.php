@@ -26,8 +26,9 @@ class StandardsController extends AppController
 		foreach($rawStandards as $standard) {
 			$standards[$standard->id] = $standard;
 		}
-		$this->set(compact('standards'));
-		$this->set('_serialize', ['standards']);
-		//pr($questions->toArray());
+		$status = 'success';
+		$this->log("Standards Loaded", 'info');
+		$this->set(compact('standards', 'status'));
+		$this->set('_serialize', ['standards', 'status']);
 	}
 }

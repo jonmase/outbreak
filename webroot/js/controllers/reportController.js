@@ -42,13 +42,16 @@
 		
 		
 		//Actions
-		//Initialise autosave
-		setAutosaveTimeout();
-		//Cancel autosave timeout when elaving page
-		$scope.$on("$destroy", function() { 
-			cancelAutosaveTimeout();
-			reportFactory.save('leave');
-		});
+		//If not already submitted, set up saving
+		if(!vm.submitted) {
+			//Initialise autosave
+			setAutosaveTimeout();
+			// Save, and cancel autosave timeout, when leaving page
+			$scope.$on("$destroy", function() { 
+				cancelAutosaveTimeout();
+				reportFactory.save('leave');
+			});
+		}
 		
 		//Functions
 		function autosave() {
@@ -78,6 +81,10 @@
 		}
 		
 		function save() {
+			if(submitted) {
+				console.log('Report already saved');
+				return false;
+			}
 			reportFactory.setEditorsReadOnly(true);
 			vm.saving = true;
 			if(autoSaveTimeout) {
@@ -100,6 +107,10 @@
 		}
 		
 		function submit() {
+			if(submitted) {
+				console.log('Report already saved');
+				return false;
+			}
 			var modalInstance = $uibModal.open({
 				animation: true,
 				size: 'md',
