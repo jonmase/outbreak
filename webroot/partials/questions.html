@@ -24,7 +24,7 @@
 									<input type="radio" 
 										ng-model="questionsCtrl.responses.answers[question.id][stem.id]" ng-value="option.id" 
 										ng-click="questionsCtrl.checkAllAnswered(question.id)" 
-										ng-disabled="questionsCtrl.responses.scores[question.id] > -1"
+										ng-disabled="questionsCtrl.responses.scores[question.id] > -1 || questionsCtrl.saving[question.id]"
 										name="question_{{question.id}}_{{stem.id}}" />
 										<label> </label>
 								</div>
