@@ -73,10 +73,10 @@
 				prerequisites: ['hidentified', 'nidentified'],
 			},
 			finish: {
-				name: 'Finish',
+				name: 'Feedback',
 				controller: 'FeedbackController',
 				template: 'feedback',
-				icon: 'sign-out',
+				icon: 'comment',	//'sign-out',
 				prerequisites: ['report', 'research'],
 			},
 			info: {
