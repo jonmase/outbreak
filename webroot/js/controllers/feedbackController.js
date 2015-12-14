@@ -5,7 +5,7 @@
 	FeedbackController.$inject = ['$scope', 'sectionFactory', 'lockFactory'];
 	function FeedbackController($scope, sectionFactory, lockFactory) {
 		var vm = this;
-		var sectionId = 'finish';
+		var sectionId = 'feedback';
 		
 		//Check whether the section is locked
 		if(!lockFactory.checkLock(sectionId)) {	

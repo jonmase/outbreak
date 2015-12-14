@@ -53,6 +53,7 @@
 <?= $this->Html->script('services/resultServices.js', ['block' => true]) ?>
 <?= $this->Html->script('controllers/reportController.js', ['block' => true]) ?>
 <?= $this->Html->script('controllers/submitModalController.js', ['block' => true]) ?>
+<?= $this->Html->script('controllers/submittedModalController.js', ['block' => true]) ?>
 <?= $this->Html->script('services/reportServices.js', ['block' => true]) ?>
 <?= $this->Html->script('app.js', ['block' => true]) ?>
 <?= $this->Html->script('controllers/mainController.js', ['block' => true]) ?>

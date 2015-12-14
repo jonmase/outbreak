@@ -126,6 +126,16 @@
 				vm.lastSaved = reportFactory.getLastSaved();
 				vm.lastSaveType = reportFactory.getLastSaveType();
 				vm.submitted = reportFactory.getSubmitted();
+				if(vm.submitted) {
+					$uibModal.open({
+						animation: true,
+						size: 'md',
+						backdrop: 'static',
+						templateUrl: '../../partials/modals/submitted-modal.html',
+						controller: 'SubmittedModalController',
+						controllerAs: 'SubmittedModalCtrl',
+					});
+				}
 			});
 		}
 	}

@@ -72,12 +72,12 @@
 				//icon: 'search',
 				prerequisites: ['hidentified', 'nidentified'],
 			},
-			finish: {
+			feedback: {
 				name: 'Feedback',
 				controller: 'FeedbackController',
 				template: 'feedback',
 				icon: 'comment',	//'sign-out',
-				prerequisites: ['report', 'research'],
+				prerequisites: ['report'],
 			},
 			info: {
 				name: 'Info & Acknowledgements',

@@ -53,7 +53,7 @@
 		
 		function fail() {
 			//progressFactory.subtractResources(-moneyCost, -timeCost);	//Add the costs back on to the remaining resources
-			alert("Saving failed, please try again. If you continue to experience problems, please refresh the page and try again. Contact msdlt@medsci.ox.ac.uk if this does not fix it");
+			//alert("Saving failed, please try again. If you continue to experience problems, please refresh the page and try again. Contact msdlt@medsci.ox.ac.uk if this does not fix it");
 			$uibModalInstance.close();
 			console.log("Error: " + reason);
 			vm.saving = false;
