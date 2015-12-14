@@ -50,6 +50,8 @@ class AssaysController extends AppController
 			$this->log("Assays Save attempted. Attempt: " . $attemptId . "; Technique: " . $techniqueId . "; Money: " . $money . "; Time: " . $time . "; Assays: " . serialize($rawAssays) . "; Standard Assays: " . serialize($rawStandardAssays), 'info');
 			
 			if($attemptId && $techniqueId && $this->Assays->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
+				$attemptData = $this->Assays->Attempts->get($attemptId);
+
 				$assays = [];
 				foreach($rawAssays as $siteId => $schools) {
 					foreach($schools as $schoolId => $children) {
@@ -63,7 +65,7 @@ class AssaysController extends AppController
 										'school_id' => $schoolId,
 										'child_id' => $childId,
 										'sample_stage_id' => $typeId,
-										'before_submit' => 1
+										'before_submit' => !$attemptData->report	//Is the assay being performed before the report has been submitted?
 									];
 									array_push($assays, $assay);
 								}
@@ -81,7 +83,7 @@ class AssaysController extends AppController
 							'attempt_id' => $attemptId,
 							'technique_id' => $techniqueId,
 							'standard_id' => $standardId,
-							'before_submit' => 1
+							'before_submit' => !$attemptData->report	//Is the assay being performed before the report has been submitted?
 						];
 						array_push($standardAssays, $assay);
 					}
@@ -90,7 +92,6 @@ class AssaysController extends AppController
 				$standardAssaysData = $this->Assays->Attempts->StandardAssays->newEntities($standardAssays);
 
 				if(!is_null($money) || !is_null($time)) {
-					$attemptData = $this->Assays->Attempts->get($attemptId);
 					if(!is_null($money)) {
 						$attemptData->money = $money;
 					}

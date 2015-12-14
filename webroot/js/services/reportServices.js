@@ -44,7 +44,7 @@
 			var allNotesEmpty = true;
 			var notes = resultFactory.getNotes();
 			for(var techniqueId in noteTechniques) {
-				if(notes[techniqueId] != '') {
+				if(notes[techniqueId] && notes[techniqueId] != '') {
 					//alert(noteTechniques[techniqueId]);
 					allNotesEmpty = false;
 					break;

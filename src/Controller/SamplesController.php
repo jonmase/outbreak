@@ -49,6 +49,8 @@ class SamplesController extends AppController
 			$this->log("Samples Save attempted. Attempt: " . $attemptId . "; Happiness: " . $happiness . "; Samples: " . serialize($rawSamples), 'info');
 			
 			if($attemptId && $rawSamples && $this->Samples->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
+				$attempt = $this->Samples->Attempts->get($attemptId);	//Get attempt, for saving happiness and identifying whether report has been submitted
+
 				$samples = [];
 				foreach($rawSamples as $siteId => $schools) {
 					foreach($schools as $schoolId => $children) {
@@ -61,7 +63,7 @@ class SamplesController extends AppController
 										'school_id' => $schoolId,
 										'child_id' => $childId,
 										'sample_stage_id' => $typeId,
-										'before_submit' => 1
+										'before_submit' => !$attempt->report	//Are these samples being collected before the report has been submitted?
 									];
 									array_push($samples, $sample);
 								}
@@ -74,7 +76,6 @@ class SamplesController extends AppController
 				$samplesData = $this->Samples->newEntities($samples);
 				
 				if(!is_null($happiness)) {
-					$attempt = $this->Samples->Attempts->get($attemptId);
 					$attempt->happiness = $happiness;
 					$attempt->sampling = true;
 				}

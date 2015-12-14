@@ -42,6 +42,9 @@
 		<h4>
 			Notes
 		</h4>
+		<p>notes: {{reportCtrl.notes}}</p>
+		<p>empty: {{reportCtrl.allNotesEmpty}}</p>
+		<p>notempty: {{!reportCtrl.allNotesEmpty}}</p>
 		<p ng-if="reportCtrl.allNotesEmpty">You have not made any notes yet. Notes you make in the <a href="#results" title="View Results and add Notes">Results section</a> will be shown here.</p>
 		<uib-accordion ng-if="!reportCtrl.allNotesEmpty" close-others="false">
 			<uib-accordion-group ng-repeat="technique in reportCtrl.techniques" is-open="true" ng-show="reportCtrl.notes[technique.id] && reportCtrl.notes[technique.id].note !== ''">
