@@ -12,5 +12,10 @@
 	<info-on-home type="'video'"></info-on-home>
 </div>
 <div class="modal-footer">
-	<button type="button" class="btn btn-primary" ng-click="IntroModalCtrl.start()">Start</button>
+	<div ng-hide="IntroModalCtrl.saving">
+		<button type="button" class="btn btn-primary" ng-click="IntroModalCtrl.start()">Start</button>
+	</div>
+	<div ng-show="IntroModalCtrl.saving">
+		<loader></loader> Saving Progress
+	</div>
 </div>

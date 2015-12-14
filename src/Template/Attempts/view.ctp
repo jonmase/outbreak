@@ -58,6 +58,7 @@
 <?= $this->Html->script('app.js', ['block' => true]) ?>
 <?= $this->Html->script('controllers/mainController.js', ['block' => true]) ?>
 <?= $this->Html->script('controllers/homeController.js', ['block' => true]) ?>
+<?= $this->Html->script('controllers/errorModalController.js', ['block' => true]) ?>
 <?= $this->Html->script('controllers/introModalController.js', ['block' => true]) ?>
 <?= $this->Html->script('controllers/outbreakAlertModalController.js', ['block' => true]) ?>
 <?= $this->Html->script('controllers/feedbackController.js', ['block' => true]) ?>

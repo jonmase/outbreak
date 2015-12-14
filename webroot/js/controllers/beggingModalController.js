@@ -2,9 +2,9 @@
 	angular.module('flu.lab')
 		.controller('BeggingModalController', BeggingModalController);
 
-	BeggingModalController.$inject = ['$uibModalInstance', 'progressFactory', 'moneyCutoff', 'timeCutoff'];
+	BeggingModalController.$inject = ['$uibModalInstance', '$uibModal', 'modalFactory', 'progressFactory', 'moneyCutoff', 'timeCutoff'];
 	
-	function BeggingModalController($uibModalInstance, progressFactory, moneyCutoff, timeCutoff) {
+	function BeggingModalController($uibModalInstance, $uibModal, modalFactory, progressFactory, moneyCutoff, timeCutoff) {
 		var vm = this;
 		var resetMoney = false;
 		var resetTime = false;
@@ -46,6 +46,9 @@
 				}, 
 				function(reason) {
 					console.log("Error: " + reason);
+					$uibModalInstance.close();
+					$uibModal.open(modalFactory.getErrorModalOptions());
+					vm.saving = false;
 				}
 			);
 		}

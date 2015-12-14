@@ -109,6 +109,7 @@
 				}, 
 				function(reason) {
 					console.log("Error: " + reason);
+					$uibModal.open(modalFactory.getErrorModalOptions());
 				}
 			);
 		};

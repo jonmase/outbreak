@@ -4,6 +4,7 @@
 	
 	function modalFactory() {
 		var beggingModalOptions = setBeggingModalOptions();
+		var errorModalOptions = setErrorModalOptions();
 		var fluAlertModalOptions = setFluAlertModalOptions();
 		var introModalOptions = setIntroModalOptions();
 		var labModalOptions = setLabModalOptions();
@@ -11,6 +12,7 @@
 		
 		var factory = {
 			getBeggingModalOptions: getBeggingModalOptions,
+			getErrorModalOptions: getErrorModalOptions,
 			getFluAlertModalOptions: getFluAlertModalOptions,
 			getIntroModalOptions: getIntroModalOptions,
 			getLabModalOptions: getLabModalOptions,
@@ -20,6 +22,10 @@
 		
 		function getBeggingModalOptions() {
 			return beggingModalOptions;
+		}
+		
+		function getErrorModalOptions() {
+			return errorModalOptions;
 		}
 		
 		function getFluAlertModalOptions() {
@@ -49,6 +55,19 @@
 			};
 			
 			return beggingModalOptions;
+		}
+
+		function setErrorModalOptions() {
+			var errorModalOptions = {
+				animation: true,
+				size: 'md',
+				backdrop: 'static',
+				templateUrl: '../../partials/modals/error-modal.html',
+				controller: 'ErrorModalController',
+				controllerAs: 'ErrorModalCtrl',
+			};
+			
+			return errorModalOptions;
 		}
 
 		function setFluAlertModalOptions() {

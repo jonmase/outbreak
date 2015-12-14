@@ -2,9 +2,9 @@
 	angular.module('flu.results', [])
 		.controller('ResultsController', ResultsController);
 
-	ResultsController.$inject = ['$scope', '$sce', 'sectionFactory', 'progressFactory', 'lockFactory', 'techniqueFactory', 'siteFactory', 'schoolFactory', 'sampleFactory', 'resultFactory', 'assayFactory'];
+	ResultsController.$inject = ['$scope', '$sce', '$uibModal', 'modalFactory', 'sectionFactory', 'progressFactory', 'lockFactory', 'techniqueFactory', 'siteFactory', 'schoolFactory', 'sampleFactory', 'resultFactory', 'assayFactory'];
 		
-	function ResultsController($scope, $sce, sectionFactory, progressFactory, lockFactory, techniqueFactory, siteFactory, schoolFactory, sampleFactory, resultFactory, assayFactory) {
+	function ResultsController($scope, $sce, $uibModal, modalFactory, sectionFactory, progressFactory, lockFactory, techniqueFactory, siteFactory, schoolFactory, sampleFactory, resultFactory, assayFactory) {
 		var vm = this;
 		var sectionId = 'results';
 
@@ -47,6 +47,7 @@
 				}, 
 				function(reason) {
 					console.log("Error:" + reason);
+					$uibModal.open(modalFactory.getErrorModalOptions());
 				}
 			);
 		}

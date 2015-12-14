@@ -2,9 +2,9 @@
 	angular.module('flu')
 		.controller('OutbreakAlertModalController', OutbreakAlertModalController);
 	
-	OutbreakAlertModalController.$inject = ['$uibModalInstance', 'lockFactory'];
+	OutbreakAlertModalController.$inject = ['$uibModal', '$uibModalInstance', 'lockFactory', 'modalFactory'];
 
-	function OutbreakAlertModalController($uibModalInstance, lockFactory) {
+	function OutbreakAlertModalController($uibModal, $uibModalInstance, lockFactory, modalFactory) {
 		var vm = this;
 		vm.saving = false;
 
@@ -23,6 +23,9 @@
 				}, 
 				function(reason) {
 					console.log("Error: " + reason);
+					$uibModalInstance.close();
+					$uibModal.open(modalFactory.getErrorModalOptions());
+					vm.saving = false;
 				}
 			);
 		}

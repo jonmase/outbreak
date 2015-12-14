@@ -2,9 +2,9 @@
 	angular.module('flu.techniques')
 		.controller('FluAlertModalController', FluAlertModalController);
 
-	FluAlertModalController.$inject = ['$uibModalInstance', '$q', 'lockFactory', 'sampleFactory'];
+	FluAlertModalController.$inject = ['$uibModalInstance', '$q', '$uibModal', 'modalFactory', 'lockFactory', 'sampleFactory'];
 
-	function FluAlertModalController($uibModalInstance, $q, lockFactory, sampleFactory) {
+	function FluAlertModalController($uibModalInstance, $q, $uibModal, modalFactory, lockFactory, sampleFactory) {
 		var vm = this;
 		
 		//Bindable Members
@@ -32,6 +32,9 @@
 				}, 
 				function(reason) {
 					console.log("Error: " + reason);
+					$uibModalInstance.close();
+					$uibModal.open(modalFactory.getErrorModalOptions());
+					vm.saving = false;
 				}
 			);
 		}

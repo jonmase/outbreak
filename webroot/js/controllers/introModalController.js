@@ -6,6 +6,7 @@
 	
 	function IntroModalController($sce, $uibModal, $uibModalInstance, lockFactory, mediaFactory, modalFactory) {
 		var vm = this;
+		vm.saving = false;
 		
 		//vm.loadVideo = loadVideo;
 		vm.introVideo = $sce.trustAsResourceUrl(mediaFactory.getIntroVideo());
@@ -16,18 +17,22 @@
 		}*/
 		
 		function start() {
-			$uibModalInstance.close();
+			vm.saving = true;
 			var completePromise = lockFactory.setComplete('start');	//Set start progress to complete
 			completePromise.then(
 				function(result) {
 					console.log(result);
+					$uibModalInstance.close();
+					$uibModal.open(modalFactory.getOutbreakAlertModalOptions());
+					vm.saving = false;
 				}, 
 				function(reason) {
 					console.log("Error: " + reason);
+					$uibModalInstance.close();
+					$uibModal.open(modalFactory.getErrorModalOptions());
+					vm.saving = false;
 				}
 			);
-			
-			$uibModal.open(modalFactory.getOutbreakAlertModalOptions());
 		};
 	}
 })();

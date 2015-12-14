@@ -2,9 +2,9 @@
 	angular.module('flu.report', [])
 		.controller('ReportController', ReportController);
 
-	ReportController.$inject = ['$scope', '$sce', '$uibModal', '$timeout', 'dateFilter', 'sectionFactory', 'lockFactory', 'reportFactory', 'resultFactory', 'techniqueFactory'];
+	ReportController.$inject = ['$scope', '$sce', '$uibModal', '$timeout', 'dateFilter', 'sectionFactory', 'lockFactory', 'modalFactory', 'reportFactory', 'resultFactory', 'techniqueFactory'];
 		
-	function ReportController($scope, $sce, $uibModal, $timeout, dateFilter, sectionFactory, lockFactory, reportFactory, resultFactory, techniqueFactory) {
+	function ReportController($scope, $sce, $uibModal, $timeout, dateFilter, sectionFactory, lockFactory, modalFactory, reportFactory, resultFactory, techniqueFactory) {
 		var vm = this;
 		var sectionId = 'report';
 		var autoSaveTimeout;
@@ -104,6 +104,8 @@
 				}, 
 				function(reason) {
 					console.log("Error: " + reason);
+					$uibModal.open(modalFactory.getErrorModalOptions());
+					vm.saving = false;
 				}
 			);
 		}

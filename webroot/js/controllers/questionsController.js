@@ -2,9 +2,9 @@
 	angular.module('flu.questions', [])
 		.controller('QuestionsController', QuestionsController);
 
-	QuestionsController.$inject = ['$scope', '$sce', 'sectionFactory', 'lockFactory', 'questionFactory', '$q'];
+	QuestionsController.$inject = ['$scope', '$sce', '$uibModal', 'sectionFactory', 'lockFactory', 'modalFactory', 'questionFactory', '$q'];
 	
-	function QuestionsController($scope, $sce, sectionFactory, lockFactory, questionFactory, $q) {
+	function QuestionsController($scope, $sce, $uibModal, sectionFactory, lockFactory, modalFactory, questionFactory, $q) {
 		var vm = this;
 		var sectionId = 'questions';
 		
@@ -87,15 +87,21 @@
 								console.log(result);
 							}, 
 							function(reason) {
-								console.log("Error: " + reason);
+								fail(questionId, reason);
 							}
 						);
 					}
 				}, 
 				function(reason) {
-					console.log("Error: " + reason);
+					fail(questionId, reason);
 				}
 			);
+		}
+		
+		function fail(questionId, reason) {
+			console.log("Error: " + reason);
+			questionFactory.setSaving(questionId, false);
+			$uibModal.open(modalFactory.getErrorModalOptions());
 		}
 		
 		function clear(questionId) {

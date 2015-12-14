@@ -2,9 +2,9 @@
 	angular.module('flu.report')
 		.controller('SubmitModalController', SubmitModalController);
 
-	SubmitModalController.$inject = ['$uibModalInstance', 'reportFactory', 'lockFactory'];
+	SubmitModalController.$inject = ['$uibModalInstance', '$uibModal', 'modalFactory', 'reportFactory', 'lockFactory'];
 	
-	function SubmitModalController($uibModalInstance, reportFactory, lockFactory) {
+	function SubmitModalController($uibModalInstance, $uibModal, modalFactory, reportFactory, lockFactory) {
 		var vm = this;
 		
 		//Bindable Members - values
@@ -56,6 +56,7 @@
 			//alert("Saving failed, please try again. If you continue to experience problems, please refresh the page and try again. Contact msdlt@medsci.ox.ac.uk if this does not fix it");
 			$uibModalInstance.close();
 			console.log("Error: " + reason);
+			uibModal.open(modalFactory.getErrorModalOptions());
 			vm.saving = false;
 			//vm.failed = true;
 		}

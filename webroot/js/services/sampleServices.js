@@ -2,9 +2,9 @@
 	angular.module('flu.samples')
 		.factory('sampleFactory', sampleFactory);
 		
-	sampleFactory.$inject = ['$uibModal', 'siteFactory', 'schoolFactory', '$resource', '$q'];
+	sampleFactory.$inject = ['$uibModal', 'modalFactory', 'siteFactory', 'schoolFactory', '$resource', '$q'];
 		
-	function sampleFactory($uibModal, siteFactory, schoolFactory, $resource, $q) {
+	function sampleFactory($uibModal, modalFactory, siteFactory, schoolFactory, $resource, $q) {
 		//Variables
 		var loaded = false;
 		var sites, siteIds, schools, types, savedSamples, emptySamples, emptySamplesCounts, samples, savedHappiness, acuteSwabSamplesCollected;
@@ -520,27 +520,29 @@
 						schools[schoolId].acuteDisabled = true;
 						console.log('Too late saved');
 						//deferred.resolve('Too late saved');
+						$uibModal.open({
+							animation: true,
+							size: 'md',
+							backdrop: 'static',
+							templateUrl: '../../partials/modals/too-late-modal.html',
+							controller: 'tooLateModalController',
+							controllerAs: 'tooLateModalCtrl',
+						});
 					}
 					else {
 						console.log('Too late save failed (' + result.status + ")");
+						$uibModal.open(modalFactory.getErrorModalOptions());
 						//deferred.reject('Too late save failed (' + result.status + ")");
 					}
 				},
 				function(result) {
 					console.log('Too late save error (' + result.status + ')');
+					$uibModal.open(modalFactory.getErrorModalOptions());
 					//deferred.reject('Too late save error (' + result.status + ')');
 				}
 			);
 			
 			//alert(tooLateMessage);
-			$uibModal.open({
-				animation: true,
-				size: 'md',
-				backdrop: 'static',
-				templateUrl: '../../partials/modals/too-late-modal.html',
-				controller: 'tooLateModalController',
-				controllerAs: 'tooLateModalCtrl',
-			});
 		}
 	
 		function getTestSamples() {

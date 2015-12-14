@@ -2,9 +2,9 @@
 	angular.module('flu.samples')
 		.controller('SamplesModalController', SamplesModalController);
 
-	SamplesModalController.$inject = ['$uibModalInstance', 'progressFactory', 'lockFactory', 'sampleFactory', 'siteFactory'];
+	SamplesModalController.$inject = ['$uibModalInstance', '$uibModal', 'modalFactory', 'progressFactory', 'lockFactory', 'sampleFactory', 'siteFactory'];
 
-	function SamplesModalController($uibModalInstance, progressFactory, lockFactory, sampleFactory, siteFactory) {
+	function SamplesModalController($uibModalInstance, $uibModal, modalFactory, progressFactory, lockFactory, sampleFactory, siteFactory) {
 		var vm = this;
 		var sectionId = 'sampling';
 		vm.confirm = confirm;
@@ -30,6 +30,9 @@
 				}, 
 				function(reason) {
 					console.log("Error: " + reason);
+					$uibModalInstance.close();
+					$uibModal.open(modalFactory.getErrorModalOptions());
+					vm.saving = false;
 				}
 			);
 		}

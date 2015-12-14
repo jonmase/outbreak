@@ -2,9 +2,9 @@
 	angular.module('flu.lab')
 		.controller('LabModalController', LabModalController);
 
-	LabModalController.$inject = ['$uibModal', '$uibModalInstance', '$q', 'progressFactory', 'lockFactory', 'techniqueFactory', 'siteFactory', 'schoolFactory', 'sampleFactory', 'assayFactory', 'resultFactory', 'currentTechniqueId'];
+	LabModalController.$inject = ['$uibModal', '$uibModalInstance', '$q', 'progressFactory', 'lockFactory', 'modalFactory', 'techniqueFactory', 'siteFactory', 'schoolFactory', 'sampleFactory', 'assayFactory', 'resultFactory', 'currentTechniqueId'];
 	
-	function LabModalController($uibModal, $uibModalInstance, $q, progressFactory, lockFactory, techniqueFactory, siteFactory, schoolFactory, sampleFactory, assayFactory, resultFactory, currentTechniqueId) {
+	function LabModalController($uibModal, $uibModalInstance, $q, progressFactory, lockFactory, modalFactory, techniqueFactory, siteFactory, schoolFactory, sampleFactory, assayFactory, resultFactory, currentTechniqueId) {
 		var vm = this;
 		var sectionId = 'lab';
 		
@@ -88,6 +88,8 @@
 			//progressFactory.subtractResources(-moneyCost, -timeCost);	//Add the costs back on to the remaining resources
 			//alert("Assay failed, please try again. If you continue to experience problems, please refresh the page and try again. Contact msdlt@medsci.ox.ac.uk if this does not fix it");
 			console.log("Error: " + reason);
+			$uibModalInstance.close();
+			$uibModal.open(modalFactory.getErrorModalOptions());
 			vm.error = true;
 			vm.saving = false;
 		}
