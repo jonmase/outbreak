@@ -2,6 +2,7 @@
 	angular.module('flu.directives', [])
 		.directive('iconBar', iconBar)
 		.directive('loader', loader)
+		.directive('emailMsdlt', emailMsdlt)
 		.directive('pageTitle', pageTitle)
 		.directive('pageMenu', pageMenu)
 		.directive('outbreakAlert', outbreakAlert)
@@ -52,6 +53,13 @@
 				items: '=',
 				click: '&onClick'
 			}
+		};
+	}
+
+	function emailMsdlt() {
+		return {
+			restrict: "E", //type of directive - E = Element (i.e. new HTML element), or A = Attribute (i.e. for behaviours)
+			templateUrl: "../../partials/elements/email-msdlt.html",
 		};
 	}
 
