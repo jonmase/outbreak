@@ -5,6 +5,9 @@ use App\Controller\AppController;
 use Cake\View\Helper;
 use Cake\View\Helper\HtmlHelper;
 use Cake\Log\Log;
+use Cake\Utility\Security;
+use Cake\Network\Exception\ForbiddenException;
+
 /**
  * Attempts Controller
  *
@@ -19,9 +22,9 @@ class AttemptsController extends AppController
 	
 	}*/
 	
-	public function loadProgress($attemptId = null) {
+	public function loadProgress($attemptId = null, $token = null) {
 		$userId = $this->Auth->user('id');
-		if($attemptId && $this->Attempts->checkUserAttempt($userId, $attemptId)) {
+		if($attemptId && $token && $this->Attempts->checkUserAttempt($userId, $attemptId, $token)) {
 			$progress = $this->Attempts->get($attemptId, ['fields' => ['start', 'alert', 'revision', 'questions', 'sampling', 'lab', 'hidentified', 'nidentified', 'report', 'research']]);
 			$status = 'success';
 			$this->log("Progress Load. Attempt: " . $attemptId . "; User: " . $userId, 'info');
@@ -38,11 +41,12 @@ class AttemptsController extends AppController
 		if($this->request->is('post')) {
 			//pr($this->request->data);
 			$attemptId = $this->request->data['attemptId'];
+			$token = $this->request->data['token'];
 			$sections = $this->request->data['sections'];
 			$completed = $this->request->data['completed'];
 			$this->log("Progress Save attempted. Attempt: " . $attemptId . "; Sections: " . serialize($sections) . "; Completed: " . $completed, 'info');
 			
-			if($attemptId && $this->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
+			if($attemptId && $token && $this->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId, $token)) {
 				$attempt = $this->Attempts->get($attemptId);
 				if(is_string($sections)) {
 					$attempt->$sections = $completed;
@@ -78,8 +82,8 @@ class AttemptsController extends AppController
 		$this->render('/Element/ajaxmessage');
 	}
 	
-	public function loadResources($attemptId = null) {
-		if($attemptId && $this->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
+	public function loadResources($attemptId = null, $token = null) {
+		if($attemptId && $token && $this->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId, $token)) {
 			$resources = $this->Attempts->get($attemptId, ['fields' => ['money', 'time']]);
 			$status = 'success';
 			$this->log("Resources Loaded. Attempt: " . $attemptId, 'info');
@@ -97,11 +101,12 @@ class AttemptsController extends AppController
 		if($this->request->is('post')) {
 			//pr($this->request->data);
 			$attemptId = $this->request->data['attemptId'];
+			$token = $this->request->data['token'];
 			$money = $this->request->data['money'];
 			$time = $this->request->data['time'];
 			$this->log("Resources Save attempted. Attempt: " . $attemptId . "; Money: " . $money . "; Time: " . $time, 'info');
 			
-			if($attemptId && (!is_null($money) || !is_null($time)) && $this->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
+			if($attemptId && $token && (!is_null($money) || !is_null($time)) && $this->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId, $token)) {
 				$attempt = $this->Attempts->get($attemptId);
 				if(!is_null($money)) {
 					$attempt->money = $money;
@@ -132,8 +137,8 @@ class AttemptsController extends AppController
 		$this->render('/Element/ajaxmessage');
 	}
 	
-	public function loadHappiness($attemptId = null) {
-		if($attemptId && $this->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
+	public function loadHappiness($attemptId = null, $token = null) {
+		if($attemptId && $token && $this->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId, $token)) {
 			$attemptHappiness = $this->Attempts->get($attemptId, ['fields' => ['happiness']]);
 			$happiness = $attemptHappiness['happiness'];
 			$status = 'success';
@@ -148,6 +153,16 @@ class AttemptsController extends AppController
 	}
 		
 	
+	/**
+     * Forbidden method
+     *
+     * @return void
+     */
+    public function forbidden()
+    {
+		throw new ForbiddenException('Access Denied');
+    }
+
 	/**
      * Index method
      *
@@ -189,7 +204,16 @@ class AttemptsController extends AppController
 			return $this->redirect(['action' => 'index']);
 		}
 		
-        $this->set('attemptId', $id);
+ 		$token = Security::hash($id . $this->Auth->user('id') . $this->Auth->user('lti_user_id') . microtime(), 'sha1', true);
+		$attempt = $this->Attempts->get($id, ['fields' => ['id']]);
+		$attempt->token = $token;
+		if (!$this->Attempts->save($attempt)) {
+			$this->Flash->error(__('There was a problem accessing your attempt. Please contact msdlt@medsci.ox.ac.uk, giving your SSO username and this attempt ID: '. $id));
+			return $this->redirect(['action' => 'index']);
+		}
+		
+		$this->set('attemptId', $id);
+		$this->set('attemptToken', $token);
 		$this->viewBuilder()->layout('angular');
     }
 

@@ -12,8 +12,8 @@ use Cake\Datasource\ConnectionManager;
  */
 class SamplesController extends AppController
 {
-	public function load($attemptId = null) {
-		if($attemptId && $this->Samples->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
+	public function load($attemptId = null, $token = null) {
+		if($attemptId && $token && $this->Samples->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId, $token)) {
 			$samplesQuery = $this->Samples->find('all', [
 				'conditions' => ['attempt_id' => $attemptId],
 			]);
@@ -44,11 +44,12 @@ class SamplesController extends AppController
 		if($this->request->is('post')) {
 			//pr($this->request->data);
 			$attemptId = $this->request->data['attemptId'];
+			$token = $this->request->data['token'];
 			$rawSamples = $this->request->data['samples'];
 			$happiness = $this->request->data['happiness'];
 			$this->log("Samples Save attempted. Attempt: " . $attemptId . "; Happiness: " . $happiness . "; Samples: " . serialize($rawSamples), 'info');
 			
-			if($attemptId && $rawSamples && $this->Samples->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
+			if($attemptId && $token && $rawSamples && $this->Samples->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId, $token)) {
 				$attempt = $this->Samples->Attempts->get($attemptId);	//Get attempt, for saving happiness and identifying whether report has been submitted
 
 				$samples = [];

@@ -92,7 +92,7 @@
 			//API: Update user's progress in DB
 			var deferred = $q.defer();
 			var ProgressCall = $resource('../saveProgress', {});
-			ProgressCall.save({}, {attemptId: ATTEMPT_ID, sections: sections, completed: completed},
+			ProgressCall.save({}, {attemptId: ATTEMPT_ID, token: ATTEMPT_TOKEN, sections: sections, completed: completed},
 				function(result) {
 					if(typeof(result.status) !== "undefined" && result.status === 'success') {
 						setProgressAndLocks(sections, completed);

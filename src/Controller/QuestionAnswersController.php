@@ -11,8 +11,8 @@ use Cake\Datasource\ConnectionManager;
  */
 class QuestionAnswersController extends AppController
 {
-	function load($attemptId = null) {
-		if($attemptId && $this->QuestionAnswers->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
+	function load($attemptId = null, $token = null) {
+		if($attemptId && $token && $this->QuestionAnswers->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId, $token)) {
 			$answersQuery = $this->QuestionAnswers->find('all', ['conditions' => ['attempt_id' => $attemptId], 'contain' => ['QuestionStems']]);
 			$rawAnswers = $answersQuery->all()->toArray();
 			$answers = [];
@@ -44,12 +44,13 @@ class QuestionAnswersController extends AppController
 		if($this->request->is('post')) {
 			//pr($this->request->data);
 			$attemptId = $this->request->data['attemptId'];
+			$token = $this->request->data['token'];
 			$questionId = $this->request->data['questionId'];
 			$rawAnswers = $this->request->data['answers'];
 			$score = $this->request->data['score'];
 			$this->log("Response Save attempted. Attempt: " . $attemptId . "; Question: " . $questionId . "; Score: " . $score . "; Answers: " . serialize($rawAnswers), 'info');
 			
-			if($attemptId && $questionId && !is_null($rawAnswers) && !is_null($score) && $this->QuestionAnswers->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
+			if($attemptId && $token && $questionId && !is_null($rawAnswers) && !is_null($score) && $this->QuestionAnswers->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId, $token)) {
 				$answers = [];
 				foreach($rawAnswers as $stemId => $optionId) {
 					$answer = [

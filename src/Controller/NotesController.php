@@ -10,8 +10,8 @@ use App\Controller\AppController;
  */
 class NotesController extends AppController
 {
-	public function load($attemptId = null) {
-		if($attemptId && $this->Notes->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
+	public function load($attemptId = null, $token = null) {
+		if($attemptId && $token && $this->Notes->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId, $token)) {
 			$query = $this->Notes->find('all', [
 				'conditions' => ['Notes.attempt_id' => $attemptId],
 				'order' => ['Notes.technique_id' => 'ASC'],
@@ -39,11 +39,12 @@ class NotesController extends AppController
 		if($this->request->is('post')) {
 			//pr($this->request->data);
 			$attemptId = $this->request->data['attemptId'];
+			$token = $this->request->data['token'];
 			$techniqueId = $this->request->data['techniqueId'];
 			$note = $this->request->data['note'];
 			$this->log("Note Save attempted. Attempt: " . $attemptId . "; Technique: " . $techniqueId . "; Note: " . serialize($note), 'info');
 			
-			if($attemptId && $techniqueId && $this->Notes->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
+			if($attemptId && $token && $techniqueId && $this->Notes->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId, $token)) {
 				$noteQuery = $this->Notes->find('all', ['conditions' => ['attempt_id' => $attemptId, 'technique_id' => $techniqueId]]);
 				if($noteQuery->isEmpty()) {
 					$noteData = $this->Notes->newEntity();

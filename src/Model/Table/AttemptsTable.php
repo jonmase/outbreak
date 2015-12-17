@@ -170,8 +170,15 @@ class AttemptsTable extends Table
         return $rules;
     }
 	
-	public function checkUserAttempt($userId, $attemptId) {
-		$attempt = $this->get($attemptId, ['fields' => ['id', 'lti_user_id']]);
-		return $attempt->lti_user_id === $userId;
+	public function checkUserAttempt($userId, $attemptId, $token = null) {
+		$attempt = $this->get($attemptId, ['fields' => ['id', 'lti_user_id', 'token']]);
+		$userCheck = $attempt->lti_user_id === $userId;
+		if($token) {
+			$tokenCheck = $attempt->token === $token;
+			return $userCheck && $tokenCheck;
+		}
+		else {
+			return $userCheck;
+		}
 	}
 }

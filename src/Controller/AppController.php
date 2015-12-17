@@ -45,10 +45,15 @@ class AppController extends Controller
         $this->loadComponent('Flash');
 		
 		$this->loadComponent('Auth', [
-			'loginAction' => [
+			/*'loginAction' => [
 				'controller' => 'Pages',
 				'action' => 'display',
 				'denied'
+			],*/
+			'loginAction' => [
+				'controller' => 'Attempts',
+				'action' => 'forbidden',
+				//'denied'
 			],
 			'loginRedirect' => [
 				'controller' => 'Attempts',

@@ -58,7 +58,7 @@
 				var score = setScoreByQuestion(questionId);
 				var deferred = $q.defer();
 				var QuestionsCall = $resource('../../question_answers/save', {});
-				QuestionsCall.save({}, {attemptId: ATTEMPT_ID, questionId: questionId, answers: responses.answers[questionId], score: score},
+				QuestionsCall.save({}, {attemptId: ATTEMPT_ID, token: ATTEMPT_TOKEN, questionId: questionId, answers: responses.answers[questionId], score: score},
 					function(result) {
 						if(typeof(result.status) !== "undefined" && result.status === 'success') {
 							responses.scores[questionId] = score;
@@ -171,8 +171,8 @@
 		
 		function loadResponses() {
 			var deferred = $q.defer();
-			var ResponsesCall = $resource('../../question_answers/load/:attemptId.json', {attemptId: '@id'});
-			ResponsesCall.get({attemptId: ATTEMPT_ID},
+			var ResponsesCall = $resource('../../question_answers/load/:attemptId/:token.json', {attemptId: null, token: null});
+			ResponsesCall.get({attemptId: ATTEMPT_ID, token: ATTEMPT_TOKEN},
 				function(result) {
 					if(typeof(result.status) !== "undefined" && result.status === 'success') {
 						responses = result.responses;

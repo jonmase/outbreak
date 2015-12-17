@@ -117,8 +117,8 @@
 		function loadUsefulTechniques() { 
 			//API: get this from the DB - this will be saved for each attempt
 			var deferred = $q.defer();
-			var Useful = $resource('../../techniqueUsefulness/load/:attemptId.json', {attemptId: '@id'});
-			Useful.get({attemptId: ATTEMPT_ID},
+			var Useful = $resource('../../techniqueUsefulness/load/:attemptId/:token.json', {attemptId: null, token: null});
+			Useful.get({attemptId: ATTEMPT_ID, token: ATTEMPT_TOKEN},
 				function(result) {
 					if(typeof(result.status) !== "undefined" && result.status === 'success') {
 				usefulTechniques = result.usefulness;
@@ -237,7 +237,7 @@
 			//API: save useful technique update to DB
 			var deferred = $q.defer();
 			var Useful = $resource('../../techniqueUsefulness/save', {});
-			Useful.save({}, {attemptId: ATTEMPT_ID, techniqueId: techniqueId, usefulness: usefulness},
+			Useful.save({}, {attemptId: ATTEMPT_ID, token: ATTEMPT_TOKEN, techniqueId: techniqueId, usefulness: usefulness},
 				function(result) {
 					if(typeof(result.status) !== "undefined" && result.status === 'success') {
 						deferred.resolve('Useful technique saved');

@@ -11,8 +11,8 @@ use Cake\Datasource\ConnectionManager;
  */
 class AssaysController extends AppController
 {
-	public function load($attemptId = null) {
-		if($attemptId && $this->Assays->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
+	public function load($attemptId = null, $token = null) {
+		if($attemptId && $token && $this->Assays->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId, $token)) {
 			$assaysQuery = $this->Assays->find('all', [
 				'conditions' => ['attempt_id' => $attemptId],
 			]);
@@ -42,6 +42,7 @@ class AssaysController extends AppController
 		if($this->request->is('post')) {
 			//pr($this->request->data);
 			$attemptId = $this->request->data['attemptId'];
+			$token = $this->request->data['token'];
 			$techniqueId = $this->request->data['techniqueId'];
 			$rawAssays = $this->request->data['assays'];
 			$rawStandardAssays = $this->request->data['standardAssays'];
@@ -49,7 +50,7 @@ class AssaysController extends AppController
 			$time = $this->request->data['time'];
 			$this->log("Assays Save attempted. Attempt: " . $attemptId . "; Technique: " . $techniqueId . "; Money: " . $money . "; Time: " . $time . "; Assays: " . serialize($rawAssays) . "; Standard Assays: " . serialize($rawStandardAssays), 'info');
 			
-			if($attemptId && $techniqueId && $this->Assays->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
+			if($attemptId && $token && $techniqueId && $this->Assays->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId, $token)) {
 				$attemptData = $this->Assays->Attempts->get($attemptId);
 
 				$assays = [];

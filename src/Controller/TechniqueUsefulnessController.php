@@ -10,8 +10,8 @@ use App\Controller\AppController;
  */
 class TechniqueUsefulnessController extends AppController
 {
-	public function load($attemptId = null) {
-		if($attemptId && $this->TechniqueUsefulness->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
+	public function load($attemptId = null, $token = null) {
+		if($attemptId && $token && $this->TechniqueUsefulness->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId, $token)) {
 			$usefulQuery = $this->TechniqueUsefulness->find('list', ['conditions' => ['attempt_id' => $attemptId], 'order' => ['technique_id' => 'ASC'], 'keyField' => 'technique_id', 'valueField' => 'useful']);
 			$usefulness = $usefulQuery->toArray();
 			
@@ -30,11 +30,12 @@ class TechniqueUsefulnessController extends AppController
 		if($this->request->is('post')) {
 			//pr($this->request->data);
 			$attemptId = $this->request->data['attemptId'];
+			$token = $this->request->data['token'];
 			$techniqueId = $this->request->data['techniqueId'];
 			$usefulness = $this->request->data['usefulness'];
 			$this->log("Useful Techniques Save attempted. Attempt: " . $attemptId . "; Technique: " . $techniqueId . "; Usefulness: " . $usefulness, 'info');
 			
-			if($attemptId && $techniqueId && $this->TechniqueUsefulness->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
+			if($attemptId && $token && $techniqueId && $this->TechniqueUsefulness->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId, $token)) {
 				$usefulQuery = $this->TechniqueUsefulness->find('all', ['conditions' => ['attempt_id' => $attemptId, 'technique_id' => $techniqueId]]);
 				$useful = $usefulQuery->first();
 				if(empty($useful)) {

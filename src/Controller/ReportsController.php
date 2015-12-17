@@ -11,8 +11,8 @@ use Cake\Datasource\ConnectionManager;
  */
 class ReportsController extends AppController
 {
-	public function load($attemptId = null) {
-		if($attemptId && $this->Reports->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
+	public function load($attemptId = null, $token = null) {
+		if($attemptId && $token && $this->Reports->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId, $token)) {
 			$reportsQuery = $this->Reports->find('all', [
 				'conditions' => ['Reports.attempt_id' => $attemptId, 'Reports.revision' => 0],
 				'order' => ['created' => 'DESC'],
@@ -53,12 +53,13 @@ class ReportsController extends AppController
 		if($this->request->is('post')) {
 			//pr($this->request->data);
 			$attemptId = $this->request->data['attemptId'];
+			$token = $this->request->data['token'];
 			$report = $this->request->data['report'];
 			//$status = $this->request->data['status'];	//'revision', 'draft' or 'submitted'
 			$type = $this->request->data['type'];	//'save', 'autosave', 'submit'
 			$this->log("Report Save attempted. Attempt: " . $attemptId . "; Type: " . $type . "; Report: " . serialize($report), 'info');
 			
-			if($attemptId && $this->Reports->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
+			if($attemptId && $token && $this->Reports->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId, $token)) {
 				$reportQuery = $this->Reports->find('all', [
 					'conditions' => ['Reports.attempt_id' => $attemptId, 'Reports.revision' => 0],
 					'order' => ['created' => 'DESC'],

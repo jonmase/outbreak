@@ -43,8 +43,8 @@
 		function loadProgress() { 
 			//API: Get user's progress from DB
 			var deferred = $q.defer();
-			var ProgressCall = $resource('../loadProgress/:attemptId.json', {attemptId: '@id'});
-			ProgressCall.get({attemptId: ATTEMPT_ID}, 
+			var ProgressCall = $resource('../loadProgress/:attemptId/:token.json', {attemptId: null, token: null});
+			ProgressCall.get({attemptId: ATTEMPT_ID, token: ATTEMPT_TOKEN}, 
 				function(result) {
 					if(typeof(result.status) !== "undefined" && result.status === 'success') {
 						progress = result.progress;
@@ -91,8 +91,8 @@
 		function loadResources() { 
 			//API: Get user's resources from DB
 			var deferred = $q.defer();
-			var ResourcesCall = $resource('../loadResources/:attemptId.json', {attemptId: '@id'});
-			ResourcesCall.get({attemptId: ATTEMPT_ID},
+			var ResourcesCall = $resource('../loadResources/:attemptId/:token.json', {attemptId: null, token: null});
+			ResourcesCall.get({attemptId: ATTEMPT_ID, token: ATTEMPT_TOKEN},
 				function(result) {
 					if(typeof(result.status) !== "undefined" && result.status === 'success') {
 						resources = result.resources;
@@ -129,7 +129,7 @@
 			}
 			var deferred = $q.defer();
 			var ResourcesCall = $resource('../../attempts/saveResources', {});
-			ResourcesCall.save({}, {attemptId: ATTEMPT_ID, money: money, time: time},
+			ResourcesCall.save({}, {attemptId: ATTEMPT_ID, token: ATTEMPT_TOKEN, money: money, time: time},
 				function(result) {
 					if(typeof(result.status) !== "undefined" && result.status === 'success') {
 						if(resetMoney) {

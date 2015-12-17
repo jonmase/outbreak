@@ -16,11 +16,11 @@ class SchoolsController extends AppController
 		$this->Auth->allow('load');
 	}
 	
-	public function load($attemptId = null) {
+	public function load($attemptId = null, $token = null) {
 		$contain = array('Children');
 		//If there is an attemptId, get school-related info for this attempt
 		$message = "Schools Loaded";
-		if($attemptId && $this->Schools->AttemptsSchools->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
+		if($attemptId && $token && $this->Schools->AttemptsSchools->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId, $token)) {
 			//$contain[] = 'AttemptsSchools';
 			$contain['AttemptsSchools'] = function ($q) use ($attemptId) {
 			   return $q
@@ -67,10 +67,11 @@ class SchoolsController extends AppController
 		if($this->request->is('post')) {
 			//pr($this->request->data);
 			$attemptId = $this->request->data['attemptId'];
+			$token = $this->request->data['token'];
 			$schoolId = $this->request->data['schoolId'];
 			$this->log("Too Late Save attempted. Attempt: " . $attemptId . "; School: " . $schoolId, 'info');
 			
-			if($attemptId && $this->Schools->AttemptsSchools->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
+			if($attemptId && $token && $this->Schools->AttemptsSchools->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId, $token)) {
 				$attemptSchoolQuery = $this->Schools->AttemptsSchools->find('all', ['conditions' => ['attempt_id' => $attemptId]]);
 				if($attemptSchoolQuery->isEmpty()) {
 					$attemptSchool = $this->Schools->AttemptsSchools->newEntity();

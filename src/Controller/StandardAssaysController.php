@@ -10,8 +10,8 @@ use App\Controller\AppController;
  */
 class StandardAssaysController extends AppController
 {
-	public function load($attemptId = null) {
-		if($attemptId && $this->StandardAssays->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
+	public function load($attemptId = null, $token = null) {
+		if($attemptId && $token && $this->StandardAssays->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId, $token)) {
 			$assaysQuery = $this->StandardAssays->find('all', [
 				'conditions' => ['attempt_id' => $attemptId],
 			]);

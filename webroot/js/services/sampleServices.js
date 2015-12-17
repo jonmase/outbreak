@@ -124,7 +124,7 @@
 				
 				var deferred = $q.defer();
 				var SamplesCall = $resource('../../samples/save', {});
-				SamplesCall.save({}, {attemptId: ATTEMPT_ID, samples: samplesToSave, happiness: null},
+				SamplesCall.save({}, {attemptId: ATTEMPT_ID, token: ATTEMPT_TOKEN, samples: samplesToSave, happiness: null},
 					function(result) {
 						if(typeof(result.status) !== "undefined" && result.status === 'success') {
 							deferred.resolve('Acute samples collected');
@@ -241,8 +241,8 @@
 		
 		function loadHappiness() {
 			var deferred = $q.defer();
-			var HappinessCall = $resource('../../Attempts/loadHappiness/:attemptId.json', {attemptId: '@id'});
-			HappinessCall.get({attemptId: ATTEMPT_ID},
+			var HappinessCall = $resource('../../Attempts/loadHappiness/:attemptId/:token.json', {attemptId: null, token: null});
+			HappinessCall.get({attemptId: ATTEMPT_ID, token: ATTEMPT_TOKEN},
 				function(result) {
 					if(typeof(result.status) !== "undefined" && result.status === 'success') {
 						savedHappiness = result.happiness;
@@ -261,8 +261,8 @@
 
 		function loadSamples() {
 			var deferred = $q.defer();
-			var SamplesCall = $resource('../../Samples/load/:attemptId.json', {attemptId: '@id'});
-			SamplesCall.get({attemptId: ATTEMPT_ID},
+			var SamplesCall = $resource('../../Samples/load/:attemptId/:token.json', {attemptId: null, token: null});
+			SamplesCall.get({attemptId: ATTEMPT_ID, token: ATTEMPT_TOKEN},
 				function(result) {
 					if(typeof(result.status) !== "undefined" && result.status === 'success') {
 						savedSamples = result.samples;
@@ -486,7 +486,7 @@
 			//API Save samples and happiness to DB, plus acutesDisabled
 			var deferred = $q.defer();
 			var SamplesCall = $resource('../../samples/save', {});
-			SamplesCall.save({}, {attemptId: ATTEMPT_ID, samples: samples.temp.samples, happiness: happiness}, 
+			SamplesCall.save({}, {attemptId: ATTEMPT_ID, token: ATTEMPT_TOKEN, samples: samples.temp.samples, happiness: happiness}, 
 				function(result) {
 					if(typeof(result.status) !== "undefined" && result.status === 'success') {
 						setSampleCounts('temp', 'saved', true);	//Set the saved counts based on the temp samples, and add the new samples to the saved samples array
@@ -514,7 +514,7 @@
 			//API: Set this in the DB
 			//var deferred = $q.defer();
 			var TooLateCall = $resource('../../schools/tooLate', {});
-			TooLateCall.save({}, {attemptId: ATTEMPT_ID, schoolId: schoolId},
+			TooLateCall.save({}, {attemptId: ATTEMPT_ID, token: ATTEMPT_TOKEN, schoolId: schoolId},
 				function(result) {
 					if(typeof(result.status) !== "undefined" && result.status === 'success') {
 						schools[schoolId].acuteDisabled = true;

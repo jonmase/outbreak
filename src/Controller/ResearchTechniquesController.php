@@ -23,8 +23,12 @@ class ResearchTechniquesController extends AppController
 		$rawTechniques = $query->all();
 		$techniques = [];
 		foreach($rawTechniques as $technique) {
+			if(substr($technique->video, 0, 1) === 'a') {
+				$technique->video = unserialize($technique->video);
+			}
 			$techniques[$technique->id] = $technique;
 		}
+		//exit;
 		$status = 'success';
 		$this->log("Research Techniques Loaded", 'info');
 		$this->set(compact('techniques', 'status'));

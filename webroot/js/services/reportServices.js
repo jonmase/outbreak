@@ -104,8 +104,8 @@
 		
 		function loadReport() {
 			var deferred = $q.defer();
-			var ReportCall = $resource('../../reports/load/:attemptId.json', {attemptId: '@id'});
-			ReportCall.get({attemptId: ATTEMPT_ID},
+			var ReportCall = $resource('../../reports/load/:attemptId/:token.json', {attemptId: null, token: null});
+			ReportCall.get({attemptId: ATTEMPT_ID, token: ATTEMPT_TOKEN},
 				function(result) {
 					if(typeof(result.status) !== "undefined" && result.status === 'success') {
 						report = result.report;
@@ -177,7 +177,7 @@
 			//API: Save report
 			var deferred = $q.defer();
 			var ReportCall = $resource('../../reports/save', {});
-			ReportCall.save({}, {attemptId: ATTEMPT_ID, report: report.reports_sections, type: type},
+			ReportCall.save({}, {attemptId: ATTEMPT_ID, token: ATTEMPT_TOKEN, report: report.reports_sections, type: type},
 				function(result) {
 					if(typeof(result.status) !== "undefined" && result.status === 'success') {
 						lastSaved = getDate();

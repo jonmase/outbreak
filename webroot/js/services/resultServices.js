@@ -51,8 +51,8 @@
 		
 		function loadNotes() {
 			var deferred = $q.defer();
-			var NotesCall = $resource('../../notes/load/:attemptId.json', {attemptId: '@id'});
-			NotesCall.get({attemptId: ATTEMPT_ID},
+			var NotesCall = $resource('../../notes/load/:attemptId/:token.json', {attemptId: null, token: null});
+			NotesCall.get({attemptId: ATTEMPT_ID, token: ATTEMPT_TOKEN},
 				function(result) {
 					if(typeof(result.status) !== "undefined" && result.status === 'success') {
 						notes = result.notes;
@@ -135,7 +135,7 @@
 			//API: Save notes to DB. Called on blur
 			var deferred = $q.defer();
 			var NotesCall = $resource('../../notes/save', {});
-			NotesCall.save({}, {attemptId: ATTEMPT_ID, techniqueId: techniqueId, note: notes[techniqueId].note},
+			NotesCall.save({}, {attemptId: ATTEMPT_ID, token: ATTEMPT_TOKEN, techniqueId: techniqueId, note: notes[techniqueId].note},
 				function(result) {
 					if(typeof(result.status) !== "undefined" && result.status === 'success') {
 						deferred.resolve('Notes saved');

@@ -24,8 +24,8 @@
 		
 		function loadSchools() {
 			var deferred = $q.defer();
-			var SchoolsCall = $resource('../../schools/load/:attemptId.json', {attemptId: '@id'});
-			SchoolsCall.get({attemptId: ATTEMPT_ID},
+			var SchoolsCall = $resource('../../schools/load/:attemptId/:token.json', {attemptId: null, token: null});
+			SchoolsCall.get({attemptId: ATTEMPT_ID, token: ATTEMPT_TOKEN},
 				function(result) {
 					if(typeof(result.status) !== "undefined" && result.status === 'success') {
 						schools = result.schools;
