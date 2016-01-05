@@ -25,7 +25,7 @@ class AttemptsController extends AppController
 	public function loadProgress($attemptId = null, $token = null) {
 		$userId = $this->Auth->user('id');
 		if($attemptId && $token && $this->Attempts->checkUserAttempt($userId, $attemptId, $token)) {
-			$progress = $this->Attempts->get($attemptId, ['fields' => ['start', 'alert', 'revision', 'questions', 'sampling', 'lab', 'hidentified', 'nidentified', 'report', 'research']]);
+			$progress = $this->Attempts->get($attemptId, ['fields' => $this->Attempts->progressFields]);
 			$status = 'success';
 			$this->log("Progress Load. Attempt: " . $attemptId . "; User: " . $userId, 'info');
 		}
@@ -84,7 +84,7 @@ class AttemptsController extends AppController
 	
 	public function loadResources($attemptId = null, $token = null) {
 		if($attemptId && $token && $this->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId, $token)) {
-			$resources = $this->Attempts->get($attemptId, ['fields' => ['money', 'time']]);
+			$resources = $this->Attempts->get($attemptId, ['fields' => $this->Attempts->resourceFields]);
 			$status = 'success';
 			$this->log("Resources Loaded. Attempt: " . $attemptId, 'info');
 			//pr($resources);
@@ -178,6 +178,8 @@ class AttemptsController extends AppController
 			'limit' => 10,
         ];
 		$attempts = $this->paginate($this->Attempts);
+		$session = $this->request->session();	//Set Session to variable
+		//pr($session->read());
 
         $this->set('attempts', $attempts);
     }
@@ -228,7 +230,20 @@ class AttemptsController extends AppController
         $attempt = $this->Attempts->newEntity();
 		//pr($user);
 		$attempt->lti_user_id = $user['id'];
+		
+		//If unlocked is set to true in the session for this launch, set all the progress fields to complete
+		$session = $this->request->session();	//Set Session to variable
+		$unlocked = $session->read('LtiResource.unlocked');
+		if($unlocked) {
+			foreach($this->Attempts->progressFields as $field) {
+				$attempt->$field = 1;
+			}
+		}
+		$attempt->lti_resource_id = $session->read('LtiResource.id');
+		$attempt->user_role = $session->read('_basic_lti_context.roles');
+		
 		//pr($attempt);
+		//exit;
 		//$attempt->time = 48;
 		//$attempt->money = 200;
 		//$attempt->happiness = 3;
