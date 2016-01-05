@@ -21,6 +21,8 @@ class LtiKeysController extends AppController
 		if(isset($_REQUEST['lti_message_type']) && isset($_REQUEST['oauth_consumer_key'])) {	//Is this an LTI request
 			require_once(ROOT . DS . 'vendor' . DS  . 'blti' . DS . 'blti.php');	//Load the BLTI class
 			$session = $this->request->session();	//Set Session to variable
+			$session->delete('LtiContext');
+			$session->delete('LtiResource');
 			//pr($session);
 			$denied = ['controller' => 'pages', 'action' => 'display', 'denied'];	//Denied redirect
 			$this->autoRender = false;	//Do not render a page
@@ -99,7 +101,7 @@ class LtiKeysController extends AppController
 			}
 			
 			//Check whether this resource exists in the database
-			$resourceQuery = $this->LtiKeys->LtiResources->find('all', ['conditions' => ['lti_resource_link_id' => $resourceId, 'lti_key_id' => $key->id]]);
+			$resourceQuery = $this->LtiKeys->LtiResources->find('all', ['conditions' => ['lti_resource_link_id' => $resourceId, 'lti_key_id' => $key->id, 'lti_context_id' => $contextData->id]]);
 			$savedResource = $resourceQuery->first();
 			//pr($savedContext);
 			
@@ -109,6 +111,7 @@ class LtiKeysController extends AppController
 				$resourceData = $this->LtiKeys->LtiResources->newEntity();
 
 				$resourceData->lti_key_id = $key->id;
+				$resourceData->lti_context_id = $contextData->id;
 				$resourceData->lti_resource_link_id = $resourceId;
 			}
 			else {
@@ -138,15 +141,16 @@ class LtiKeysController extends AppController
 			}
 			else {
 				//No user_id in launch data, so must be public user
-				$userId = 'public_' . $context->info['resource_link_id'];
+				$userId = 'public_' . $context->info['resource_link_id'] . '_' . $_SERVER['REMOTE_ADDR'];
 			}
-			//Try to find a user who already exists with the key id and userId
+			
+			//Try to find a user who already exists with the userId and keyId
 			$userQuery = $this->LtiKeys->LtiUsers->find('all', ['conditions' => ['lti_user_id' => $userId, 'lti_key_id' => $key->id]]);
 			$savedUser = $userQuery->first();
 			
 			if(empty($savedUser)) {
 				//If there is no saved user matching the userId and key ID, create one
-				$userData = $this->LtiKeys->LtiContexts->newEntity();
+				$userData = $this->LtiKeys->LtiUsers->newEntity();
 
 				$userData->lti_key_id = $key->id;
 				$userData->lti_user_id = $userId;
@@ -166,8 +170,11 @@ class LtiKeysController extends AppController
 			else {
 				$userData->lti_displayid = null;
 			}
-			$userData->lti_roles = $context->info['roles'];
-			$userData->lti_sakai_role = $context->info['ext_sakai_role'];
+			//Do not save roles here, as this can change for each launch. Instead, role that they user had when they start each attempt will be saved
+			//$userData->lti_roles = $context->info['roles'];
+			//$userData->lti_sakai_role = $context->info['ext_sakai_role'];
+			
+			//Save user details
 			$userData->lti_lis_person_contact_email_primary = $context->info['lis_person_contact_email_primary'];
 			$userData->lti_lis_person_name_family = $context->info['lis_person_name_family'];
 			$userData->lti_lis_person_name_full = $context->info['lis_person_name_full'];
@@ -186,6 +193,10 @@ class LtiKeysController extends AppController
 				exit;
 			}
 
+			//If the 'unlocked' custom parameter has been passed through, set this in the session
+			if(!empty($context->info['custom_unlocked'])) {
+				$session->write('LtiResource.unlocked', true);
+			}
 			
 			//pr($session->read());
 			//exit;

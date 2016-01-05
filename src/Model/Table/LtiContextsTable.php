@@ -37,6 +37,9 @@ class LtiContextsTable extends Table
             'foreignKey' => 'lti_key_id',
             'joinType' => 'INNER'
         ]);
+        $this->hasMany('LtiResources', [
+            'foreignKey' => 'lti_context_id'
+        ]);
     }
 
     /**

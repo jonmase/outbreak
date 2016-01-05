@@ -32,9 +32,16 @@ class LtiResourcesTable extends Table
 
         $this->addBehavior('Timestamp');
 
-        $this->belongsTo('LtiKeys', [
+        $this->belongsTo('LtiContexts', [
+            'foreignKey' => 'lti_context_id',
+            'joinType' => 'INNER'
+        ]);
+         $this->belongsTo('LtiKeys', [
             'foreignKey' => 'lti_key_id',
             'joinType' => 'INNER'
+        ]);
+        $this->hasMany('Attempts', [
+            'foreignKey' => 'lti_resource_id'
         ]);
     }
 
@@ -73,6 +80,7 @@ class LtiResourcesTable extends Table
      */
     public function buildRules(RulesChecker $rules)
     {
+        $rules->add($rules->existsIn(['lti_context_id'], 'LtiContexts'));
         $rules->add($rules->existsIn(['lti_key_id'], 'LtiKeys'));
         return $rules;
     }

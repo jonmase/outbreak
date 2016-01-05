@@ -39,6 +39,10 @@ class AttemptsTable extends Table
 
         $this->addBehavior('Timestamp');
 
+        $this->belongsTo('LtiResources', [
+            'foreignKey' => 'lti_resource_id',
+            'joinType' => 'INNER'
+        ]);
         $this->belongsTo('LtiUsers', [
             'foreignKey' => 'lti_user_id',
             'joinType' => 'INNER'
@@ -75,6 +79,9 @@ class AttemptsTable extends Table
             'targetForeignKey' => 'school_id',
             'joinTable' => 'attempts_schools'
         ]);*/
+		
+		$this->progressFields = array('start', 'alert', 'revision', 'questions', 'sampling', 'lab', 'hidentified', 'nidentified', 'report', 'research');
+		$this->resourceFields = array('money', 'time');
     }
 
     /**
@@ -166,6 +173,7 @@ class AttemptsTable extends Table
      */
     public function buildRules(RulesChecker $rules)
     {
+        $rules->add($rules->existsIn(['lti_resource_id'], 'LtiResources'));
         $rules->add($rules->existsIn(['lti_user_id'], 'LtiUsers'));
         return $rules;
     }
