@@ -12,55 +12,35 @@
 		if(!lockFactory.checkLock(sectionId)) {	
 			return false;
 		}
+		document.body.scrollTop = 0;
 		vm.loading = true;
+
+		//Bindable Members - values
 		$scope.$parent.currentSectionId = sectionId;	//Make sure the section ID is set correctly in Main Controller
 		vm.section = sectionFactory.getSection(sectionId);	//Get the section details
+		vm.subsections = questionFactory.getQuestions();
+		vm.currentQuestionId = questionFactory.getCurrentQuestionId();
+		vm.romans = questionFactory.getRomans();
+		questionFactory.setAnswered();	//Set whether each question has been answered
+		vm.responses = questionFactory.getResponses();
+		vm.saving = questionFactory.getSaving();
+		//vm.notAnswered = questionFactory.getNotAnswered();
 
-		setup();
+		//Bindable Members - methods
+		vm.setSubsection = setSubsection;
+		vm.checkAllAnswered = checkAllAnswered;
+		vm.check = check;
+		vm.clear = clear;
+		vm.complete = complete;
+		vm.next = next;
+		vm.prev = prev;
 		
-		/*if(!questionFactory.getLoaded()) {
-			var questionsPromise = questionFactory.loadQuestions();
-			var responsesPromise = questionFactory.loadResponses();
-			$q.all([questionsPromise, responsesPromise]).then(
-				function(result) {
-					questionFactory.setLoaded();
-					console.log(result);
-					setup();
-				}, 
-				function(reason) {
-					console.log("Error: " + reason);
-				}
-			);
-		}
-		else {
-			setup();
-		}*/
-		
-		function setup() {
-			vm.subsections = questionFactory.getQuestions();
-			vm.currentQuestionId = questionFactory.getCurrentQuestionId();
-			vm.romans = questionFactory.getRomans();
-			questionFactory.setAnswered();	//Set whether each question has been answered
-			vm.responses = questionFactory.getResponses();
-			vm.saving = questionFactory.getSaving();
-			//vm.notAnswered = questionFactory.getNotAnswered();
-
-			//Bindable Members - methods
-			vm.setSubsection = setSubsection;
-			vm.checkAllAnswered = checkAllAnswered;
-			vm.check = check;
-			vm.clear = clear;
-			vm.complete = complete;
-			vm.next = next;
-			vm.prev = prev;
-			
-			//Actions on arrival
-			vm.setSubsection(vm.currentQuestionId);	//Set the subsection
-			//For Development, set to complete as soon as you go to the questions page
-			//Note that this still gets called even if user is redirected home by checkLock - doesn't really matter, as won't just unlock page on first visit.
-			//lockFactory.setComplete(sectionId);	//Set the progress for this section to complete
-			vm.loading = false;
-		}
+		//Actions on arrival
+		vm.setSubsection(vm.currentQuestionId);	//Set the subsection
+		//For Development, set to complete as soon as you go to the questions page
+		//Note that this still gets called even if user is redirected home by checkLock - doesn't really matter, as won't just unlock page on first visit.
+		//lockFactory.setComplete(sectionId);	//Set the progress for this section to complete
+		vm.loading = false;
 		
 		//Functions
 		function checkAllAnswered(questionId) {

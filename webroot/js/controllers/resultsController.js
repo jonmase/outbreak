@@ -12,9 +12,10 @@
 		if(!lockFactory.checkLock(sectionId)) {	
 			return false;
 		}
-		$scope.$parent.currentSectionId = sectionId;	//Make sure the section ID is set correctly in Main Controller
+		document.body.scrollTop = 0;
 
-		//Bindable Members - variables
+		//Bindable Members - values
+		$scope.$parent.currentSectionId = sectionId;	//Make sure the section ID is set correctly in Main Controller
 		vm.section = sectionFactory.getSection(sectionId);	//Get the section details
 		vm.subsections = resultFactory.getSections();
 		vm.currentTechniqueId = resultFactory.getCurrentTechniqueId();

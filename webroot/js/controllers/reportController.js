@@ -15,9 +15,10 @@
 			//lockFactory.setComplete(sectionId);
 			return false;
 		}
-		$scope.$parent.currentSectionId = sectionId;	//Make sure the section ID is set correctly in Main Controller
+		document.body.scrollTop = 0;
 
 		//Bindable Members - values
+		$scope.$parent.currentSectionId = sectionId;	//Make sure the section ID is set correctly in Main Controller
 		vm.section = sectionFactory.getSection(sectionId);	//Get the section details
 		vm.boxes = reportFactory.getBoxes();
 		vm.date = reportFactory.getDate();
@@ -38,8 +39,6 @@
 		//Bindable Members - methods
 		vm.save = save;
 		vm.submit = submit;
-		
-		
 		
 		//Actions
 		//If not already submitted, set up saving

@@ -12,63 +12,42 @@
 		if(!lockFactory.checkLock(sectionId)) {	
 			return false;
 		}
+		document.body.scrollTop = 0;
 		vm.loading = true;
+
+		//Bindable Members - values
 		$scope.$parent.currentSectionId = sectionId;	//Make sure the section ID is set correctly in Main Controller
 		vm.section = sectionFactory.getSection(sectionId);	//Get the section details
-
-		setup();
+		vm.subsections = techniqueFactory.getTechniques(sectionId);
+		vm.currentTechniqueId = techniqueFactory.getCurrentTechniqueId(sectionId);
+		vm.usefulDisabled = [];
+		if(sectionId === 'revision') {
+			//Pass techniques useful to view for revision page
+			vm.techniquesUseful = techniqueFactory.getUsefulTechniques();
+		}
 		
-		/*if(!techniqueFactory.getLoaded()) {
-			techniqueFactory.setLoaded();
-			var techniquesPromise = techniqueFactory.loadTechniques();
-			var researchTechniquesPromise = techniqueFactory.loadResearchTechniques();
-			var usefulPromise = techniqueFactory.loadUsefulTechniques();
-			$q.all([techniquesPromise, researchTechniquesPromise, usefulPromise]).then(
+		//Bindable Members - methods
+		vm.setSubsection = setSubsection;
+		vm.setUsefulTechnique = setUsefulTechnique;
+		vm.setVideoTab = setVideoTab;
+		vm.complete = complete;	//Dev only, so don't have to click all of the buttons
+		
+		//Actions
+		vm.setSubsection(vm.currentTechniqueId);
+		if(sectionId === 'research' && !progressFactory.checkProgress(sectionId)) {	//For research section, only show research techniques
+			var completePromise = lockFactory.setComplete(sectionId);	//Set progress to complete
+			completePromise.then(
 				function(result) {
 					console.log(result);
-					setup();
 				}, 
 				function(reason) {
 					console.log("Error: " + reason);
 				}
 			);
 		}
-		else {
-			setup();
-		}*/
+		vm.loading = false;
 
 		//Functions
-		function setup() {
-			vm.subsections = techniqueFactory.getTechniques(sectionId);
-			vm.currentTechniqueId = techniqueFactory.getCurrentTechniqueId(sectionId);
-			if(sectionId === 'revision') {
-				//Pass techniques useful to view for revision page
-				vm.techniquesUseful = techniqueFactory.getUsefulTechniques();
-			}
-			
-			//Bindable Members - methods
-			vm.setSubsection = setSubsection;
-			vm.setUsefulTechnique = setUsefulTechnique;
-			vm.setVideoTab = setVideoTab;
-			vm.complete = complete;	//Dev only, so don't have to click all of the buttons
-			
-			//Actions
-			vm.setSubsection(vm.currentTechniqueId);
-			if(sectionId === 'research' && !progressFactory.checkProgress(sectionId)) {	//For research section, only show research techniques
-				var completePromise = lockFactory.setComplete(sectionId);	//Set progress to complete
-				completePromise.then(
-					function(result) {
-						console.log(result);
-					}, 
-					function(reason) {
-						console.log("Error: " + reason);
-					}
-				);
-			}
-			vm.usefulDisabled = [];
-			vm.loading = false;
-		}
-		
 		//Dev only: set section to complete
 		function complete() {
 			lockFactory.setComplete('revision');

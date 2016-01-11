@@ -8,8 +8,10 @@
 		var vm = this;
 		vm.loading = true;
 		
-		//Bindable Members
 		$location.path( "/home" );
+		document.body.scrollTop = 0;
+		
+		//Bindable Members
 		vm.sections = sectionsConstant();
 		$scope.currentSectionId = getSectionFromPath();
 
