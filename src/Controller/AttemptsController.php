@@ -240,8 +240,9 @@ class AttemptsController extends AppController
 			}
 		}
 		$attempt->lti_resource_id = $session->read('LtiResource.id');
-		$attempt->user_role = $session->read('_basic_lti_context.roles');
+		$attempt->user_role = $session->read('User.role');
 		
+		//pr($session->read());
 		//pr($attempt);
 		//exit;
 		//$attempt->time = 48;

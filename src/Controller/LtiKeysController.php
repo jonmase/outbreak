@@ -173,6 +173,7 @@ class LtiKeysController extends AppController
 			//Do not save roles here, as this can change for each launch. Instead, role that they user had when they start each attempt will be saved
 			//$userData->lti_roles = $context->info['roles'];
 			//$userData->lti_sakai_role = $context->info['ext_sakai_role'];
+			$session->write('User.role', $context->info['roles']);
 			
 			//Save user details
 			$userData->lti_lis_person_contact_email_primary = $context->info['lis_person_contact_email_primary'];

@@ -67,6 +67,12 @@ class AppController extends Controller
 		]);
     }
 
+	public function beforeFilter(Event $event) {
+		//if($this->name !== 'Pages') {
+		//	$this->redirect('/maintenance');
+		//}
+	}
+	
     /**
      * Before render callback.
      *
