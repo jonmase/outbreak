@@ -30,11 +30,11 @@ class QuestionAnswersController extends AppController
 			];
 			
 			$status = 'success';
-			$this->log("Responses Loaded. Attempt: " . $attemptId, 'info');
+			$this->infolog("Responses Loaded. Attempt: " . $attemptId);
 		}
 		else {
 			$status = 'denied';
-			$this->log("Responses Load denied. Attempt: " . $attemptId, 'info');
+			$this->infolog("Responses Load denied. Attempt: " . $attemptId);
 		}
 		$this->set(compact('responses', 'status'));
 		$this->set('_serialize', ['responses', 'status']);
@@ -48,7 +48,7 @@ class QuestionAnswersController extends AppController
 			$questionId = $this->request->data['questionId'];
 			$rawAnswers = $this->request->data['answers'];
 			$score = $this->request->data['score'];
-			$this->log("Response Save attempted. Attempt: " . $attemptId . "; Question: " . $questionId . "; Score: " . $score . "; Answers: " . serialize($rawAnswers), 'info');
+			$this->infolog("Response Save attempted. Attempt: " . $attemptId . "; Question: " . $questionId . "; Score: " . $score . "; Answers: " . serialize($rawAnswers));
 			
 			if($attemptId && $token && $questionId && !is_null($rawAnswers) && !is_null($score) && $this->QuestionAnswers->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId, $token)) {
 				$answers = [];
@@ -78,28 +78,28 @@ class QuestionAnswersController extends AppController
 					foreach ($answersData as $answer) {
 						if(!$this->QuestionAnswers->save($answer)) {
 							$this->set('status', 'failed');
-							$this->log("Response Save failed. Attempt: " . $attemptId . "; Question: " . $questionId, 'info');
+							$this->infolog("Response Save failed. Attempt: " . $attemptId . "; Question: " . $questionId);
 							return false;
 						}
 					}
 					if(!$this->QuestionAnswers->Attempts->QuestionScores->save($scoreData)) {
 						$this->set('status', 'failed');
-						$this->log("Response Save failed. Attempt: " . $attemptId . "; Question: " . $questionId, 'info');
+						$this->infolog("Response Save failed. Attempt: " . $attemptId . "; Question: " . $questionId);
 						return false;
 					}
 					$this->set('status', 'success');
-					$this->log("Response Save succeeded. Attempt: " . $attemptId . "; Question: " . $questionId, 'info');
+					$this->infolog("Response Save succeeded. Attempt: " . $attemptId . "; Question: " . $questionId);
 				});
 				
 			}
 			else {
 				$this->set('status', 'denied');
-				$this->log("Response Save denied. Attempt: " . $attemptId . "; Question: " . $questionId, 'info');
+				$this->infolog("Response Save denied. Attempt: " . $attemptId . "; Question: " . $questionId);
 			}
 		}
 		else {
 			$this->set('status', 'notpost');
-			$this->log("Response Save not POST ", 'info');
+			$this->infolog("Response Save not POST ");
 		}
 		$this->viewBuilder()->layout('ajax');
 		$this->render('/Element/ajaxmessage');

@@ -30,7 +30,7 @@ class ResearchTechniquesController extends AppController
 		}
 		//exit;
 		$status = 'success';
-		$this->log("Research Techniques Loaded", 'info');
+		$this->infolog("Research Techniques Loaded");
 		$this->set(compact('techniques', 'status'));
 		$this->set('_serialize', ['techniques', 'status']);
 	}

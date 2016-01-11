@@ -39,11 +39,11 @@ class ReportsController extends AppController
 			}
 			
 			$status = 'success';
-			$this->log("Report Loaded. Attempt: " . $attemptId, 'info');
+			$this->infolog("Report Loaded. Attempt: " . $attemptId);
 		}
 		else {
 			$status = 'denied';
-			$this->log("Report Load denied. Attempt: " . $attemptId, 'info');
+			$this->infolog("Report Load denied. Attempt: " . $attemptId);
 		}
 		$this->set(compact('report', 'sections', 'status'));
 		$this->set('_serialize', ['report', 'sections', 'status']);
@@ -57,7 +57,7 @@ class ReportsController extends AppController
 			$report = $this->request->data['report'];
 			//$status = $this->request->data['status'];	//'revision', 'draft' or 'submitted'
 			$type = $this->request->data['type'];	//'save', 'autosave', 'submit'
-			$this->log("Report Save attempted. Attempt: " . $attemptId . "; Type: " . $type . "; Report: " . serialize($report), 'info');
+			$this->infolog("Report Save attempted. Attempt: " . $attemptId . "; Type: " . $type . "; Report: " . serialize($report));
 			
 			if($attemptId && $token && $this->Reports->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId, $token)) {
 				$reportQuery = $this->Reports->find('all', [
@@ -68,7 +68,7 @@ class ReportsController extends AppController
 				if(!$reportQuery->isEmpty() && $lastSavedReport->type === 'submit') {
 					//Report has already been submitted, so can't save over the top
 					$this->set('status', 'Report already submitted');
-					$this->log("Report Save rejected - report already submitted. Attempt: " . $attemptId . "; Type: " . $type, 'info');
+					$this->infolog("Report Save rejected - report already submitted. Attempt: " . $attemptId . "; Type: " . $type);
 				}
 				else {
 					$sectionsQuery = $this->Reports->ReportsSections->Sections->find('all');
@@ -106,27 +106,27 @@ class ReportsController extends AppController
 					$connection->transactional(function () use ($reportData, $oldReportData, $attemptId, $type) {
 						if(!$this->Reports->save($reportData)) {
 							$this->set('status', 'failed');
-							$this->log("Report Save failed (new report). Attempt: " . $attemptId . "; Type: " . $type, 'info');
+							$this->infolog("Report Save failed (new report). Attempt: " . $attemptId . "; Type: " . $type);
 							return false;
 						}
 						if(!is_null($oldReportData) && !$this->Reports->save($oldReportData)) {
 							$this->set('status', 'failed');
-							$this->log("Report Save failed (old report). Attempt: " . $attemptId . "; Type: " . $type, 'info');
+							$this->infolog("Report Save failed (old report). Attempt: " . $attemptId . "; Type: " . $type);
 							return false;
 						}
 						$this->set('status', 'success');
-						$this->log("Report Save succeeded. Attempt: " . $attemptId . "; Type: " . $type, 'info');
+						$this->infolog("Report Save succeeded. Attempt: " . $attemptId . "; Type: " . $type);
 					});
 				}
 			}
 			else {
 				$this->set('status', 'denied');
-				$this->log("Report Save denied. Attempt: " . $attemptId . "; Type: " . $type, 'info');
+				$this->infolog("Report Save denied. Attempt: " . $attemptId . "; Type: " . $type);
 			}
 		}
 		else {
 			$this->set('status', 'notpost');
-			$this->log("Report Save not POST ", 'info');
+			$this->infolog("Report Save not POST ");
 		}
 		$this->viewBuilder()->layout('ajax');
 		$this->render('/Element/ajaxmessage');

@@ -27,24 +27,25 @@ class AttemptsController extends AppController
 		if($attemptId && $token && $this->Attempts->checkUserAttempt($userId, $attemptId, $token)) {
 			$progress = $this->Attempts->get($attemptId, ['fields' => $this->Attempts->progressFields]);
 			$status = 'success';
-			$this->log("Progress Load. Attempt: " . $attemptId . "; User: " . $userId, 'info');
+			$this->infolog("Progress Load. Attempt: " . $attemptId . "; User: " . $userId);
 		}
 		else {
 			$status = 'denied';
-			$this->log("Progress Load denied. Attempt: " . $attemptId . "; User: " . $userId, 'info');
+			$this->infolog("Progress Load denied. Attempt: " . $attemptId . "; User: " . $userId);
 		}
 		$this->set(compact('progress', 'status'));
 		$this->set('_serialize', ['progress', 'status']);
 	}
 	
 	public function saveProgress() {
+		//Make sure the request it a POST
 		if($this->request->is('post')) {
-			//pr($this->request->data);
+			//Get the POST data
 			$attemptId = $this->request->data['attemptId'];
 			$token = $this->request->data['token'];
 			$sections = $this->request->data['sections'];
 			$completed = $this->request->data['completed'];
-			$this->log("Progress Save attempted. Attempt: " . $attemptId . "; Sections: " . serialize($sections) . "; Completed: " . $completed, 'info');
+			$this->infolog("Progress Save attempted. Attempt: " . $attemptId . "; Sections: " . serialize($sections) . "; Completed: " . $completed);
 			
 			if($attemptId && $token && $this->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId, $token)) {
 				$attempt = $this->Attempts->get($attemptId);
@@ -61,22 +62,22 @@ class AttemptsController extends AppController
 				//exit;
 				if ($this->Attempts->save($attempt)) {
 					$this->set('status', 'success');
-					$this->log("Progress Save succeeded. Attempt: " . $attemptId . "; Sections: " . serialize($sections), 'info');
+					$this->infolog("Progress Save succeeded. Attempt: " . $attemptId . "; Sections: " . serialize($sections));
 				} else {
 					$this->set('status', 'failed');
-					$this->log("Progress Save failed. Attempt: " . $attemptId . "; Sections: " . serialize($sections), 'info');
+					$this->infolog("Progress Save failed. Attempt: " . $attemptId . "; Sections: " . serialize($sections));
 				}
 				//$this->Attempts->save($attempt);
 				//pr($attempt);
 			}
 			else {
 				$this->set('status', 'denied');
-				$this->log("Progress Save denied. Attempt: " . $attemptId . "; Sections: " . serialize($sections), 'info');
+				$this->infolog("Progress Save denied. Attempt: " . $attemptId . "; Sections: " . serialize($sections));
 			}
 		}
 		else {
 			$this->set('status', 'notpost');
-			$this->log("Progress Save not POST.", 'info');
+			$this->infolog("Progress Save not POST.");
 		}
 		$this->viewBuilder()->layout('ajax');
 		$this->render('/Element/ajaxmessage');
@@ -86,12 +87,12 @@ class AttemptsController extends AppController
 		if($attemptId && $token && $this->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId, $token)) {
 			$resources = $this->Attempts->get($attemptId, ['fields' => $this->Attempts->resourceFields]);
 			$status = 'success';
-			$this->log("Resources Loaded. Attempt: " . $attemptId, 'info');
+			$this->infolog("Resources Loaded. Attempt: " . $attemptId);
 			//pr($resources);
 		}
 		else {
 			$status = 'denied';
-			$this->log("Resources Load denied. Attempt: " . $attemptId, 'info');
+			$this->infolog("Resources Load denied. Attempt: " . $attemptId);
 		}
 		$this->set(compact('resources', 'status'));
 		$this->set('_serialize', ['resources', 'status']);
@@ -104,7 +105,7 @@ class AttemptsController extends AppController
 			$token = $this->request->data['token'];
 			$money = $this->request->data['money'];
 			$time = $this->request->data['time'];
-			$this->log("Resources Save attempted. Attempt: " . $attemptId . "; Money: " . $money . "; Time: " . $time, 'info');
+			$this->infolog("Resources Save attempted. Attempt: " . $attemptId . "; Money: " . $money . "; Time: " . $time);
 			
 			if($attemptId && $token && (!is_null($money) || !is_null($time)) && $this->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId, $token)) {
 				$attempt = $this->Attempts->get($attemptId);
@@ -117,21 +118,21 @@ class AttemptsController extends AppController
 
 				if ($this->Attempts->save($attempt)) {
 					$this->set('status', 'success');
-					$this->log("Resources Save succeeded. Attempt: " . $attemptId . "; Money: " . $money . "; Time: " . $time, 'info');
+					$this->infolog("Resources Save succeeded. Attempt: " . $attemptId . "; Money: " . $money . "; Time: " . $time);
 				} 
 				else {
 					$this->set('status', 'failed');
-					$this->log("Resources Save failed. Attempt: " . $attemptId . "; Money: " . $money . "; Time: " . $time, 'info');
+					$this->infolog("Resources Save failed. Attempt: " . $attemptId . "; Money: " . $money . "; Time: " . $time);
 				}
 			}
 			else {
 				$this->set('status', 'denied');
-				$this->log("Resources Save denied. Attempt: " . $attemptId . "; Money: " . $money . "; Time: " . $time, 'info');
+				$this->infolog("Resources Save denied. Attempt: " . $attemptId . "; Money: " . $money . "; Time: " . $time);
 			}
 		}
 		else {
 			$this->set('status', 'notpost');
-			$this->log("Resources Save not POST", 'info');
+			$this->infolog("Resources Save not POST");
 		}
 		$this->viewBuilder()->layout('ajax');
 		$this->render('/Element/ajaxmessage');
@@ -142,11 +143,11 @@ class AttemptsController extends AppController
 			$attemptHappiness = $this->Attempts->get($attemptId, ['fields' => ['happiness']]);
 			$happiness = $attemptHappiness['happiness'];
 			$status = 'success';
-			$this->log("Happiness Loaded. Attempt: " . $attemptId, 'info');
+			$this->infolog("Happiness Loaded. Attempt: " . $attemptId);
 		}
 		else {
 			$status = 'denied';
-			$this->log("Happiness Load denied. Attempt: " . $attemptId, 'info');
+			$this->infolog("Happiness Load denied. Attempt: " . $attemptId);
 		}
 		$this->set(compact('happiness', 'status'));
 		$this->set('_serialize', ['happiness', 'status']);
@@ -203,6 +204,7 @@ class AttemptsController extends AppController
 			//$emailLink = $html->link('msdlt@medsci.ox.ac.uk', 'mailto:msdlt@medsci.ox.ac.uk');
 			//$this->Flash->error(__('You do not have permission to view this attempt. If this is an error, please contact ' . $emailLink));
 			$this->Flash->error(__('You do not have permission to view this attempt. If you think you should be able to, please contact msdlt@medsci.ox.ac.uk, giving your SSO username and this attempt ID: '. $id));
+			$this->infolog("Attempt Access Denied. Attempt: " . $id);
 			return $this->redirect(['action' => 'index']);
 		}
 		
@@ -211,11 +213,13 @@ class AttemptsController extends AppController
 		$attempt->token = $token;
 		if (!$this->Attempts->save($attempt)) {
 			$this->Flash->error(__('There was a problem accessing your attempt. Please contact msdlt@medsci.ox.ac.uk, giving your SSO username and this attempt ID: '. $id));
+			$this->infolog("Attempt Access Failed (token save). Attempt: " . $id);
 			return $this->redirect(['action' => 'index']);
 		}
 		
 		$this->set('attemptId', $id);
 		$this->set('attemptToken', $token);
+		$this->infolog("Attempt Accessed. Attempt: $id; Token: $token");
 		$this->viewBuilder()->layout('angular');
     }
 
@@ -251,13 +255,15 @@ class AttemptsController extends AppController
 		
 		if ($this->Attempts->save($attempt)) {
 			//$this->Flash->success(__('The attempt has been saved.'));
+			$this->infolog("Attempt Started. Attempt: " . $attempt->id);
 			return $this->redirect(['action' => 'view', $attempt->id]);
 		} else {
 			//$view = new View($this);
 			//$Html = $view->loadHelper('Html');
 			//$emailLink = $html->link('msdlt@medsci.ox.ac.uk', 'mailto:msdlt@medsci.ox.ac.uk');
 			//$this->Flash->error(__('The attempt could not be started. Please, try again. If problems persist, please contact ' . $emailLink));
-			$this->Flash->error(__('You do not have permission to view this attempt. If this is an error, please contact msdlt@medsci.ox.ac.uk'));
+			$this->infolog("Attempt Start Failed. Attempt: " . $attempt->id);
+			$this->Flash->error(__('The attempt could not be started. Please try again. If the problem persists, please contact msdlt@medsci.ox.ac.uk'));
 			return $this->redirect(['action' => 'index']);
 		}
     }

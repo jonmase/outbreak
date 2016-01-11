@@ -27,7 +27,7 @@ class TechniquesController extends AppController
 			$techniques[$technique->id] = $technique;
 		}
 		$status = 'success';
-		$this->log("Techniques Loaded", 'info');
+		$this->infolog("Techniques Loaded");
 		$this->set(compact('techniques', 'status'));
 		$this->set('_serialize', ['techniques', 'status']);
 	}

@@ -24,11 +24,11 @@ class NotesController extends AppController
 				$notes[$note->technique_id] = $note;
 			}
 			$status = 'success';
-			$this->log("Notes Loaded. Attempt: " . $attemptId, 'info');
+			$this->infolog("Notes Loaded. Attempt: " . $attemptId);
 		}
 		else {
 			$status = 'denied';
-			$this->log("Notes Load denied. Attempt: " . $attemptId, 'info');
+			$this->infolog("Notes Load denied. Attempt: " . $attemptId);
 		}
 		
 		$this->set(compact('notes', 'status'));
@@ -42,7 +42,7 @@ class NotesController extends AppController
 			$token = $this->request->data['token'];
 			$techniqueId = $this->request->data['techniqueId'];
 			$note = $this->request->data['note'];
-			$this->log("Note Save attempted. Attempt: " . $attemptId . "; Technique: " . $techniqueId . "; Note: " . serialize($note), 'info');
+			$this->infolog("Note Save attempted. Attempt: " . $attemptId . "; Technique: " . $techniqueId . "; Note: " . serialize($note));
 			
 			if($attemptId && $token && $techniqueId && $this->Notes->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId, $token)) {
 				$noteQuery = $this->Notes->find('all', ['conditions' => ['attempt_id' => $attemptId, 'technique_id' => $techniqueId]]);
@@ -59,20 +59,20 @@ class NotesController extends AppController
 				//exit;
 				if ($this->Notes->save($noteData)) {
 					$this->set('status', 'success');
-					$this->log("Note Save succeeded. Attempt: " . $attemptId . "; Technique: " . $techniqueId, 'info');
+					$this->infolog("Note Save succeeded. Attempt: " . $attemptId . "; Technique: " . $techniqueId);
 				} else {
 					$this->set('status', 'failed');
-					$this->log("Note Save failed. Attempt: " . $attemptId . "; Technique: " . $techniqueId, 'info');
+					$this->infolog("Note Save failed. Attempt: " . $attemptId . "; Technique: " . $techniqueId);
 				}
 			}
 			else {
 				$this->set('status', 'denied');
-				$this->log("Note Save denied. Attempt: " . $attemptId . "; Technique: " . $techniqueId, 'info');
+				$this->infolog("Note Save denied. Attempt: " . $attemptId . "; Technique: " . $techniqueId);
 			}
 		}
 		else {
 			$this->set('status', 'notpost');
-			$this->log("Note Save not POST", 'info');
+			$this->infolog("Note Save not POST");
 		}
 		$this->viewBuilder()->layout('ajax');
 		$this->render('/Element/ajaxmessage');

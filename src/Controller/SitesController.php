@@ -26,7 +26,7 @@ class SitesController extends AppController
 			$sites[$site->id] = $site;
 		}
 		$status = 'success';
-		$this->log("Sites Loaded", 'info');
+		$this->infolog("Sites Loaded");
 		$this->set(compact('sites', 'status'));
 		$this->set('_serialize', ['sites', 'status']);
 	}

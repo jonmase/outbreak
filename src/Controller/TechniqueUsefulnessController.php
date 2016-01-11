@@ -16,11 +16,11 @@ class TechniqueUsefulnessController extends AppController
 			$usefulness = $usefulQuery->toArray();
 			
 			$status = 'success';
-			$this->log("Technique Usefulness Loaded. Attempt: " . $attemptId, 'info');
+			$this->infolog("Technique Usefulness Loaded. Attempt: " . $attemptId);
 		}
 		else {
 			$status = 'denied';
-			$this->log("Technique Usefulness Load denied. Attempt: " . $attemptId, 'info');
+			$this->infolog("Technique Usefulness Load denied. Attempt: " . $attemptId);
 		}
 		$this->set(compact('usefulness', 'status'));
 		$this->set('_serialize', ['usefulness', 'status']);
@@ -33,7 +33,7 @@ class TechniqueUsefulnessController extends AppController
 			$token = $this->request->data['token'];
 			$techniqueId = $this->request->data['techniqueId'];
 			$usefulness = $this->request->data['usefulness'];
-			$this->log("Useful Techniques Save attempted. Attempt: " . $attemptId . "; Technique: " . $techniqueId . "; Usefulness: " . $usefulness, 'info');
+			$this->infolog("Useful Techniques Save attempted. Attempt: " . $attemptId . "; Technique: " . $techniqueId . "; Usefulness: " . $usefulness);
 			
 			if($attemptId && $token && $techniqueId && $this->TechniqueUsefulness->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId, $token)) {
 				$usefulQuery = $this->TechniqueUsefulness->find('all', ['conditions' => ['attempt_id' => $attemptId, 'technique_id' => $techniqueId]]);
@@ -48,20 +48,20 @@ class TechniqueUsefulnessController extends AppController
 
 				if ($this->TechniqueUsefulness->save($useful)) {
 					$this->set('status', 'success');
-					$this->log("Useful Techniques Save succeeded. Attempt: " . $attemptId . "; Technique: " . $techniqueId, 'info');
+					$this->infolog("Useful Techniques Save succeeded. Attempt: " . $attemptId . "; Technique: " . $techniqueId);
 				} else {
 					$this->set('status', 'failed');
-					$this->log("Useful Techniques Save failed. Attempt: " . $attemptId . "; Technique: " . $techniqueId, 'info');
+					$this->infolog("Useful Techniques Save failed. Attempt: " . $attemptId . "; Technique: " . $techniqueId);
 				}
 			}
 			else {
 				$this->set('status', 'denied');
-				$this->log("Useful Techniques Save denied. Attempt: " . $attemptId . "; Technique: " . $techniqueId, 'info');
+				$this->infolog("Useful Techniques Save denied. Attempt: " . $attemptId . "; Technique: " . $techniqueId);
 			}
 		}
 		else {
 			$this->set('status', 'notpost');
-			$this->log("Useful Techniques Save not POST", 'info');
+			$this->infolog("Useful Techniques Save not POST");
 		}
 		$this->viewBuilder()->layout('ajax');
 		$this->render('/Element/ajaxmessage');

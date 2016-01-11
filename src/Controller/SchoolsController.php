@@ -58,7 +58,7 @@ class SchoolsController extends AppController
 		}
 		
 		$status = 'success';
-		$this->log($message, 'info');
+		$this->infolog($message);
 		$this->set(compact('schools', 'status'));
 		$this->set('_serialize', ['schools', 'status']);
 	}
@@ -69,7 +69,7 @@ class SchoolsController extends AppController
 			$attemptId = $this->request->data['attemptId'];
 			$token = $this->request->data['token'];
 			$schoolId = $this->request->data['schoolId'];
-			$this->log("Too Late Save attempted. Attempt: " . $attemptId . "; School: " . $schoolId, 'info');
+			$this->infolog("Too Late Save attempted. Attempt: " . $attemptId . "; School: " . $schoolId);
 			
 			if($attemptId && $token && $this->Schools->AttemptsSchools->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId, $token)) {
 				$attemptSchoolQuery = $this->Schools->AttemptsSchools->find('all', ['conditions' => ['attempt_id' => $attemptId]]);
@@ -86,20 +86,20 @@ class SchoolsController extends AppController
 				//exit;
 				if ($this->Schools->AttemptsSchools->save($attemptSchool)) {
 					$this->set('status', 'success');
-					$this->log("Too Late Save succeedded. Attempt: " . $attemptId . "; School: " . $schoolId, 'info');
+					$this->infolog("Too Late Save succeedded. Attempt: " . $attemptId . "; School: " . $schoolId);
 				} else {
 					$this->set('status', 'failed');
-					$this->log("Too Late Save failed. Attempt: " . $attemptId . "; School: " . $schoolId, 'info');
+					$this->infolog("Too Late Save failed. Attempt: " . $attemptId . "; School: " . $schoolId);
 				}
 			}
 			else {
 				$this->set('status', 'denied');
-					$this->log("Too Late Save denied. Attempt: " . $attemptId . "; School: " . $schoolId, 'info');
+					$this->infolog("Too Late Save denied. Attempt: " . $attemptId . "; School: " . $schoolId);
 			}
 		}
 		else {
 			$this->set('status', 'notpost');
-			$this->log("Too Late Save not POST", 'info');
+			$this->infolog("Too Late Save not POST");
 		}
 		$this->viewBuilder()->layout('ajax');
 		$this->render('/Element/ajaxmessage');		

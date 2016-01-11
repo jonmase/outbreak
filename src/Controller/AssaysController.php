@@ -28,11 +28,11 @@ class AssaysController extends AppController
 				$assays[$assay->technique_id][$assay->site_id][$assay->school_id][$assay->child_id][$assay->sample_stage_id] = 1;
 			}
 			$status = 'success';
-			$this->log("Assays Loaded. Attempt: " . $attemptId, 'info');
+			$this->infolog("Assays Loaded. Attempt: " . $attemptId);
 		}
 		else {
 			$status = 'denied';
-			$this->log("Assays Load denied. Attempt: " . $attemptId, 'info');
+			$this->infolog("Assays Load denied. Attempt: " . $attemptId);
 		}
 		$this->set(compact('assays', 'status'));
 		$this->set('_serialize', ['assays', 'status']);
@@ -48,7 +48,7 @@ class AssaysController extends AppController
 			$rawStandardAssays = $this->request->data['standardAssays'];
 			$money = $this->request->data['money'];
 			$time = $this->request->data['time'];
-			$this->log("Assays Save attempted. Attempt: " . $attemptId . "; Technique: " . $techniqueId . "; Money: " . $money . "; Time: " . $time . "; Assays: " . serialize($rawAssays) . "; Standard Assays: " . serialize($rawStandardAssays), 'info');
+			$this->infolog("Assays Save attempted. Attempt: " . $attemptId . "; Technique: " . $techniqueId . "; Money: " . $money . "; Time: " . $time . "; Assays: " . serialize($rawAssays) . "; Standard Assays: " . serialize($rawStandardAssays));
 			
 			if($attemptId && $token && $techniqueId && $this->Assays->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId, $token)) {
 				$attemptData = $this->Assays->Attempts->get($attemptId);
@@ -114,7 +114,7 @@ class AssaysController extends AppController
 						//pr($sample);
 						if(!$this->Assays->save($assay)) {
 							$this->set('status', 'failed');
-							$this->log("Assays Save failed. Attempt: " . $attemptId . "; Technique: " . $techniqueId, 'info');
+							$this->infolog("Assays Save failed. Attempt: " . $attemptId . "; Technique: " . $techniqueId);
 							return false;
 						}
 					}
@@ -122,27 +122,27 @@ class AssaysController extends AppController
 						//pr($sample);
 						if(!$this->Assays->Attempts->StandardAssays->save($assay)) {
 							$this->set('status', 'failed');
-							$this->log("Assays Save failed. Attempt: " . $attemptId . "; Technique: " . $techniqueId, 'info');
+							$this->infolog("Assays Save failed. Attempt: " . $attemptId . "; Technique: " . $techniqueId);
 							return false;
 						}
 					}
 					if(!is_null($attemptData) && !$this->Assays->Attempts->save($attemptData)) {
 						$this->set('status', 'failed');
-						$this->log("Assays Save failed. Attempt: " . $attemptId . "; Technique: " . $techniqueId, 'info');
+						$this->infolog("Assays Save failed. Attempt: " . $attemptId . "; Technique: " . $techniqueId);
 						return false;
 					}
 					$this->set('status', 'success');
-					$this->log("Assays Save succeeded. Attempt: " . $attemptId . "; Technique: " . $techniqueId, 'info');
+					$this->infolog("Assays Save succeeded. Attempt: " . $attemptId . "; Technique: " . $techniqueId);
 				});
 			}
 			else {
 				$this->set('status', 'denied');
-				$this->log("Assays Save denied. Attempt: " . $attemptId . "; Technique: " . $techniqueId, 'info');
+				$this->infolog("Assays Save denied. Attempt: " . $attemptId . "; Technique: " . $techniqueId);
 			}
 		}
 		else {
 			$this->set('status', 'notpost');
-			$this->log("Assays Save not POST", 'info');
+			$this->infolog("Assays Save not POST");
 		}
 		$this->viewBuilder()->layout('ajax');
 		$this->render('/Element/ajaxmessage');

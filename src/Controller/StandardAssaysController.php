@@ -27,11 +27,11 @@ class StandardAssaysController extends AppController
 				$standardAssays[$assay->technique_id][$assay->standard_id] = 1;
 			}
 			$status = 'success';
-			$this->log("Standard Assays Loaded. Attempt: " . $attemptId, 'info');
+			$this->infolog("Standard Assays Loaded. Attempt: " . $attemptId);
 		}
 		else {
 			$status = 'denied';
-			$this->log("Standard Assays Load denied. Attempt: " . $attemptId, 'info');
+			$this->infolog("Standard Assays Load denied. Attempt: " . $attemptId);
 		}
 		$this->set(compact('standardAssays', 'status'));
 		$this->set('_serialize', ['standardAssays', 'status']);

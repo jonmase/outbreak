@@ -29,12 +29,12 @@ class SamplesController extends AppController
 			}
 			
 			$status = 'success';
-			$this->log("Samples Loaded. Attempt: " . $attemptId, 'info');
+			$this->infolog("Samples Loaded. Attempt: " . $attemptId);
 			//pr($resources);
 		}
 		else {
 			$status = 'denied';
-			$this->log("Samples Load denied. Attempt: " . $attemptId, 'info');
+			$this->infolog("Samples Load denied. Attempt: " . $attemptId);
 		}
 		$this->set(compact('samples', 'status'));
 		$this->set('_serialize', ['samples', 'status']);
@@ -47,7 +47,7 @@ class SamplesController extends AppController
 			$token = $this->request->data['token'];
 			$rawSamples = $this->request->data['samples'];
 			$happiness = $this->request->data['happiness'];
-			$this->log("Samples Save attempted. Attempt: " . $attemptId . "; Happiness: " . $happiness . "; Samples: " . serialize($rawSamples), 'info');
+			$this->infolog("Samples Save attempted. Attempt: " . $attemptId . "; Happiness: " . $happiness . "; Samples: " . serialize($rawSamples));
 			
 			if($attemptId && $token && $rawSamples && $this->Samples->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId, $token)) {
 				$attempt = $this->Samples->Attempts->get($attemptId);	//Get attempt, for saving happiness and identifying whether report has been submitted
@@ -94,27 +94,27 @@ class SamplesController extends AppController
 						//pr($sample);
 						if(!$this->Samples->save($sample)) {
 							$this->set('status', 'failed');
-							$this->log("Samples Save failed Attempt: " . $attemptId, 'info');
+							$this->infolog("Samples Save failed Attempt: " . $attemptId);
 							return false;
 						}
 					}
 					if(!is_null($attempt) && !$this->Samples->Attempts->save($attempt)) {
 						$this->set('status', 'failed');
-						$this->log("Samples Save failed Attempt: " . $attemptId, 'info');
+						$this->infolog("Samples Save failed Attempt: " . $attemptId);
 						return false;
 					}
 					$this->set('status', 'success');
-					$this->log("Samples Save succeeded. Attempt: " . $attemptId, 'info');
+					$this->infolog("Samples Save succeeded. Attempt: " . $attemptId);
 				});
 			}
 			else {
 				$this->set('status', 'denied');
-				$this->log("Samples Save denied. Attempt: " . $attemptId, 'info');
+				$this->infolog("Samples Save denied. Attempt: " . $attemptId);
 			}
 		}
 		else {
 			$this->set('status', 'notpost');
-			$this->log("Samples Save not POST ", 'info');
+			$this->infolog("Samples Save not POST ");
 		}
 		$this->viewBuilder()->layout('ajax');
 		$this->render('/Element/ajaxmessage');

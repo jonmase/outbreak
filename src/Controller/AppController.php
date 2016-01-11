@@ -87,4 +87,8 @@ class AppController extends Controller
             $this->set('_serialize', true);
         }
     }
+	
+	public function infolog($message = null) {
+		$this->log($_SERVER['REMOTE_ADDR'] . ". User ID: " . $this->Auth->user('id') . "; Username: " . $this->Auth->user('lti_displayid') . ". " . $message, 'info');
+	}
 }

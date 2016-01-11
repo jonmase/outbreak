@@ -26,7 +26,7 @@ class SampleStagesController extends AppController
 			$stages[$stage->id] = $stage;
 		}
 		$status = 'success';
-		$this->log("Samples Stages Loaded", 'info');
+		$this->infolog("Samples Stages Loaded");
 		$this->set(compact('stages', 'status'));
 		$this->set('_serialize', ['stages', 'status']);
 	}

@@ -27,7 +27,7 @@ class QuestionsController extends AppController
 			$questions[$question->id] = $question;
 		}
 		$status = 'success';
-		$this->log("Questions Loaded", 'info');
+		$this->infolog("Questions Loaded");
 		$this->set(compact('questions', 'status'));
 		$this->set('_serialize', ['questions', 'status']);
 	}

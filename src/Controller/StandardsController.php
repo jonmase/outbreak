@@ -27,7 +27,7 @@ class StandardsController extends AppController
 			$standards[$standard->id] = $standard;
 		}
 		$status = 'success';
-		$this->log("Standards Loaded", 'info');
+		$this->infolog("Standards Loaded");
 		$this->set(compact('standards', 'status'));
 		$this->set('_serialize', ['standards', 'status']);
 	}
