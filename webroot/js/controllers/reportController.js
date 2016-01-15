@@ -39,6 +39,7 @@
 		//Bindable Members - methods
 		vm.save = save;
 		vm.submit = submit;
+		vm.reopen = reopen;
 		
 		//Actions
 		//If not already submitted, set up saving
@@ -127,6 +128,9 @@
 				vm.lastSaved = reportFactory.getLastSaved();
 				vm.lastSaveType = reportFactory.getLastSaveType();
 				vm.submitted = reportFactory.getSubmitted();
+				if(autoSaveTimeout) {
+					cancelAutosaveTimeout();
+				}
 				if(vm.submitted) {
 					$uibModal.open({
 						animation: true,
@@ -138,6 +142,42 @@
 					});
 				}
 			});
+		}
+		
+		function reopen() {
+			if(!vm.submitted) {
+				console.log('Report not submitted');
+				return false;
+			}
+			vm.saving = true;
+			var reportPromise = reportFactory.reopen();
+			reportPromise.then(
+				function(result) {
+					console.log(result);
+					var completePromise = lockFactory.setIncomplete('report', true, true);
+					completePromise.then(
+						function(result) {
+							console.log(result);
+							reportFactory.setEditorsReadOnly(false);
+							vm.submitted = reportFactory.getSubmitted();
+							vm.saving = false;
+							setAutosaveTimeout();
+						}, 
+						function(reason) {
+							fail(reason);
+						}
+					);
+				}, 
+				function(reason) {
+					fail(reason);
+				}
+			);
+		}
+		
+		function fail(reason) {
+			console.log("Error: " + reason);
+			$uibModal.open(modalFactory.getErrorModalOptions());
+			vm.saving = false;
 		}
 	}
 })();

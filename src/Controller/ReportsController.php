@@ -49,6 +49,53 @@ class ReportsController extends AppController
 		$this->set('_serialize', ['report', 'sections', 'status']);
 	}
 
+	public function reopen() {
+		if($this->request->is('post')) {
+			//pr($this->request->data);
+			$attemptId = $this->request->data['attemptId'];
+			$token = $this->request->data['token'];
+			$this->infolog("Report Reopen attempted. Attempt: " . $attemptId);
+			
+			if($attemptId && $token && $this->Reports->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId, $token)) {
+				$reportQuery = $this->Reports->find('all', [
+					'conditions' => ['Reports.attempt_id' => $attemptId, 'Reports.revision' => 0],
+					'order' => ['created' => 'DESC'],
+				]);
+				$lastSavedReport = $reportQuery->first();
+				if($reportQuery->isEmpty() || $lastSavedReport->type !== 'submit') {
+					//Report has already been submitted, so can't save over the top
+					$this->set('status', "Report not submitted, so can't reopen");
+					$this->infolog("Report Reopen rejected - report not submitted. Attempt: " . $attemptId);
+				}
+				else {
+					$reportData = $lastSavedReport;
+					
+					$reportData->attempt_id = $attemptId;
+					$reportData->revision = false;
+					$reportData->type = 'reopen';
+					
+					if(!$this->Reports->save($reportData)) {
+						$this->set('status', 'failed');
+						$this->infolog("Report Save failed (new report). Attempt: " . $attemptId . "; Type: " . $type);
+						return false;
+					}
+					$this->set('status', 'success');
+					$this->infolog("Report Reopen succeeded. Attempt: " . $attemptId);
+				}
+			}
+			else {
+				$this->set('status', 'denied');
+				$this->infolog("Report Reopen denied. Attempt: " . $attemptId);
+			}
+		}
+		else {
+			$this->set('status', 'notpost');
+			$this->infolog("Report Reopen not POST ");
+		}
+		$this->viewBuilder()->layout('ajax');
+		$this->render('/Element/ajaxmessage');
+	}
+
 	public function save() {
 		if($this->request->is('post')) {
 			//pr($this->request->data);

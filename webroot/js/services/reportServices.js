@@ -23,6 +23,7 @@
 			getReport: getReport,
 			getSubmitted: getSubmitted,
 			loadReport: loadReport,
+			reopen: reopen,
 			save: save,
 			//setAutosaveTimeout: setAutosaveTimeout,
 			setEditorsReadOnly: setEditorsReadOnly,
@@ -170,6 +171,28 @@
 			var techniques = angular.copy(techniqueFactory.readTechniques('results'));
 			//techniques.push(resultFactory.readQuickVue());	//Add additional info
 			return techniques;
+		}
+		
+		function reopen() {
+			//API: Reopen report
+			var deferred = $q.defer();
+			var ReportCall = $resource('../../reports/reopen', {});
+			ReportCall.save({}, {attemptId: ATTEMPT_ID, token: ATTEMPT_TOKEN},
+				function(result) {
+					if(typeof(result.status) !== "undefined" && result.status === 'success') {
+						submitted = false;
+						deferred.resolve('Report reopened');
+					}
+					else {
+						deferred.reject('Report reopen failed (' + result.status + ")");
+					}
+				},
+				function(result) {
+					deferred.reject('Report reopen error (' + result.status + ')');
+				}
+			);
+			return deferred.promise;
+			//return now;
 		}
 		
 		function save(type) {

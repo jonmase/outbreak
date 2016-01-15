@@ -25,30 +25,21 @@
 				function(result) {
 					console.log(result);
 					var completePromise = lockFactory.setComplete('report');
-					if(completePromise) {	//If complete promise is not false, then all questions have been completed and we need to wait for progress to be saved
-						completePromise.then(
-							function(result) {
-								console.log(result);
-								success();
-							}, 
-							function(reason) {
-								fail(reason);
-							}
-						);
-					}
-					else {
-						success();
-					}
+					completePromise.then(
+						function(result) {
+							console.log(result);
+							$uibModalInstance.close();
+							vm.saving = false;
+						}, 
+						function(reason) {
+							fail(reason);
+						}
+					);
 				}, 
 				function(reason) {
 					fail(reason);
 				}
 			);
-		}
-		
-		function success() {
-			$uibModalInstance.close();
-			vm.saving = false;
 		}
 		
 		function fail() {

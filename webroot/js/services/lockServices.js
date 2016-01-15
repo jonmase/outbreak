@@ -17,6 +17,7 @@
 			checkLockOnClick: checkLockOnClick,
 			getLock: getLock,
 			setComplete: setComplete,
+			setIncomplete: setIncomplete,
 			setLocks: setLocks,
 			setProgressAndLocks: setProgressAndLocks,
 		}
@@ -55,6 +56,19 @@
 			}
 			else {
 				setProgressAndLocks(sections, 1);	//Set progress locally only
+				return true;
+			}
+		}
+
+		function setIncomplete(sections, saveToDB) {
+			if(typeof(saveToDB) === 'undefined') {	saveToDB = true; }
+			//return setProgress(sectionId, 1, saveToDB);	//Set the progress for this section to complete
+			if(saveToDB) {
+				var progressPromise = saveProgress(sections, 0);	//save progress to DB and set locally
+				return progressPromise;
+			}
+			else {
+				setProgressAndLocks(sections, 0);	//Set progress locally only
 				return true;
 			}
 		}
