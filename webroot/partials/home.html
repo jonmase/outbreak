@@ -24,7 +24,7 @@
 	<div class="col-xs-12 col-md-6">
 		<div style="margin-top: 1.66%;">
 			<div class="video-container">
-				<iframe width="100%" ng-src="{{homeCtrl.introVideo}}" frameborder="0" allowfullscreen></iframe>
+				<iframe width="100%" ng-src="{{homeCtrl.introVideo}}" frameborder="0" allowfullscreen ng-hide="!mainCtrl.progress.alert"></iframe>
 			</div>
 		</div>
 		<div style="margin-top: 1.66%;" class="blue-tabs home-tabs">
