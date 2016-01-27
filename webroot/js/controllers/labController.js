@@ -1,5 +1,5 @@
 (function() {
-	angular.module('flu.lab', [])
+	angular.module('flu.lab')
 		.controller('LabController', LabController);
 
 	LabController.$inject = ['$scope', '$sce', '$location', '$uibModal', 'sectionFactory', 'progressFactory', 'lockFactory', 'mediaFactory', 'modalFactory', 'techniqueFactory', 'siteFactory', 'schoolFactory', 'sampleFactory', 'resultFactory', 'assayFactory', 'moneyCutoff', 'timeCutoff'];

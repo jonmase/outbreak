@@ -1,10 +1,10 @@
 (function() {
-	angular.module('flu')
+	angular.module('flu.modals')
 		.controller('ErrorModalController', ErrorModalController);
 	
-	ErrorModalController.$inject = ['$uibModalInstance', 'lockFactory'];
+	ErrorModalController.$inject = ['$uibModalInstance'];
 
-	function ErrorModalController($uibModalInstance, lockFactory) {
+	function ErrorModalController($uibModalInstance) {
 		var vm = this;
 
 		//Do the same whether the user confirms or cancels - either way they're just dismissing the modal having seen the alert

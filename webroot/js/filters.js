@@ -3,7 +3,8 @@
 		.filter('unsafe', ['$sce', unsafe])
 		.filter('assayedSampleFilter', assayedSampleFilter)
 		.filter('lineBreaksFilter', lineBreaksFilter)
-		.filter('subobjectFilter', subobjectFilter);
+		.filter('subobjectFilter', subobjectFilter)
+		.filter('submittedFilter', submittedFilter);
 
 	function unsafe($sce) { 
 		return $sce.trustAsHtml; 
@@ -28,6 +29,25 @@
 			var result = input.replace(/\n/g, '<br />');
 			return result;
 		}
+	}
+
+	//Custom filter for filtering attempts on whether they have been submitted
+	function submittedFilter() {
+		return function(users, statusToShow) { 
+			users = users.filter(function(user){
+				if(statusToShow.value === 1) {
+					return user.submissions > 0;
+				}
+				else if(statusToShow.value === 0) {
+					return user.submissions === 0;
+				}
+				else {
+					return true;
+				}
+			});
+
+			return users;
+		};
 	}
 
 	//Custom filter for filtering objects by second level value

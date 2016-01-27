@@ -43,6 +43,9 @@ class LtiResourcesTable extends Table
         $this->hasMany('Attempts', [
             'foreignKey' => 'lti_resource_id'
         ]);
+        $this->hasMany('Marks', [
+            'foreignKey' => 'lti_resource_id'
+        ]);
     }
 
     /**

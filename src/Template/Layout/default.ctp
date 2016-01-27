@@ -38,7 +38,6 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
 </head>
 <body>
     <section class="container clearfix">
-		<h2 class="page-title">Viral Outbreak</h2>
 		<?= $this->Flash->render(); ?>
        <?= $this->fetch('content') ?>
     </section>

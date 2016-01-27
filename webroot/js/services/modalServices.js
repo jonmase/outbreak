@@ -1,5 +1,5 @@
 (function() {
-	angular.module('flu')
+	angular.module('flu.modals')
 		.factory('modalFactory', modalFactory);
 	
 	function modalFactory() {

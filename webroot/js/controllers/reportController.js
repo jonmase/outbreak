@@ -1,5 +1,5 @@
 (function() {
-	angular.module('flu.report', [])
+	angular.module('flu.report')
 		.controller('ReportController', ReportController);
 
 	ReportController.$inject = ['$scope', '$sce', '$uibModal', '$timeout', 'dateFilter', 'sectionFactory', 'lockFactory', 'modalFactory', 'reportFactory', 'resultFactory', 'techniqueFactory'];

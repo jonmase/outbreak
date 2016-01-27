@@ -1,5 +1,5 @@
 (function() {
-	angular.module('flu.samples', [])
+	angular.module('flu.samples')
 		.controller('SamplesController', SamplesController);
 
 	SamplesController.$inject = ['$scope', '$sce', '$uibModal', 'sectionFactory', 'progressFactory', 'lockFactory', 'siteFactory', 'schoolFactory', 'sampleFactory', '$q'];

@@ -181,8 +181,9 @@ class AttemptsController extends AppController
 		$attempts = $this->paginate($this->Attempts);
 		$session = $this->request->session();	//Set Session to variable
 		//pr($session->read());
+		$role = $session->read('User.role');
 
-        $this->set('attempts', $attempts);
+        $this->set(compact('attempts', 'role'));
     }
 
     /**

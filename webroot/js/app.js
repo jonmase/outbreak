@@ -1,6 +1,15 @@
 (function() {
+	angular.module('flu.techniques', [])
+	angular.module('flu.questions', [])
+	angular.module('flu.samples', [])
+	angular.module('flu.lab', [])
+	angular.module('flu.results', [])
+	angular.module('flu.report', [])
+	angular.module('flu.directives', [])
+	angular.module('flu.filters', [])
+	angular.module('flu.modals', [])
 	angular
-		.module('flu', ['ngResource', 'ngRoute', 'ngSanitize', 'ui.bootstrap', 'ngCkeditor', 'ui.checkbox', 'mgcrea.ngStrap.affix', 'flu.techniques', 'flu.questions', 'flu.samples', 'flu.lab', 'flu.results', 'flu.report', 'flu.directives', 'flu.filters'])	//with Ckeditor
+		.module('flu', ['ngResource', 'ngRoute', 'ngSanitize', 'ui.bootstrap', 'ngCkeditor', 'ui.checkbox', 'mgcrea.ngStrap.affix', 'flu.techniques', 'flu.questions', 'flu.samples', 'flu.lab', 'flu.results', 'flu.report', 'flu.directives', 'flu.filters', 'flu.modals'])	//with Ckeditor
 		//.module('flu', ['ngRoute', 'ngSanitize', 'ui.bootstrap', 'textAngular', 'flu.techniques', 'flu.questions', 'flu.samples', 'flu.lab', 'flu.results', 'flu.report', 'flu.directives', 'flu.filters'])	//With textangular
 		.config(config);
 		

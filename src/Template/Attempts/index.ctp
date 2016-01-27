@@ -1,3 +1,9 @@
+<h2 class="page-title">
+	<?php if($role === "Instructor") { ?>
+		<div class="pull-right"><?= $this->Html->link('<i class="fa fa-check"></i>&nbsp; Marking', ['controller' => 'marks', 'action' => 'index'], ['class' => 'btn btn-success', 'role' => 'button', 'escape' => false]) ?></div>
+	<?php } ?>
+	Viral Outbreak
+</h2>
 <div class="row attempts index content">
 	<div class="col-xs-12">
 		<p>Welcome to the Viral Outbreak iCase. Click the "Start New Attempt" button below to begin<?php if(!$attempts->isEmpty()): ?>, or resume an attempt you have already started by clicking the "Resume" button for the appropriate attempt<?php endif; ?>. </p>
