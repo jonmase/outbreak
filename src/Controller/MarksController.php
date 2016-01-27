@@ -73,6 +73,32 @@ class MarksController extends AppController
 						$users[$index]['last_submit'] = $attempt['reports'][0]['modified'];
 					}
 				}
+				
+				$samples = [];
+				$sampleCounts = [];
+				foreach($attempt['samples'] as $sample) {
+					//if(!isset($samples[$sample->site_id])) { $samples[$sample->site_id] = []; }
+					//if(!isset($samples[$sample->site_id][$sample->school_id])) { $samples[$sample->site_id][$sample->school_id] = []; }
+					//if(!isset($samples[$sample->site_id][$sample->school_id][$sample->child_id])) { $samples[$sample->site_id][$sample->school_id][$sample->child_id] = []; }
+					//if(!isset($samples[$sample->site_id][$sample->school_id][$sample->child_id][$sample->sample_stage_id])) { $samples[$sample->site_id][$sample->school_id][$sample->child_id][$sample->sample_stage_id] = []; }
+
+					$samples[$sample->site_id][$sample->school_id][$sample->child_id][$sample->sample_stage_id] = 1;
+					if(!isset($sampleCounts[$sample->site_id])) {
+						$sampleCounts[$sample->site_id] = [
+							'total' => 0,
+							'schools' => [],
+						];
+					}
+					if(!isset($sampleCounts[$sample->site_id]['schools'][$sample->school_id])) {
+						$sampleCounts[$sample->site_id]['schools'][$sample->school_id] = 0;
+					}
+					$sampleCounts[$sample->site_id]['total']++;
+					$sampleCounts[$sample->site_id]['schools'][$sample->school_id]++;
+
+				}
+				$attempt['samples'] = $samples;
+				$attempt['sampleCounts'] = $sampleCounts;
+
 			}
 			//pr($users);
 			

@@ -723,9 +723,7 @@ td.assays-convalescent div.checkbox {
 	border-top: none;
 }
 #marking-info-table th {
-	width: 10%;
+	width: 120px;
+	padding-left: 0;
 	text-align: right;
-}
-#marking-info-table td {
-	width: 20%;
 }

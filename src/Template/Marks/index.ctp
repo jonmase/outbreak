@@ -62,39 +62,93 @@
 			</table>
 		</div>
 		
-		<div ng-show="markingCtrl.status === 'mark'" ng-cloak>
-			<button type="button" class="btn btn-primary" ng-click="markingCtrl.status = 'index'"><i class="fa fa-arrow-left"></i>&nbsp; Back to List</button>
-			<table class="table" id="marking-info-table">
-				<tbody>
-					<tr>
-						<th>Username:</th><td>{{markingCtrl.currentUser.lti_displayid}}</td>
-						<th>Starts:</th><td>{{markingCtrl.currentUser.attempts_count}}</td>
-						<th>Mark:</th><td>{{}}</td>
-					</tr>
-					<tr>
-						<th>Name:</th><td>{{markingCtrl.currentUser.lti_lis_person_name_full}}</td>
-						<th>Submissions:</th><td>{{markingCtrl.currentUser.submissions}}</td>
-						<th>Marked By:</th><td>{{}}</td>
-					</tr>
-					<tr>
-						<th>Role:</th><td>{{markingCtrl.currentUser.most_recent_role}}</td>
-						<th>Last Submission:</th><td>{{markingCtrl.currentUser.last_submit | date: "d MMM yy 'at' H:mm"}}</td>
-						<th>Marked on</th><td>{{}}</td>
-					</tr>
-				</tbody>
-			</table>
-			
-						
-			<!--dl>			
-				<dt>Username:</dt><dd>{{markingCtrl.currentUser.lti_displayid}}</dd>
-				<dt>Name:</dt><dd>{{markingCtrl.currentUser.lti_lis_person_name_full}}</dd>
-				<dt>Role:</dt><dd>{{markingCtrl.currentUser.most_recent_role}}</dd>
-				<dt>Starts:</dt><dd>{{markingCtrl.currentUser.attempts_count}}</dd>
-				<dt>Submissions:</dt><dd>{{markingCtrl.currentUser.submissions}}</dd>
-				<dt>Last Submission:</dt><dd>{{markingCtrl.currentUser.last_submit | date: "d MMM yy 'at' H:mm" }}</dd>
-				<dt>Mark:</dt><dd>{{}}</dd>
-				<dt>Marked By:</dt><dd>{{}}</dd>
-			</dl-->
+		<div ng-show="markingCtrl.status === 'mark'" ng-cloak class="row">
+			<div class="col-xs-3">
+				<button type="button" class="btn btn-primary" ng-click="markingCtrl.status = 'index'"><i class="fa fa-arrow-left"></i>&nbsp; Back to List</button>
+				<table class="table" id="marking-info-table">
+					<tbody>
+						<tr>
+							<th>Username:</th><td>{{markingCtrl.currentUser.lti_displayid}}</td>
+						</tr>
+						<tr>
+							<th>Name:</th><td>{{markingCtrl.currentUser.lti_lis_person_name_full}}</td>
+						</tr>
+						<tr>
+							<th>Role:</th><td>{{markingCtrl.currentUser.most_recent_role}}</td>
+						</tr>
+						<tr>
+							<th>Starts:</th><td>{{markingCtrl.currentUser.attempts_count}}</td>
+						</tr>
+						<tr>
+							<th>Submissions:</th><td>{{markingCtrl.currentUser.submissions}}</td>
+						</tr>
+						<tr>
+							<th>Last Submission:</th><td>{{markingCtrl.currentUser.last_submit | date: "d MMM yy 'at' H:mm"}}</td>
+						</tr>
+						<!--tr>
+							<th>Mark:</th><td>{{}}</td>
+						</tr>
+						<tr>
+							<th>Marked By:</th><td>{{}}</td>
+						</tr>
+						<tr>
+							<th>Marked On:</th><td>{{}}</td>
+						</tr-->
+					</tbody>
+				</table>
+				
+				<!--dl>			
+					<dt>Username:</dt><dd>{{markingCtrl.currentUser.lti_displayid}}</dd>
+					<dt>Name:</dt><dd>{{markingCtrl.currentUser.lti_lis_person_name_full}}</dd>
+					<dt>Role:</dt><dd>{{markingCtrl.currentUser.most_recent_role}}</dd>
+					<dt>Starts:</dt><dd>{{markingCtrl.currentUser.attempts_count}}</dd>
+					<dt>Submissions:</dt><dd>{{markingCtrl.currentUser.submissions}}</dd>
+					<dt>Last Submission:</dt><dd>{{markingCtrl.currentUser.last_submit | date: "d MMM yy 'at' H:mm" }}</dd>
+					<dt>Mark:</dt><dd>{{}}</dd>
+					<dt>Marked By:</dt><dd>{{}}</dd>
+				</dl-->
+			</div>
+			<div class="col-xs-9">
+				<div ng-repeat="attempt in markingCtrl.currentUser.attempts" class="panel" ng-class="{ 'panel-success':attempt.report, 'panel-default':!attempt.report }">
+					<div class="panel-heading">
+						<h3 class="panel-title">Attempt {{attempt.id}} - {{attempt.report?"Submitted on ":"Not Submitted"}}{{(attempt.report?attempt.reports[0].modified:null) | date: "d MMM yy 'at' H:mm"}} - Last modified on {{attempt.modified | date: "d MMM yy 'at' H:mm"}}</h3>
+					</div>
+					<div class="panel-body">
+						<div class="row">
+							<div class="col-lg-10 col-md-9 col-sm-8 col-xs-6">
+								<h4>Sampling</h4>
+								<div ng-repeat="(siteIndex, site) in markingCtrl.sites" ng-if="attempt.sampleCounts[site.id].total > 0">
+									<h5 class="no-top-margin">{{site.name}}</h5>
+									<div class="row">
+										<div class="col-xs-12 col-md-6 sample-school" ng-repeat="(schoolIndex, school) in markingCtrl.schools" ng-if="attempt.sampleCounts[site.id].schools[school.id] > 0">
+											<h6 class="no-top-margin">{{school.name}}</h6>
+											<p>{{school.details}}</p>
+											<table>
+												<tr>
+													<th><!--Child--></th>
+													<th ng-repeat="(typeIndex, type) in markingCtrl.types" ng-if="school[type.stage]" ng-class="'samples-' + type.stage">{{type.stage.charAt(0).toUpperCase() + type.stage.slice(1)}}</th>
+												</tr>
+												<tr ng-repeat="(childIndex, child) in school.children">
+													<td>{{child.name}}</td>
+													<td ng-repeat="(typeIndex, type) in markingCtrl.types" ng-if="school[type.stage]" class="align-center" ng-class="'samples-' + type.stage">
+														<i class="fa fa-check" ng-if="attempt.samples[site.id][school.id][child.id][type.id]"></i>
+													</td>
+												</tr>
+											</table>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-lg-2 col-md-3 col-sm-4 col-xs-6 smiley">
+								<img ng-src="img/smileys/smile-o.svg" ng-show="attempt.happiness == 3" />
+								<img ng-src="img/smileys/meh-o.svg" ng-show="attempt.happiness == 2" />
+								<img ng-src="img/smileys/frown-o.svg" ng-show="attempt.happiness == 1" />
+								<img ng-src="img/smileys/cry.svg" ng-show="attempt.happiness == 0" />
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>

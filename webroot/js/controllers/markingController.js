@@ -52,15 +52,17 @@
 		//Actions
 		var usersPromise = markingFactory.loadUsers();
 
+		var techniquesPromise = techniqueFactory.loadTechniques();
 		var sitesPromise = siteFactory.loadSites();
 		var schoolsPromise = schoolFactory.loadSchools();
 		var typesPromise = sampleFactory.loadTypes();
 		var standardsPromise = assayFactory.loadStandards();
 		
-		$q.all([usersPromise, sitesPromise, schoolsPromise, typesPromise, standardsPromise]).then(
+		$q.all([usersPromise, techniquesPromise, sitesPromise, schoolsPromise, typesPromise, standardsPromise]).then(
 			function(result) {
 				console.log(result);
 				vm.users = markingFactory.getUsers();
+				vm.techniques = techniqueFactory.getTechniques('lab');
 				vm.sites = siteFactory.getSites();;
 				vm.schools = schoolFactory.getSchools();
 				vm.types = sampleFactory.getSampleTypes();
