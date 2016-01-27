@@ -1,5 +1,5 @@
 (function() {
-	angular.module('flu')
+	angular.module('flu.progress')
 		.factory('progressFactory', progressFactory);
 
 	progressFactory.$inject = ['moneyCutoff', 'timeCutoff', '$resource', '$q'];
@@ -128,7 +128,7 @@
 				var time = startingTime;
 			}
 			var deferred = $q.defer();
-			var ResourcesCall = $resource('../../attempts/saveResources', {});
+			var ResourcesCall = $resource(URL_MODIFIER + 'attempts/saveResources', {});
 			ResourcesCall.save({}, {attemptId: ATTEMPT_ID, token: ATTEMPT_TOKEN, money: money, time: time},
 				function(result) {
 					if(typeof(result.status) !== "undefined" && result.status === 'success') {

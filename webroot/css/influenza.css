@@ -716,3 +716,16 @@ td.assays-convalescent div.checkbox {
 	margin-right: 30px;
 	max-height: 93px;
 }
+
+
+/* Marking */
+#marking-info-table th, #marking-info-table td {
+	border-top: none;
+}
+#marking-info-table th {
+	width: 10%;
+	text-align: right;
+}
+#marking-info-table td {
+	width: 20%;
+}

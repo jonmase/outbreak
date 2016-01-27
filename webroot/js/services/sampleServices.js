@@ -123,7 +123,7 @@
 				setSampleCounts('saved', 'saved');	//Count the saved samples into the saved counts
 				
 				var deferred = $q.defer();
-				var SamplesCall = $resource('../../samples/save', {});
+				var SamplesCall = $resource(URL_MODIFIER + 'samples/save', {});
 				SamplesCall.save({}, {attemptId: ATTEMPT_ID, token: ATTEMPT_TOKEN, samples: samplesToSave, happiness: null},
 					function(result) {
 						if(typeof(result.status) !== "undefined" && result.status === 'success') {
@@ -241,7 +241,7 @@
 		
 		function loadHappiness() {
 			var deferred = $q.defer();
-			var HappinessCall = $resource('../../Attempts/loadHappiness/:attemptId/:token.json', {attemptId: null, token: null});
+			var HappinessCall = $resource(URL_MODIFIER + 'Attempts/loadHappiness/:attemptId/:token.json', {attemptId: null, token: null});
 			HappinessCall.get({attemptId: ATTEMPT_ID, token: ATTEMPT_TOKEN},
 				function(result) {
 					if(typeof(result.status) !== "undefined" && result.status === 'success') {
@@ -261,7 +261,7 @@
 
 		function loadSamples() {
 			var deferred = $q.defer();
-			var SamplesCall = $resource('../../Samples/load/:attemptId/:token.json', {attemptId: null, token: null});
+			var SamplesCall = $resource(URL_MODIFIER + 'Samples/load/:attemptId/:token.json', {attemptId: null, token: null});
 			SamplesCall.get({attemptId: ATTEMPT_ID, token: ATTEMPT_TOKEN},
 				function(result) {
 					if(typeof(result.status) !== "undefined" && result.status === 'success') {
@@ -284,7 +284,7 @@
 
 		function loadTypes() {
 			var deferred = $q.defer();
-			var TypesCall = $resource('../../SampleStages/load.json', {});
+			var TypesCall = $resource(URL_MODIFIER + 'SampleStages/load.json', {});
 			TypesCall.get({},
 				function(result) {
 					if(typeof(result.status) !== "undefined" && result.status === 'success') {
@@ -513,7 +513,7 @@
 		function tooLate(schoolId) {
 			//API: Set this in the DB
 			//var deferred = $q.defer();
-			var TooLateCall = $resource('../../schools/tooLate', {});
+			var TooLateCall = $resource(URL_MODIFIER + 'schools/tooLate', {});
 			TooLateCall.save({}, {attemptId: ATTEMPT_ID, token: ATTEMPT_TOKEN, schoolId: schoolId},
 				function(result) {
 					if(typeof(result.status) !== "undefined" && result.status === 'success') {

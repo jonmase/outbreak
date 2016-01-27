@@ -72,7 +72,7 @@
 		function loadTechniques() {
 			//API: get these from the DB? [constant]
 			var deferred = $q.defer();
-			var Techniques = $resource('../../techniques/load.json', {});
+			var Techniques = $resource(URL_MODIFIER + 'techniques/load.json', {});
 			Techniques.get({},
 				function(result) {
 					if(typeof(result.status) !== "undefined" && result.status === 'success') {
@@ -95,7 +95,7 @@
 		function loadResearchTechniques() {
 			//API: get these from the DB? [constant]
 			var deferred = $q.defer();
-			var Techniques = $resource('../../researchTechniques/load.json', {});
+			var Techniques = $resource(URL_MODIFIER + 'researchTechniques/load.json', {});
 			Techniques.get({},
 				function(result) {
 					if(typeof(result.status) !== "undefined" && result.status === 'success') {
@@ -117,7 +117,7 @@
 		function loadUsefulTechniques() { 
 			//API: get this from the DB - this will be saved for each attempt
 			var deferred = $q.defer();
-			var Useful = $resource('../../techniqueUsefulness/load/:attemptId/:token.json', {attemptId: null, token: null});
+			var Useful = $resource(URL_MODIFIER + 'techniqueUsefulness/load/:attemptId/:token.json', {attemptId: null, token: null});
 			Useful.get({attemptId: ATTEMPT_ID, token: ATTEMPT_TOKEN},
 				function(result) {
 					if(typeof(result.status) !== "undefined" && result.status === 'success') {
@@ -236,7 +236,7 @@
 		function setUsefulTechnique(techniqueId, usefulness) { 
 			//API: save useful technique update to DB
 			var deferred = $q.defer();
-			var Useful = $resource('../../techniqueUsefulness/save', {});
+			var Useful = $resource(URL_MODIFIER + 'techniqueUsefulness/save', {});
 			Useful.save({}, {attemptId: ATTEMPT_ID, token: ATTEMPT_TOKEN, techniqueId: techniqueId, usefulness: usefulness},
 				function(result) {
 					if(typeof(result.status) !== "undefined" && result.status === 'success') {

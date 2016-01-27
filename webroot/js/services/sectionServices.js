@@ -1,5 +1,5 @@
 (function() {
-	angular.module('flu')
+	angular.module('flu.progress')
 		.constant('sectionsConstant', sectionsConstant)
 		.factory('sectionFactory', sectionFactory);
 		

@@ -1,5 +1,5 @@
 (function() {
-	angular.module('flu')
+	angular.module('flu.progress')
 		.factory('lockFactory', lockFactory);
 	
 	lockFactory.$inject = ['$location', '$resource', '$q', 'sectionsConstant', 'progressFactory'];

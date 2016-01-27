@@ -194,7 +194,7 @@
 		
 		function loadAssays() {
 			var deferred = $q.defer();
-			var AssaysCall = $resource('../../Assays/load/:attemptId/:token.json', {attemptId: null, token: null});
+			var AssaysCall = $resource(URL_MODIFIER + 'Assays/load/:attemptId/:token.json', {attemptId: null, token: null});
 			AssaysCall.get({attemptId: ATTEMPT_ID, token: ATTEMPT_TOKEN},
 				function(result) {
 					if(typeof(result.status) !== "undefined" && result.status === 'success') {
@@ -214,7 +214,7 @@
 
 		function loadStandardAssays() {
 			var deferred = $q.defer();
-			var StandardAssaysCall = $resource('../../StandardAssays/load/:attemptId/:token.json', {attemptId: null, token: null});
+			var StandardAssaysCall = $resource(URL_MODIFIER + 'StandardAssays/load/:attemptId/:token.json', {attemptId: null, token: null});
 			StandardAssaysCall.get({attemptId: ATTEMPT_ID, token: ATTEMPT_TOKEN},
 				function(result) {
 					if(typeof(result.status) !== "undefined" && result.status === 'success') {
@@ -234,7 +234,7 @@
 
 		function loadStandards() {
 			var deferred = $q.defer();
-			var StandardsCall = $resource('../../Standards/load.json', {});
+			var StandardsCall = $resource(URL_MODIFIER + 'Standards/load.json', {});
 			StandardsCall.get({},
 				function(result) {
 					if(typeof(result.status) !== "undefined" && result.status === 'success') {
@@ -412,7 +412,7 @@
 		function setAssays(techniqueId, moneyCost, timeCost) {
 			//API: Save assays performed
 			var deferred = $q.defer();
-			var AssaysCall = $resource('../../assays/save', {});
+			var AssaysCall = $resource(URL_MODIFIER + 'assays/save', {});
 			AssaysCall.save({}, {attemptId: ATTEMPT_ID, token: ATTEMPT_TOKEN, techniqueId: techniqueId, assays: assays.temp.samples[techniqueId], standardAssays: assays.temp.standards[techniqueId], money: (resources.money - moneyCost), time: (resources.time - timeCost)},
 				function(result) {
 					if(typeof(result.status) !== "undefined" && result.status === 'success') {

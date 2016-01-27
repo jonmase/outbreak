@@ -43,7 +43,7 @@
 		
 		function loadSites() {
 			var deferred = $q.defer();
-			var SitesCall = $resource('../../sites/load.json', {});
+			var SitesCall = $resource(URL_MODIFIER + 'sites/load.json', {});
 			SitesCall.get({},
 				function(result) {
 					if(typeof(result.status) !== "undefined" && result.status === 'success') {

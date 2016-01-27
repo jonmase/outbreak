@@ -57,7 +57,7 @@
 				//API: Save responses (answers, score) to DB
 				var score = setScoreByQuestion(questionId);
 				var deferred = $q.defer();
-				var QuestionsCall = $resource('../../question_answers/save', {});
+				var QuestionsCall = $resource(URL_MODIFIER + 'question_answers/save', {});
 				QuestionsCall.save({}, {attemptId: ATTEMPT_ID, token: ATTEMPT_TOKEN, questionId: questionId, answers: responses.answers[questionId], score: score},
 					function(result) {
 						if(typeof(result.status) !== "undefined" && result.status === 'success') {
@@ -143,7 +143,7 @@
 
 		function loadQuestions() {
 			var deferred = $q.defer();
-			var QuestionsCall = $resource('../../questions/load.json', {});
+			var QuestionsCall = $resource(URL_MODIFIER + 'questions/load.json', {});
 			QuestionsCall.get({},
 				function(result) {
 					if(typeof(result.status) !== "undefined" && result.status === 'success') {
@@ -171,7 +171,7 @@
 		
 		function loadResponses() {
 			var deferred = $q.defer();
-			var ResponsesCall = $resource('../../question_answers/load/:attemptId/:token.json', {attemptId: null, token: null});
+			var ResponsesCall = $resource(URL_MODIFIER + 'question_answers/load/:attemptId/:token.json', {attemptId: null, token: null});
 			ResponsesCall.get({attemptId: ATTEMPT_ID, token: ATTEMPT_TOKEN},
 				function(result) {
 					if(typeof(result.status) !== "undefined" && result.status === 'success') {

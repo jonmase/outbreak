@@ -29,12 +29,18 @@ class MarksController extends AppController
 			$attemptsQuery = $this->Marks->LtiResources->Attempts->find('all', [
 				'conditions' => ['lti_resource_id' => $ltiResourceId],
 				'order' => ['Attempts.modified' => 'DESC'],
-				'contain' => ['LtiUsers' => ['Marks' => ['MarksGiven']], 'Reports' => function ($q) {
-				   return $q
-						->select(['type', 'attempt_id', 'modified'])
-						->where(['Reports.type' => 'submit'])
-						->order(['Reports.modified' => 'DESC']);
-				}],
+				'contain' => [
+					'LtiUsers' => ['Marks' => ['MarksGiven']], 
+					'Samples',
+					'Assays',
+					'StandardAssays',
+					'Reports' => function ($q) {
+					   return $q
+							->select(['type', 'attempt_id', 'modified'])
+							->where(['Reports.type' => 'submit'])
+							->order(['Reports.modified' => 'DESC']);
+					}
+				],
 			]);
 			$attempts = $attemptsQuery->all();
 			//pr($attempts);
@@ -92,6 +98,8 @@ class MarksController extends AppController
 			$this->redirect(['controller' => 'attempts', 'action' => 'index']);
 		}
         //pr($session->read());
+		$ltiResourceId = $session->read('LtiResource.id');
+		$this->set(compact('ltiResourceId'));
 		$this->viewBuilder()->layout('angular');
 	}
 

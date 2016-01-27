@@ -1,4 +1,5 @@
 (function() {
+	angular.module('flu.progress', [])
 	angular.module('flu.techniques', [])
 	angular.module('flu.questions', [])
 	angular.module('flu.samples', [])
@@ -9,7 +10,7 @@
 	angular.module('flu.filters', [])
 	angular.module('flu.modals', [])
 	angular
-		.module('flu', ['ngResource', 'ngRoute', 'ngSanitize', 'ui.bootstrap', 'ngCkeditor', 'ui.checkbox', 'mgcrea.ngStrap.affix', 'flu.techniques', 'flu.questions', 'flu.samples', 'flu.lab', 'flu.results', 'flu.report', 'flu.directives', 'flu.filters', 'flu.modals'])	//with Ckeditor
+		.module('flu', ['ngResource', 'ngRoute', 'ngSanitize', 'ui.bootstrap', 'ngCkeditor', 'ui.checkbox', 'mgcrea.ngStrap.affix', 'flu.progress', 'flu.techniques', 'flu.questions', 'flu.samples', 'flu.lab', 'flu.results', 'flu.report', 'flu.directives', 'flu.filters', 'flu.modals'])	//with Ckeditor
 		//.module('flu', ['ngRoute', 'ngSanitize', 'ui.bootstrap', 'textAngular', 'flu.techniques', 'flu.questions', 'flu.samples', 'flu.lab', 'flu.results', 'flu.report', 'flu.directives', 'flu.filters'])	//With textangular
 		.config(config);
 		

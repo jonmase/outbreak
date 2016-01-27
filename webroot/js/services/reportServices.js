@@ -105,7 +105,7 @@
 		
 		function loadReport() {
 			var deferred = $q.defer();
-			var ReportCall = $resource('../../reports/load/:attemptId/:token.json', {attemptId: null, token: null});
+			var ReportCall = $resource(URL_MODIFIER + 'reports/load/:attemptId/:token.json', {attemptId: null, token: null});
 			ReportCall.get({attemptId: ATTEMPT_ID, token: ATTEMPT_TOKEN},
 				function(result) {
 					if(typeof(result.status) !== "undefined" && result.status === 'success') {
@@ -176,7 +176,7 @@
 		function reopen() {
 			//API: Reopen report
 			var deferred = $q.defer();
-			var ReportCall = $resource('../../reports/reopen', {});
+			var ReportCall = $resource(URL_MODIFIER + 'reports/reopen', {});
 			ReportCall.save({}, {attemptId: ATTEMPT_ID, token: ATTEMPT_TOKEN},
 				function(result) {
 					if(typeof(result.status) !== "undefined" && result.status === 'success') {
@@ -199,7 +199,7 @@
 			if(!type) { type = 'save'; }
 			//API: Save report
 			var deferred = $q.defer();
-			var ReportCall = $resource('../../reports/save', {});
+			var ReportCall = $resource(URL_MODIFIER + 'reports/save', {});
 			ReportCall.save({}, {attemptId: ATTEMPT_ID, token: ATTEMPT_TOKEN, report: report.reports_sections, type: type},
 				function(result) {
 					if(typeof(result.status) !== "undefined" && result.status === 'success') {

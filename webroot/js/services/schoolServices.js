@@ -24,8 +24,16 @@
 		
 		function loadSchools() {
 			var deferred = $q.defer();
-			var SchoolsCall = $resource('../../schools/load/:attemptId/:token.json', {attemptId: null, token: null});
-			SchoolsCall.get({attemptId: ATTEMPT_ID, token: ATTEMPT_TOKEN},
+			if(typeof(ATTEMPT_ID) === "undefined" || typeof(ATTEMPT_TOKEN) === "undefined") {
+				var SchoolsCall = $resource(URL_MODIFIER + 'schools/load.json', {});
+				var parameters = {};
+			}
+			else {
+				var SchoolsCall = $resource(URL_MODIFIER + 'schools/load/:attemptId/:token.json', {attemptId: null, token: null});
+				var parameters = {attemptId: ATTEMPT_ID, token: ATTEMPT_TOKEN};
+			}
+			
+			SchoolsCall.get(parameters,
 				function(result) {
 					if(typeof(result.status) !== "undefined" && result.status === 'success') {
 						schools = result.schools;
