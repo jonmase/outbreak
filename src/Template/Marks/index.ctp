@@ -18,9 +18,6 @@
 				</div>
 			</div>
 
-			
-			{{}}
-			{{}}
 			<table class="table">
 				<thead>
 					<tr>
@@ -46,13 +43,6 @@
 						<td></td>
 						<td></td>
 						<td class="actions" style="font-size: 140%; padding: 4px 8px;">
-							<?php /*
-							<?= $this->Html->link(__('Mark'), ['action' => 'add', $ltiResourceId]) ?>
-							<?= $this->Html->link(__('Hide'), ['action' => 'hide']) ?>
-							<button type="button" class="btn btn-primary" ng-click="ErrorModalCtrl.confirm()"><i class="fa fa-check fa-2x"></i></button>
-							<button type="button" class="btn btn-primary" ng-click="ErrorModalCtrl.confirm()"><i class="fa fa-eye-slash fa-2x"></i></button>
-							<button type="button" class="btn btn-primary" ng-click="ErrorModalCtrl.confirm()"><i class="fa fa-eye fa-2x"></i></button>
-							 */?>
 							<a href="" ng-click="markingCtrl.markUser(userIndex)" title="Mark"><i class="fa fa-check"></i></a>
 							<a href="" ng-click="markingCtrl.hideUser(userIndex)" title="Hide"><i class="fa fa-eye-slash"></i></a>
 							<a href="" ng-click="markingCtrl.showUser(userIndex)" title="Show"><i class="fa fa-eye"></i></a>
@@ -114,15 +104,15 @@
 						<h3 class="panel-title">Attempt {{attempt.id}} - {{attempt.report?"Submitted on ":"Not Submitted"}}{{(attempt.report?attempt.reports[0].modified:null) | date: "d MMM yy 'at' H:mm"}} - Last modified on {{attempt.modified | date: "d MMM yy 'at' H:mm"}}</h3>
 					</div>
 					<div class="panel-body">
-						<div class="row">
+						<!-- Samples -->
+						<div class="row" ng-if="attempt.sampleCounts.total > 0">
 							<div class="col-lg-10 col-md-9 col-sm-8 col-xs-6">
-								<h4>Sampling</h4>
+								<h3 class="no-top-margin">Samples</h3>
 								<div ng-repeat="(siteIndex, site) in markingCtrl.sites" ng-if="attempt.sampleCounts[site.id].total > 0">
 									<h5 class="no-top-margin">{{site.name}}</h5>
 									<div class="row">
 										<div class="col-xs-12 col-md-6 sample-school" ng-repeat="(schoolIndex, school) in markingCtrl.schools" ng-if="attempt.sampleCounts[site.id].schools[school.id] > 0">
-											<h6 class="no-top-margin">{{school.name}}</h6>
-											<p>{{school.details}}</p>
+											<p>{{school.name}} ({{school.acute?"Still infected":"Convalescent"}})</p>
 											<table>
 												<tr>
 													<th><!--Child--></th>
@@ -144,6 +134,53 @@
 								<img ng-src="img/smileys/meh-o.svg" ng-show="attempt.happiness == 2" />
 								<img ng-src="img/smileys/frown-o.svg" ng-show="attempt.happiness == 1" />
 								<img ng-src="img/smileys/cry.svg" ng-show="attempt.happiness == 0" />
+							</div>
+						</div>
+						
+						<!-- Assays -->
+						<div class="row" ng-if="attempt.assayCounts.total > 0">
+							<div class="col-xs-12">
+								<h3>Assays</h3>
+								<div ng-repeat="(techniqueIndex, technique) in markingCtrl.techniques" ng-if="attempt.assayCounts[technique.id].total > 0">
+									<h4>{{technique.menu}}</h5>
+									<div ng-if="attempt.standardAssayCounts[technique.id] > 0" style="margin-bottom: 10px">
+										<h6 class="no-top-margin">Standards</h6>
+										<span ng-repeat="(standardIndex, standard) in attempt.standardAssays[technique.id]" ng-if="standard">
+											{{markingCtrl.standards[standardIndex].name}} &nbsp; &nbsp; 
+										</span>
+									</div>
+									<div ng-repeat="(siteIndex, site) in markingCtrl.sites" ng-if="attempt.assayCounts[technique.id].sites[site.id].total > 0">
+										<h6 class="no-top-margin">{{site.name}}</h6>
+										<div class="row">
+											<div class="col-xs-12 col-md-6 assays-school" ng-repeat="(schoolIndex, school) in markingCtrl.schools" ng-if="attempt.assayCounts[technique.id].sites[site.id].schools[school.id] > 0">
+												<p>{{school.name}} ({{school.acute?"Still infected":"Convalescent"}})</p>
+												<table>
+													<tr>
+														<th><!--Child--></th>
+														<th ng-repeat="(typeIndex, type) in markingCtrl.types" ng-if="school[type.stage]" ng-class="'assays-' + type.stage">{{type.stage.charAt(0).toUpperCase() + type.stage.slice(1)}}</th>
+													</tr>
+													<tr ng-repeat="(childIndex, child) in school.children">
+														<td>{{child.name}}</td>
+														<td ng-repeat="(typeIndex, type) in markingCtrl.types" ng-if="school[type.stage]" class="align-center" ng-class="'assays-' + type.stage">
+															<i class="fa fa-check" ng-if="attempt.assays[technique.id][site.id][school.id][child.id][type.id]"></i>
+														</td>
+													</tr>
+												</table>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						
+						<!-- Reports -->
+						<div class="row" ng-if="attempt.reports.length > 0">
+							<div class="col-xs-12">
+								<h3>Report</h3>
+								<div ng-repeat="section in attempt.reports[0].reports_sections">
+									<h4>{{section.section.label}}</h4>
+									<div ng-bind-html="section.text | unsafe"></div>
+								</div>
 							</div>
 						</div>
 					</div>

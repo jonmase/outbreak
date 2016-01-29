@@ -36,19 +36,21 @@ class MarksController extends AppController
 					'StandardAssays',
 					'Reports' => function ($q) {
 					   return $q
-							->select(['type', 'attempt_id', 'modified'])
+							->select(['id', 'type', 'attempt_id', 'modified'])
 							->where(['Reports.type' => 'submit'])
+							->contain(['ReportsSections' => ['Sections']])
 							->order(['Reports.modified' => 'DESC']);
-					}
+					},
 				],
 			]);
 			$attempts = $attemptsQuery->all();
-			//pr($attempts);
+			//pr($attempts); exit;
 			
 			$users = [];
 			$userIdsInUsersArray = [];
 			foreach($attempts as $attempt) {
 				$attemptUserId = $attempt['lti_user_id'];
+				
 				//Create an array for this user, if there isn't one already
 				if(!isset($userIdsInUsersArray[$attemptUserId])) {
 					$index = count($users);
@@ -63,8 +65,9 @@ class MarksController extends AppController
 				else {
 					$index = $userIdsInUsersArray[$attemptUserId];
 				}
-				
 				unset($attempt['lti_user']);	//Delete the user details from the attempt
+				
+				//Process basic user, attempt and submission info/counts
 				$users[$index]['attempts'][] = $attempt;	//Add the attempt to the attempts array for the user
 				$users[$index]['attempts_count']++; //Count the attempt
 				if(!empty($attempt['reports'])) {
@@ -74,14 +77,12 @@ class MarksController extends AppController
 					}
 				}
 				
+				//Process samples
 				$samples = [];
-				$sampleCounts = [];
+				$sampleCounts = [
+					'total' => 0,
+				];
 				foreach($attempt['samples'] as $sample) {
-					//if(!isset($samples[$sample->site_id])) { $samples[$sample->site_id] = []; }
-					//if(!isset($samples[$sample->site_id][$sample->school_id])) { $samples[$sample->site_id][$sample->school_id] = []; }
-					//if(!isset($samples[$sample->site_id][$sample->school_id][$sample->child_id])) { $samples[$sample->site_id][$sample->school_id][$sample->child_id] = []; }
-					//if(!isset($samples[$sample->site_id][$sample->school_id][$sample->child_id][$sample->sample_stage_id])) { $samples[$sample->site_id][$sample->school_id][$sample->child_id][$sample->sample_stage_id] = []; }
-
 					$samples[$sample->site_id][$sample->school_id][$sample->child_id][$sample->sample_stage_id] = 1;
 					if(!isset($sampleCounts[$sample->site_id])) {
 						$sampleCounts[$sample->site_id] = [
@@ -92,18 +93,70 @@ class MarksController extends AppController
 					if(!isset($sampleCounts[$sample->site_id]['schools'][$sample->school_id])) {
 						$sampleCounts[$sample->site_id]['schools'][$sample->school_id] = 0;
 					}
+					$sampleCounts['total']++;
 					$sampleCounts[$sample->site_id]['total']++;
 					$sampleCounts[$sample->site_id]['schools'][$sample->school_id]++;
 
 				}
 				$attempt['samples'] = $samples;
 				$attempt['sampleCounts'] = $sampleCounts;
-
+				
+				//Process assays
+				$assays = [];
+				$assayCounts = [
+					'total' => 0,
+				];
+				foreach($attempt['assays'] as $assay) {
+					$assays[$assay->technique_id][$assay->site_id][$assay->school_id][$assay->child_id][$assay->sample_stage_id] = 1;
+					
+					if(!isset($assayCounts[$assay->technique_id])) {
+						$assayCounts[$assay->technique_id] = [
+							'total' => 0,
+							'sites' => [],
+						];
+					}
+					if(!isset($assayCounts[$assay->technique_id]['sites'][$assay->site_id])) {
+						$assayCounts[$assay->technique_id]['sites'][$assay->site_id] = [
+							'total' => 0,
+							'schools' => [],
+						];
+					}
+					if(!isset($assayCounts[$assay->technique_id]['sites'][$assay->site_id]['schools'][$assay->school_id])) {
+						$assayCounts[$assay->technique_id]['sites'][$assay->site_id]['schools'][$assay->school_id] = 0;
+					}
+					$assayCounts['total']++;
+					$assayCounts[$assay->technique_id]['total']++;
+					$assayCounts[$assay->technique_id]['sites'][$assay->site_id]['total']++;
+					$assayCounts[$assay->technique_id]['sites'][$assay->site_id]['schools'][$assay->school_id]++;
+				}
+				
+				//Process standards assays
+				$standardAssays = [];
+				$standardAssayCounts = [];
+				foreach($attempt['standard_assays'] as $standardAssay) {
+					$standardAssays[$standardAssay->technique_id][$standardAssay->standard_id] = 1;
+					
+					if(!isset($standardAssayCounts[$standardAssay->technique_id])) {
+						$standardAssayCounts[$standardAssay->technique_id] = 0;
+					}
+					if(!isset($assayCounts[$standardAssay->technique_id])) {
+						$assayCounts[$standardAssay->technique_id] = [
+							'total' => 0,
+						];
+					}
+					$assayCounts['total']++;	//Increment the total assay count (for idenitfying whether to show Assays section)
+					$assayCounts[$standardAssay->technique_id]['total']++;	//Increment the total assay count for this technique (for idenitfying whether to show the technique section)
+					$standardAssayCounts[$standardAssay->technique_id]++;
+				}
+				unset($attempt['standard_assays']);
+				$attempt['assays'] = $assays;
+				$attempt['assayCounts'] = $assayCounts;
+				$attempt['standardAssays'] = $standardAssays;
+				$attempt['standardAssayCounts'] = $standardAssayCounts;
+				
+				
 			}
-			//pr($users);
-			
-			/*foreach($users as $user) {
-			}*/
+			//pr($users); exit;
 			
 			$status = 'success';
 		}
