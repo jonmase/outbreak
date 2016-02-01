@@ -54,49 +54,51 @@
 		
 		<div ng-show="markingCtrl.status === 'mark'" ng-cloak class="row">
 			<div class="col-xs-3">
-				<button type="button" class="btn btn-primary" ng-click="markingCtrl.status = 'index'"><i class="fa fa-arrow-left"></i>&nbsp; Back to List</button>
-				<table class="table" id="marking-info-table">
-					<tbody>
-						<tr>
-							<th>Username:</th><td>{{markingCtrl.currentUser.lti_displayid}}</td>
-						</tr>
-						<tr>
-							<th>Name:</th><td>{{markingCtrl.currentUser.lti_lis_person_name_full}}</td>
-						</tr>
-						<tr>
-							<th>Role:</th><td>{{markingCtrl.currentUser.most_recent_role}}</td>
-						</tr>
-						<tr>
-							<th>Starts:</th><td>{{markingCtrl.currentUser.attempts_count}}</td>
-						</tr>
-						<tr>
-							<th>Submissions:</th><td>{{markingCtrl.currentUser.submissions}}</td>
-						</tr>
-						<tr>
-							<th>Last Submission:</th><td>{{markingCtrl.currentUser.last_submit | date: "d MMM yy 'at' H:mm"}}</td>
-						</tr>
-						<!--tr>
-							<th>Mark:</th><td>{{}}</td>
-						</tr>
-						<tr>
-							<th>Marked By:</th><td>{{}}</td>
-						</tr>
-						<tr>
-							<th>Marked On:</th><td>{{}}</td>
-						</tr-->
-					</tbody>
-				</table>
-				
-				<!--dl>			
-					<dt>Username:</dt><dd>{{markingCtrl.currentUser.lti_displayid}}</dd>
-					<dt>Name:</dt><dd>{{markingCtrl.currentUser.lti_lis_person_name_full}}</dd>
-					<dt>Role:</dt><dd>{{markingCtrl.currentUser.most_recent_role}}</dd>
-					<dt>Starts:</dt><dd>{{markingCtrl.currentUser.attempts_count}}</dd>
-					<dt>Submissions:</dt><dd>{{markingCtrl.currentUser.submissions}}</dd>
-					<dt>Last Submission:</dt><dd>{{markingCtrl.currentUser.last_submit | date: "d MMM yy 'at' H:mm" }}</dd>
-					<dt>Mark:</dt><dd>{{}}</dd>
-					<dt>Marked By:</dt><dd>{{}}</dd>
-				</dl-->
+				<div id="marking-info" role="complementary" data-offset-top="62" bs-affix>
+					<button type="button" class="btn btn-primary" ng-click="markingCtrl.status = 'index'"><i class="fa fa-arrow-left"></i>&nbsp; Back to List</button>
+					<table class="table" id="marking-info-table">
+						<tbody>
+							<tr>
+								<th>Username:</th><td>{{markingCtrl.currentUser.lti_displayid}}</td>
+							</tr>
+							<tr>
+								<th>Name:</th><td>{{markingCtrl.currentUser.lti_lis_person_name_full}}</td>
+							</tr>
+							<tr>
+								<th>Role:</th><td>{{markingCtrl.currentUser.most_recent_role}}</td>
+							</tr>
+							<tr>
+								<th>Starts:</th><td>{{markingCtrl.currentUser.attempts_count}}</td>
+							</tr>
+							<tr>
+								<th>Submissions:</th><td>{{markingCtrl.currentUser.submissions}}</td>
+							</tr>
+							<tr>
+								<th>Last Submission:</th><td>{{markingCtrl.currentUser.last_submit | date: "d MMM yy 'at' H:mm"}}</td>
+							</tr>
+							<!--tr>
+								<th>Mark:</th><td>{{}}</td>
+							</tr>
+							<tr>
+								<th>Marked By:</th><td>{{}}</td>
+							</tr>
+							<tr>
+								<th>Marked On:</th><td>{{}}</td>
+							</tr-->
+						</tbody>
+					</table>
+					
+					<!--dl>			
+						<dt>Username:</dt><dd>{{markingCtrl.currentUser.lti_displayid}}</dd>
+						<dt>Name:</dt><dd>{{markingCtrl.currentUser.lti_lis_person_name_full}}</dd>
+						<dt>Role:</dt><dd>{{markingCtrl.currentUser.most_recent_role}}</dd>
+						<dt>Starts:</dt><dd>{{markingCtrl.currentUser.attempts_count}}</dd>
+						<dt>Submissions:</dt><dd>{{markingCtrl.currentUser.submissions}}</dd>
+						<dt>Last Submission:</dt><dd>{{markingCtrl.currentUser.last_submit | date: "d MMM yy 'at' H:mm" }}</dd>
+						<dt>Mark:</dt><dd>{{}}</dd>
+						<dt>Marked By:</dt><dd>{{}}</dd>
+					</dl-->
+				</div>
 			</div>
 			<div class="col-xs-9">
 				<div ng-repeat="attempt in markingCtrl.currentUser.attempts" class="panel" ng-class="{ 'panel-success':attempt.report, 'panel-default':!attempt.report }">
@@ -196,6 +198,9 @@
 <?= $this->Html->script('lib/ckeditor/ckeditor.js', ['block' => true]) ?>
 <?= $this->Html->script('lib/ng-ckeditor.js', ['block' => true]) ?>
 <?= $this->Html->script('lib/angular-bootstrap-checkbox.js', ['block' => true]) ?>
+<?= $this->Html->script('lib/angular-strap-helper-debounce.js', ['block' => true]) ?>
+<?= $this->Html->script('lib/angular-strap-helper-dimensions.js', ['block' => true]) ?>
+<?= $this->Html->script('lib/angular-strap-affix.js', ['block' => true]) ?>
 <?= $this->Html->scriptBlock('var URL_MODIFIER = "";', ['block' => true]) ?>
 <?= $this->Html->script('markingapp.js', ['block' => true]) ?>
 <?= $this->Html->script('controllers/markingController.js', ['block' => true]) ?>

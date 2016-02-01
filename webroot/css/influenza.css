@@ -725,5 +725,9 @@ td.assays-convalescent div.checkbox {
 #marking-info-table th {
 	width: 120px;
 	padding-left: 0;
-	text-align: right;
+	/*text-align: right;*/
+}
+#marking-info.affix {
+	margin-top: 15px;
+}
 }
