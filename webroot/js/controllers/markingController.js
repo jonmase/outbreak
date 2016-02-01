@@ -12,6 +12,8 @@
 		vm.currentUser = null;
 		
 		//Bindable Members - variables
+		vm.marks = [];
+		
 		vm.rolesForFilter = [
 			{
 				value: 'Student',
@@ -44,10 +46,29 @@
 		];
 		vm.statusToShow = vm.statusesForFilter[2];
 		
+		/*vm.markOptions = [
+			{
+				value: 'plus',
+				label: 'Satis plus',
+			},
+			{
+				value: 'satis',
+				label: 'Satis',
+			},
+			{
+				value: 'fail',
+				label: 'Fail',
+			},
+		];*/
+		vm.markOptions = ['Satis plus', 'Satis', 'Fail',];
+		
 		//Bindable Members - methods
 		vm.hideUser = hideUser;
 		vm.markUser = markUser;
 		vm.showUser = showUser;
+		vm.save = save;
+		vm.edit = edit;
+		vm.cancel = cancel;
 		
 		//Actions
 		var usersPromise = markingFactory.loadUsers();
@@ -83,9 +104,45 @@
 			vm.status = 'mark';
 			vm.currentUserIndex = userIndex;
 			vm.currentUser = vm.users[vm.currentUserIndex];
+
+			checkout();
 		}
 		function showUser(userIndex) {
 			alert(userIndex);
+		}
+		
+		function cancel() {
+			vm.status = 'index';
+			vm.currentUserIndex = null;
+			vm.currentUser = null;
+			
+			//TODO: Release checked out user
+		}
+		
+		function checkout() {
+			//TODO: Check out method
+		}
+		
+		function edit() {
+			//TODO: Show select and text area
+			
+			checkout();
+		}
+		
+		function save() {
+			var markPromise = markingFactory.save(vm.currentUserIndex);
+			markPromise.then(
+				function(result) {
+					console.log(result);
+					//Display mark, comments and marker details, plus Edit Mark button
+					
+				}, 
+				function(reason) {
+					console.log("Error: " + reason);
+					$uibModal.open(modalFactory.getErrorModalOptions());
+				}
+			);
+
 		}
 	}
 })();

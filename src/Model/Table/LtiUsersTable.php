@@ -44,7 +44,7 @@ class LtiUsersTable extends Table
         $this->hasMany('Marks', [
             'foreignKey' => 'lti_user_id'
         ]);
-        $this->hasMany('MarksGiven', [
+        $this->hasMany('Marker', [
 			'className' => 'LtiUsers',
             'foreignKey' => 'marker_id'
         ]);

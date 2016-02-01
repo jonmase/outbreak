@@ -14,6 +14,7 @@
 			setup: setup,
 			getUsers: getUsers,
 			loadUsers: loadUsers,
+			save: save,
 		}
 		return factory;
 		
@@ -21,14 +22,9 @@
 		function setup() {
 		}
 		
-		//function get
-		
 		function getUsers() {
 			return users;
 		}
-		
-		
-		
 		
 		function loadUsers() {
 			var deferred = $q.defer();
@@ -48,6 +44,30 @@
 				}
 			);
 			return deferred.promise;
+		}
+		
+		function save(userIndex) {
+			//API: Save mark
+			var userId = users[userIndex].id;
+			var mark = users[userIndex].marks;
+			var deferred = $q.defer();
+			var ReportCall = $resource(URL_MODIFIER + 'marks/save', {});
+			ReportCall.save({}, {userId: userId, mark: mark},
+				function(result) {
+					if(typeof(result.status) !== "undefined" && result.status === 'success') {
+						users[userIndex].marked = 1;
+						deferred.resolve('Mark saved');
+					}
+					else {
+						deferred.reject('Mark save failed (' + result.status + ")");
+					}
+				},
+				function(result) {
+					deferred.reject('Mark save error (' + result.status + ')');
+				}
+			);
+			return deferred.promise;
+			//return now;
 		}
 	}
 })();

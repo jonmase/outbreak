@@ -24,9 +24,9 @@
 						<th>Username</th>
 						<th>Name</th>
 						<th>Role</th>
-						<th>Starts</th>
-						<th>Submissions</th>
-						<th>Last Submission</th>
+						<th class="align-center">Starts</th>
+						<th class="align-center">Submissions</th>
+						<!--th>Last Submission</th-->
 						<th>Mark</th>
 						<th>Marked By</th>
 						<th class="actions"><?= __('Actions') ?></th>
@@ -37,15 +37,16 @@
 						<td>{{user.lti_displayid}}</td>
 						<td>{{user.lti_lis_person_name_full}}</td>
 						<td>{{user.most_recent_role}}</td>
-						<td>{{user.attempts_count}}</td>
-						<td>{{user.submissions}}</td>
-						<td>{{user.last_submit | date: "d MMM yy 'at' H:mm" }}</td>
-						<td></td>
-						<td></td>
+						<td class="align-center">{{user.attempts_count}}</td>
+						<td class="align-center">{{user.submissions}}</td>
+						<!--td>{{user.last_submit | date: "d MMM yy 'at' H:mm" }}</td-->
+						<td>{{user.marks.mark}}</td>
+						<td>{{user.marks.marker.lti_lis_person_name_full}}</td>
 						<td class="actions" style="font-size: 140%; padding: 4px 8px;">
-							<a href="" ng-click="markingCtrl.markUser(userIndex)" title="Mark"><i class="fa fa-check"></i></a>
-							<a href="" ng-click="markingCtrl.hideUser(userIndex)" title="Hide"><i class="fa fa-eye-slash"></i></a>
-							<a href="" ng-click="markingCtrl.showUser(userIndex)" title="Show"><i class="fa fa-eye"></i></a>
+							<a href="" ng-click="markingCtrl.markUser(userIndex)" ng-attr-title="{{user.marked?'Edit Mark':'Mark'}}" ng-show="!user.marks.checked_out" ng-class="{grey: user.marked}"><i class="fa fa-check"></i></a>
+							<i class="fa fa-lock grey" title="Locked" ng-show="user.marks.checked_out"></i>
+							<!--a href="" ng-click="markingCtrl.hideUser(userIndex)" title="Hide"><i class="fa fa-eye-slash"></i></a>
+							<a href="" ng-click="markingCtrl.showUser(userIndex)" title="Show"><i class="fa fa-eye"></i></a-->
 						</td>
 					</tr>
 				</tbody>
@@ -53,9 +54,9 @@
 		</div>
 		
 		<div ng-show="markingCtrl.status === 'mark'" ng-cloak class="row">
-			<div class="col-xs-3">
+			<div class="col-xs-12 col-md-4 col-lg-3">
 				<div id="marking-info" role="complementary" data-offset-top="62" bs-affix>
-					<button type="button" class="btn btn-primary" ng-click="markingCtrl.status = 'index'"><i class="fa fa-arrow-left"></i>&nbsp; Back to List</button>
+					<button type="button" class="btn btn-primary" ng-click="markingCtrl.cancel()"><i class="fa fa-arrow-left"></i>&nbsp; Back to List</button>
 					<table class="table" id="marking-info-table">
 						<tbody>
 							<tr>
@@ -76,15 +77,40 @@
 							<tr>
 								<th>Last Submission:</th><td>{{markingCtrl.currentUser.last_submit | date: "d MMM yy 'at' H:mm"}}</td>
 							</tr>
-							<!--tr>
-								<th>Mark:</th><td>{{}}</td>
+							<tr>
+								<th>Mark:</th>
+								<td ng-show="!markingCtrl.currentUser.marked">
+									<select class="form-control" id="mark_select" name="mark_select" ng-model="markingCtrl.currentUser.marks.mark" ng-options="mark for mark in markingCtrl.markOptions">
+										<option value="">Select Mark</option>
+									</select>
+								</td>
+								<td ng-show="markingCtrl.currentUser.marked">
+									{{markingCtrl.currentUser.marks.mark}}
+								</td>
 							</tr>
 							<tr>
-								<th>Marked By:</th><td>{{}}</td>
+								<th>Comments:</th>
+								<td ng-show="!markingCtrl.currentUser.marked">
+									<textarea class="form-control" rows="3" id="mark_comments" name="mark_comments" ng-model="markingCtrl.currentUser.marks.comment"></textarea>
+								</td>
+								<td ng-show="markingCtrl.currentUser.marked">
+									{{markingCtrl.currentUser.marks.comment}}
+								</td>
+							</tr>
+							<tr ng-show="markingCtrl.currentUser.marked">
+								<th>Marked By:</th><td>{{markingCtrl.currentUser.marks.marker.lti_lis_person_name_full}}</td>
+							</tr>
+							<tr ng-show="markingCtrl.currentUser.marked">
+								<th>Marked On:</th><td>{{markingCtrl.currentUser.marks.modified | date: "d MMM yy 'at' H:mm"}}</td>
 							</tr>
 							<tr>
-								<th>Marked On:</th><td>{{}}</td>
-							</tr-->
+								<th></th>
+								<td>
+									<button type="button" class="btn btn-success" ng-show="!markingCtrl.currentUser.marked || markingCtrl.currentUser.editing" ng-click="markingCtrl.save()"><i class="fa fa-check"></i>&nbsp; Save Mark</button>
+									<button type="button" class="btn btn-warning" ng-show="markingCtrl.currentUser.marked && !markingCtrl.currentUser.editing" ng-click="markingCtrl.edit()"><i class="fa fa-check"></i>&nbsp; Edit Mark</button>
+									<button type="button" class="btn btn-danger" ng-show="!markingCtrl.currentUser.marked || markingCtrl.currentUser.editing" ng-click="markingCtrl.cancel()"><i class="fa fa-times"></i>&nbsp; Cancel</button>
+								</td>
+							</tr>
 						</tbody>
 					</table>
 					
@@ -100,7 +126,7 @@
 					</dl-->
 				</div>
 			</div>
-			<div class="col-xs-9">
+			<div class="col-xs-12 col-md-8 col-lg-9">
 				<div ng-repeat="attempt in markingCtrl.currentUser.attempts" class="panel" ng-class="{ 'panel-success':attempt.report, 'panel-default':!attempt.report }">
 					<div class="panel-heading">
 						<h3 class="panel-title">Attempt {{attempt.id}} - {{attempt.report?"Submitted on ":"Not Submitted"}}{{(attempt.report?attempt.reports[0].modified:null) | date: "d MMM yy 'at' H:mm"}} - Last modified on {{attempt.modified | date: "d MMM yy 'at' H:mm"}}</h3>

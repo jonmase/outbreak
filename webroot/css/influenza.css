@@ -105,6 +105,9 @@ th, td {
 .blue {
 	color: #002147;
 }
+.grey {
+	color: #aaa;
+}
 .saving {
 	opacity: 0.7
 }
@@ -729,5 +732,13 @@ td.assays-convalescent div.checkbox {
 }
 #marking-info.affix {
 	margin-top: 15px;
+
 }
+@media(max-width:767px){
+	#marking-info.affix {
+		position: static !important;
+		width: auto !important;
+		top: 0 !important;
+		margin-top: 0;
+   }
 }

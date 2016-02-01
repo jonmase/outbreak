@@ -41,7 +41,7 @@ class MarksTable extends Table
             'foreignKey' => 'lti_user_id',
             'joinType' => 'INNER'
         ]);
-        $this->belongsTo('MarksGiven', [
+        $this->belongsTo('Marker', [
 			'className' => 'LtiUsers',
             'foreignKey' => 'marker_id',
             'joinType' => 'INNER'

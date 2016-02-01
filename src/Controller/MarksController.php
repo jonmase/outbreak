@@ -2,6 +2,7 @@
 namespace App\Controller;
 
 use App\Controller\AppController;
+use Cake\Datasource\ConnectionManager;
 
 /**
  * Marks Controller
@@ -30,7 +31,7 @@ class MarksController extends AppController
 				'conditions' => ['lti_resource_id' => $ltiResourceId],
 				'order' => ['Attempts.modified' => 'DESC'],
 				'contain' => [
-					'LtiUsers' => ['Marks' => ['MarksGiven']], 
+					'LtiUsers', 
 					'Samples',
 					'Assays',
 					'StandardAssays',
@@ -153,10 +154,33 @@ class MarksController extends AppController
 				$attempt['assayCounts'] = $assayCounts;
 				$attempt['standardAssays'] = $standardAssays;
 				$attempt['standardAssayCounts'] = $standardAssayCounts;
-				
-				
 			}
 			//pr($users); exit;
+			
+			//Get all the marks
+			$marksQuery = $this->Marks->find('all', [
+				'conditions' => ['lti_resource_id' => $ltiResourceId, 'revision' => 0],
+				'order' => ['Marks.created' => 'DESC'],
+				'contain' => 'Marker'
+			]);
+			$marks = $marksQuery->all();
+			//pr($marks);
+			
+			foreach($marks as $mark) {
+				//$user['marks'] = ['mark' => null];
+				//pr($mark);
+				//Should never have more than one result for a particular user, but just check that we haven't already got this user
+				$userIndex = $userIdsInUsersArray[$mark['lti_user_id']];
+				if(empty($users[$userIndex]['marks'])) {
+					$users[$userIndex]['marks'] = $mark;
+					
+					$users[$userIndex]['marked'] = 1;
+					$users[$userIndex]['editing'] = 0;
+				}
+			}
+
+			//pr($users); 
+			//exit;
 			
 			$status = 'success';
 		}
@@ -181,6 +205,88 @@ class MarksController extends AppController
 		$this->set(compact('ltiResourceId'));
 		$this->viewBuilder()->layout('angular');
 	}
+	
+	public function checkout() {
+		//Create new mark record with blank mark comments etc, but with marker_id and checkout set
+		//This gets deleted if the marker cancels the marking
+	}
+	
+	public function save() {
+		if($this->request->is('post')) {
+			//pr($this->request->data);
+			$userId = $this->request->data['userId'];
+			$mark = $this->request->data['mark'];
+			$session = $this->request->session();	//Set Session to variable
+			$ltiResourceId = $session->read('LtiResource.id');
+			$markerId = $this->Auth->user('id');
+
+			$this->infolog("Mark Save attempted. User: " . $userId . "; Lti Resource ID: " . $ltiResourceId . "; Mark: " . serialize($mark));
+			
+			//Get the latest mark for this resource and user
+			$markQuery = $this->Marks->find('all', [
+				'conditions' => ['Marks.lti_resource_id' => $ltiResourceId, 'Marks.lti_user_id' => $userId, 'Marks.revision' => 0],
+				'order' => ['modified' => 'DESC'],
+			]);
+			$lastMark = $markQuery->first();
+		
+			//Make sure we have a user ID and the marker is an instructor
+			if($userId && $session->read('User.role') === "Instructor") {
+				//Make sure the last mark is either not checked out, checked out by this marker, or checked out > 1 hour ago
+				if(!$lastMark['checked_out'] || $lastMark['marker_id'] === $markerId || !$lastMark['checked_out']->wasWithinLast('1 hour')) {
+					if(!$markQuery->isEmpty()) {
+						//Change old version to a revision
+						$oldMarkData = $lastMark;
+						$oldMarkData->revision = true;
+					}
+					else {
+						$oldMarkData = null;
+					}
+					
+					$markData = $this->Marks->newEntity();
+					$markData->lti_resource_id = $ltiResourceId;
+					$markData->lti_user_id = $userId;
+					$markData->mark = $mark['mark'];
+					$markData->mark_comment = $mark['comments'];
+					$markData->marker_id = $markerId;
+					$markData->checked_out = null;
+					$markData->revision = false;
+					
+					//pr($markData);
+					//pr($oldMarkData);
+					//exit;
+					$connection = ConnectionManager::get('default');
+					$connection->transactional(function () use ($markData, $oldMarkData, $userId, $ltiResourceId) {
+						if(!$this->Marks->save($markData)) {
+							$this->set('status', 'failed');
+							$this->infolog("Mark Save failed (new mark). User: " . $userId . "; Lti Resource ID: " . $ltiResourceId);
+							return false;
+						}
+						if(!is_null($oldMarkData) && !$this->Marks->save($oldMarkData)) {
+							$this->set('status', 'failed');
+							$this->infolog("Mark Save failed (old mark). User: " . $userId . "; Lti Resource ID: " . $ltiResourceId);
+							return false;
+						}
+						$this->set('status', 'success');
+						$this->infolog("Mark Save succeeded. User: " . $userId . "; Lti Resource ID: " . $ltiResourceId);
+					});
+				}
+				else {
+					$this->set('status', 'locked');
+					$this->infolog("Mark Save locked. User: " . $userId . "; Lti Resource ID: " . $ltiResourceId . "; Marker: " . $markerId . "; Locked By: " . $lastMark['marker_id']);
+				}
+			}
+			else {
+				$this->set('status', 'denied');
+				$this->infolog("Mark Save denied. User: " . $userId . "; Lti Resource ID: " . $ltiResourceId);
+			}
+		}
+		else {
+			$this->set('status', 'notpost');
+			$this->infolog("Mark Save not POST ");
+		}
+		$this->viewBuilder()->layout('ajax');
+		$this->render('/Element/ajaxmessage');
+	}
 
     /**
      * View method
@@ -189,7 +295,7 @@ class MarksController extends AppController
      * @return void
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
-    public function view($id = null)
+    /*public function view($id = null)
     {
         $mark = $this->Marks->get($id, [
             'contain' => ['LtiResources', 'LtiUsers']
@@ -203,7 +309,7 @@ class MarksController extends AppController
      *
      * @return void Redirects on successful add, renders view otherwise.
      */
-    public function add()
+    /*public function add()
     {
         $mark = $this->Marks->newEntity();
         if ($this->request->is('post')) {
@@ -228,7 +334,7 @@ class MarksController extends AppController
      * @return void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
-    public function edit($id = null)
+    /*public function edit($id = null)
     {
         $mark = $this->Marks->get($id, [
             'contain' => []
@@ -255,7 +361,7 @@ class MarksController extends AppController
      * @return \Cake\Network\Response|null Redirects to index.
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
-    public function delete($id = null)
+    /*public function delete($id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
         $mark = $this->Marks->get($id);
@@ -265,5 +371,5 @@ class MarksController extends AppController
             $this->Flash->error(__('The mark could not be deleted. Please, try again.'));
         }
         return $this->redirect(['action' => 'index']);
-    }
+    }*/
 }
