@@ -2,11 +2,12 @@
 	angular.module('flu.marking')
 		.controller('MarkingController', MarkingController);
 
-	MarkingController.$inject = ['$q', '$uibModal', 'markingFactory', 'modalFactory', 'techniqueFactory', 'sampleFactory', 'schoolFactory', 'siteFactory', 'assayFactory'];
+	MarkingController.$inject = ['$q', '$window', '$uibModal', 'markingFactory', 'modalFactory', 'techniqueFactory', 'sampleFactory', 'schoolFactory', 'siteFactory', 'assayFactory'];
 	
-	function MarkingController($q, $uibModal, markingFactory, modalFactory, techniqueFactory, sampleFactory, schoolFactory, siteFactory, assayFactory) {
+	function MarkingController($q, $window, $uibModal, markingFactory, modalFactory, techniqueFactory, sampleFactory, schoolFactory, siteFactory, assayFactory) {
 		var vm = this;
 		
+		vm.me = MY_ID;
 		vm.status = 'loading';
 		vm.currentUserIndex = null;
 		vm.currentUser = null;
@@ -98,35 +99,79 @@
 		
 		//Functions
 		function hideUser(userIndex) {
-			alert(userIndex);
-		}
-		function markUser(userIndex) {
-			vm.status = 'mark';
-			vm.currentUserIndex = userIndex;
-			vm.currentUser = vm.users[vm.currentUserIndex];
-
-			checkout();
+			//alert(userIndex);
 		}
 		function showUser(userIndex) {
-			alert(userIndex);
+			//alert(userIndex);
+		}
+		
+		function markUser(userIndex) {
+			vm.currentUserIndex = userIndex;
+			vm.currentUser = vm.users[vm.currentUserIndex];		
+			//If user has not been marked, lock them and then take them to the marking interface
+			if(!vm.currentUser.marked) {
+				var lockPromise = markingFactory.setLock(vm.currentUserIndex, true);
+				lockPromise.then(
+					function(result) {
+						console.log(result);
+						vm.status = 'mark';
+					}, 
+					function(reason) {
+						console.log("Error: " + reason);
+						if(reason === 'locked') {
+							$uibModal.open(modalFactory.getMarkingLockedModalOptions());
+						}
+						else {
+							$uibModal.open(modalFactory.getErrorModalOptions());
+						}
+					}
+				);
+			}
+			//If user has already been marked, just take them to the marking interface
+			else {
+				vm.status = 'mark';
+			}
 		}
 		
 		function cancel() {
-			vm.status = 'index';
-			vm.currentUserIndex = null;
-			vm.currentUser = null;
+			var lockPromise = markingFactory.setLock(vm.currentUserIndex, false);
 			
-			//TODO: Release checked out user
+			lockPromise.then(
+				function(result) {
+					console.log(result);
+					$window.location.reload();
+				}, 
+				function(reason) {
+					console.log("Error: " + reason);
+					$uibModal.open(modalFactory.getErrorModalOptions());
+				}
+			);
 		}
 		
-		function checkout() {
-			//TODO: Check out method
+		function setLock(userIndex, lock) {
+			//TODO
+			var lockPromise = markingFactory.setLock(userIndex, lock);
+			if(returnPromise) { return lockPromise; }
+			lockPromise.then(
+				function(result) {
+					console.log(result);
+				}, 
+				function(reason) {
+					console.log("Error: " + reason);
+					if(reason === 'locked') {
+						$uibModal.open(modalFactory.getMarkingLockedModalOptions());
+					}
+					else {
+						$uibModal.open(modalFactory.getErrorModalOptions());
+					}
+				}
+			);
 		}
 		
 		function edit() {
 			//TODO: Show select and text area
 			
-			checkout();
+			setLock(vm.currentUserIndex, true);
 		}
 		
 		function save() {
@@ -134,8 +179,6 @@
 			markPromise.then(
 				function(result) {
 					console.log(result);
-					//Display mark, comments and marker details, plus Edit Mark button
-					
 				}, 
 				function(reason) {
 					console.log("Error: " + reason);

@@ -31,7 +31,7 @@
 			});
 		}
 		$routeProvider.otherwise( {	//Default route - go home
-				redirectTo: "/home",
+			redirectTo: "/home",
 		});
 	};
 })();

@@ -71,6 +71,9 @@ th, td {
 .clickable {
 	cursor: hand; cursor: pointer;
 }
+.not-allowed {
+	cursor: not-allowed;
+}
 .inline {
 	display: inline-block;
 }

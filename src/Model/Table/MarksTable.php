@@ -44,7 +44,12 @@ class MarksTable extends Table
         $this->belongsTo('Marker', [
 			'className' => 'LtiUsers',
             'foreignKey' => 'marker_id',
-            'joinType' => 'INNER'
+            'joinType' => 'LEFT'
+        ]);
+        $this->belongsTo('Locker', [
+			'className' => 'LtiUsers',
+            'foreignKey' => 'locker_id',
+            'joinType' => 'LEFT'
         ]);
     }
 
@@ -85,6 +90,7 @@ class MarksTable extends Table
         $rules->add($rules->existsIn(['lti_resource_id'], 'LtiResources'));
         $rules->add($rules->existsIn(['lti_user_id'], 'LtiUsers'));
         $rules->add($rules->existsIn(['marker_id'], 'LtiUsers'));
+        $rules->add($rules->existsIn(['locker_id'], 'LtiUsers'));
         return $rules;
     }
 }

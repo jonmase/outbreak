@@ -15,6 +15,7 @@
 			getUsers: getUsers,
 			loadUsers: loadUsers,
 			save: save,
+			setLock: setLock,
 		}
 		return factory;
 		
@@ -46,13 +47,38 @@
 			return deferred.promise;
 		}
 		
+		function setLock(userIndex, lock) {
+			//API: Lock user, so no-one else can edit them, or unlock it (if lock is false)
+			var userId = users[userIndex].id;
+			var deferred = $q.defer();
+			var ReportCall = $resource(URL_MODIFIER + 'marks/save/lock', {});
+			ReportCall.save({}, {userId: userId, data: lock},
+				function(result) {
+					if(typeof(result.status) !== "undefined" && result.status === 'success') {
+						deferred.resolve('Mark lock set');
+					}
+					else {
+						if(result.status === 'locked') {
+							deferred.reject('locked');
+						}
+						deferred.reject('Mark lock set failed (' + result.status + ")");
+					}
+				},
+				function(result) {
+					deferred.reject('Mark lock set error (' + result.status + ')');
+				}
+			);
+			return deferred.promise;
+			//return now;
+		}
+
 		function save(userIndex) {
 			//API: Save mark
 			var userId = users[userIndex].id;
 			var mark = users[userIndex].marks;
 			var deferred = $q.defer();
 			var ReportCall = $resource(URL_MODIFIER + 'marks/save', {});
-			ReportCall.save({}, {userId: userId, mark: mark},
+			ReportCall.save({}, {userId: userId, data: mark},
 				function(result) {
 					if(typeof(result.status) !== "undefined" && result.status === 'success') {
 						users[userIndex].marked = 1;

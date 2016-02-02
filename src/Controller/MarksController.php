@@ -161,9 +161,10 @@ class MarksController extends AppController
 			$marksQuery = $this->Marks->find('all', [
 				'conditions' => ['lti_resource_id' => $ltiResourceId, 'revision' => 0],
 				'order' => ['Marks.created' => 'DESC'],
-				'contain' => 'Marker'
+				'contain' => ['Marker', 'Locker'],
 			]);
 			$marks = $marksQuery->all();
+			//pr($ltiResourceId);
 			//pr($marks);
 			
 			foreach($marks as $mark) {
@@ -172,10 +173,13 @@ class MarksController extends AppController
 				//Should never have more than one result for a particular user, but just check that we haven't already got this user
 				$userIndex = $userIdsInUsersArray[$mark['lti_user_id']];
 				if(empty($users[$userIndex]['marks'])) {
-					$users[$userIndex]['marks'] = $mark;
+					if($mark->locked && (!$mark->locked->wasWithinLast('1 hour') || $mark->locker_id === $this->Auth->user('id'))) {
+						$mark->locked = null;
+						$mark->locker_id = null;
+						$mark->locker = null;
+					}
 					
-					$users[$userIndex]['marked'] = 1;
-					$users[$userIndex]['editing'] = 0;
+					$users[$userIndex]['marks'] = $mark;
 				}
 			}
 
@@ -202,25 +206,36 @@ class MarksController extends AppController
 		}
         //pr($session->read());
 		$ltiResourceId = $session->read('LtiResource.id');
-		$this->set(compact('ltiResourceId'));
+		$myUserId = $this->Auth->user('id');
+		$this->set(compact('ltiResourceId', 'myUserId'));
 		$this->viewBuilder()->layout('angular');
 	}
 	
-	public function checkout() {
-		//Create new mark record with blank mark comments etc, but with marker_id and checkout set
+	/*public function lock() {
+		//Create new mark record with blank mark comments etc, but with marker_id and checked_out set
 		//This gets deleted if the marker cancels the marking
-	}
-	
-	public function save() {
 		if($this->request->is('post')) {
-			//pr($this->request->data);
 			$userId = $this->request->data['userId'];
-			$mark = $this->request->data['mark'];
-			$session = $this->request->session();	//Set Session to variable
 			$ltiResourceId = $session->read('LtiResource.id');
 			$markerId = $this->Auth->user('id');
+			
+			$this->infolog("Mark Lock setting attempted. User: " . $userId . "; Lti Resource ID: " . $ltiResourceId . "; Marker: " . $markerId . "; Lock: " . $lock);
 
-			$this->infolog("Mark Save attempted. User: " . $userId . "; Lti Resource ID: " . $ltiResourceId . "; Mark: " . serialize($mark));
+			
+	}*/
+	
+	public function save($type = 'save') {
+		if($this->request->is('post')) {
+			$session = $this->request->session();	//Set Session to variable
+			//pr($this->request->data);
+			
+			$userId = $this->request->data['userId'];
+			$data = $this->request->data['data'];
+			$ltiResourceId = $session->read('LtiResource.id');
+			$markerId = $this->Auth->user('id');
+			
+
+			$this->infolog("Mark Save attempted. User: " . $userId . "; Lti Resource ID: " . $ltiResourceId . "; Marker: " . $markerId . "; data: " . serialize($data));
 			
 			//Get the latest mark for this resource and user
 			$markQuery = $this->Marks->find('all', [
@@ -228,12 +243,13 @@ class MarksController extends AppController
 				'order' => ['modified' => 'DESC'],
 			]);
 			$lastMark = $markQuery->first();
+			//pr($lastMark);
 		
 			//Make sure we have a user ID and the marker is an instructor
 			if($userId && $session->read('User.role') === "Instructor") {
-				//Make sure the last mark is either not checked out, checked out by this marker, or checked out > 1 hour ago
-				if(!$lastMark['checked_out'] || $lastMark['marker_id'] === $markerId || !$lastMark['checked_out']->wasWithinLast('1 hour')) {
-					if(!$markQuery->isEmpty()) {
+				//Make sure the last mark is either not locked, locked by this marker, or locked > 1 hour ago
+				if(!$lastMark['locked'] || $lastMark['locker_id'] === $markerId || !$lastMark['locked']->wasWithinLast('1 hour')) {
+					if($type === 'save' && !$markQuery->isEmpty()) {
 						//Change old version to a revision
 						$oldMarkData = $lastMark;
 						$oldMarkData->revision = true;
@@ -242,20 +258,40 @@ class MarksController extends AppController
 						$oldMarkData = null;
 					}
 					
-					$markData = $this->Marks->newEntity();
-					$markData->lti_resource_id = $ltiResourceId;
-					$markData->lti_user_id = $userId;
-					$markData->mark = $mark['mark'];
-					$markData->mark_comment = $mark['comments'];
-					$markData->marker_id = $markerId;
-					$markData->checked_out = null;
-					$markData->revision = false;
+					if($type === 'save' || ($type === 'lock' && $markQuery->isEmpty())) {
+						$markData = $this->Marks->newEntity();
+						$markData->lti_resource_id = $ltiResourceId;
+						$markData->lti_user_id = $userId;
+						$markData->revision = false;
+					}
+					
+					if($type === 'save') {
+						$markData->mark = $mark['mark'];
+						$markData->mark_comment = $mark['comments'];
+						$markData->marker_id = $markerId;
+						$markData->locker_id = null;
+						$markData->locked = null;
+					}
+					if($type === 'lock') {
+						if(!$markQuery->isEmpty()) {	//Set the id to that of the last (and still current mark)
+							$markData = $lastMark;
+						}
+						if(!$data) {
+							$markData->locker_id = null;
+							$markData->locked = null;
+						}
+						else {
+							//Set the locker ID and the time it was locked
+							$markData->locker_id = $markerId;
+							$markData->locked = date('Y-m-d H:i:s');
+						}
+					}
 					
 					//pr($markData);
 					//pr($oldMarkData);
 					//exit;
 					$connection = ConnectionManager::get('default');
-					$connection->transactional(function () use ($markData, $oldMarkData, $userId, $ltiResourceId) {
+					$connection->transactional(function () use ($type, $markData, $oldMarkData, $userId, $ltiResourceId) {
 						if(!$this->Marks->save($markData)) {
 							$this->set('status', 'failed');
 							$this->infolog("Mark Save failed (new mark). User: " . $userId . "; Lti Resource ID: " . $ltiResourceId);

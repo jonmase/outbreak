@@ -43,8 +43,8 @@
 						<td>{{user.marks.mark}}</td>
 						<td>{{user.marks.marker.lti_lis_person_name_full}}</td>
 						<td class="actions" style="font-size: 140%; padding: 4px 8px;">
-							<a href="" ng-click="markingCtrl.markUser(userIndex)" ng-attr-title="{{user.marked?'Edit Mark':'Mark'}}" ng-show="!user.marks.checked_out" ng-class="{grey: user.marked}"><i class="fa fa-check"></i></a>
-							<i class="fa fa-lock grey" title="Locked" ng-show="user.marks.checked_out"></i>
+							<a href="" ng-click="markingCtrl.markUser(userIndex)" ng-attr-title="{{user.marks.mark?'Edit Mark':'Mark'}}" ng-show="!user.marks.locked" ng-class="{grey: user.marks.mark}"><i class="fa fa-check"></i></a>
+							<i class="fa fa-lock grey not-allowed" title="Locked by {{user.marks.locker.lti_lis_person_name_full}}" ng-show="user.marks.locked"></i>
 							<!--a href="" ng-click="markingCtrl.hideUser(userIndex)" title="Hide"><i class="fa fa-eye-slash"></i></a>
 							<a href="" ng-click="markingCtrl.showUser(userIndex)" title="Show"><i class="fa fa-eye"></i></a-->
 						</td>
@@ -106,9 +106,9 @@
 							<tr>
 								<th></th>
 								<td>
-									<button type="button" class="btn btn-success" ng-show="!markingCtrl.currentUser.marked || markingCtrl.currentUser.editing" ng-click="markingCtrl.save()"><i class="fa fa-check"></i>&nbsp; Save Mark</button>
-									<button type="button" class="btn btn-warning" ng-show="markingCtrl.currentUser.marked && !markingCtrl.currentUser.editing" ng-click="markingCtrl.edit()"><i class="fa fa-check"></i>&nbsp; Edit Mark</button>
-									<button type="button" class="btn btn-danger" ng-show="!markingCtrl.currentUser.marked || markingCtrl.currentUser.editing" ng-click="markingCtrl.cancel()"><i class="fa fa-times"></i>&nbsp; Cancel</button>
+									<button type="button" class="btn btn-success" ng-show="!markingCtrl.currentUser.marks.mark || markingCtrl.currentUser.editing" ng-click="markingCtrl.save()"><i class="fa fa-check"></i>&nbsp; Save Mark</button>
+									<button type="button" class="btn btn-warning" ng-show="markingCtrl.currentUser.marks.mark && !markingCtrl.currentUser.editing" ng-click="markingCtrl.edit()"><i class="fa fa-check"></i>&nbsp; Edit Mark</button>
+									<button type="button" class="btn btn-danger" ng-show="!markingCtrl.currentUser.marks.mark || markingCtrl.currentUser.editing" ng-click="markingCtrl.cancel()"><i class="fa fa-times"></i>&nbsp; Cancel</button>
 								</td>
 							</tr>
 						</tbody>
@@ -218,6 +218,7 @@
 	</div>
 </div>
 
+<?= $this->Html->scriptBlock('var MY_ID = ' . $myUserId . ';', ['block' => true]) ?>
 <?= $this->Html->script('lib/angular.min.js', ['block' => true]) ?>
 <?= $this->Html->script('lib/angular-resource.min.js', ['block' => true]) ?>
 <?= $this->Html->script('lib/ui-bootstrap-tpls-0.14.3.js', ['block' => true]) ?>
@@ -231,6 +232,7 @@
 <?= $this->Html->script('markingapp.js', ['block' => true]) ?>
 <?= $this->Html->script('controllers/markingController.js', ['block' => true]) ?>
 <?= $this->Html->script('controllers/errorModalController.js', ['block' => true]) ?>
+<?= $this->Html->script('controllers/markingLockedModalController.js', ['block' => true]) ?>
 <?= $this->Html->script('services/sectionServices.js', ['block' => true]) ?>
 <?= $this->Html->script('services/progressServices.js', ['block' => true]) ?>
 <?= $this->Html->script('services/lockServices.js', ['block' => true]) ?>
@@ -242,3 +244,4 @@
 <?= $this->Html->script('services/markingServices.js', ['block' => true]) ?>
 <?= $this->Html->script('services/modalServices.js', ['block' => true]) ?>
 <?= $this->Html->script('filters.js', ['block' => true]) ?>
+<?= $this->Html->script('directives.js', ['block' => true]) ?>

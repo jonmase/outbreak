@@ -48,6 +48,10 @@ class LtiUsersTable extends Table
 			'className' => 'LtiUsers',
             'foreignKey' => 'marker_id'
         ]);
+        $this->hasMany('Locker', [
+			'className' => 'LtiUsers',
+            'foreignKey' => 'locker_id'
+        ]);
    }
 
     /**

@@ -8,6 +8,7 @@
 		var fluAlertModalOptions = setFluAlertModalOptions();
 		var introModalOptions = setIntroModalOptions();
 		var labModalOptions = setLabModalOptions();
+		var markingLockedModalOptions = setMarkingLockedModalOptions();
 		var outbreakAlertModalOptions = setOutbreakAlertModalOptions();
 		
 		var factory = {
@@ -16,6 +17,7 @@
 			getFluAlertModalOptions: getFluAlertModalOptions,
 			getIntroModalOptions: getIntroModalOptions,
 			getLabModalOptions: getLabModalOptions,
+			getMarkingLockedModalOptions: getMarkingLockedModalOptions,
 			getOutbreakAlertModalOptions: getOutbreakAlertModalOptions,
 		}
 		return factory;
@@ -40,9 +42,14 @@
 			return labModalOptions;
 		}
 		
+		function getMarkingLockedModalOptions() {
+			return markingLockedModalOptions;
+		}
+		
 		function getOutbreakAlertModalOptions() {
 			return outbreakAlertModalOptions;
 		}
+		
 		
 		function setBeggingModalOptions() {
 			var beggingModalOptions = {
@@ -63,9 +70,23 @@
 				size: 'md',
 				backdrop: 'static',
 				//templateUrl: '../../partials/modals/error-modal.html',
-				template: '<div class="modal-header"><h4 class="modal-title">Someting\'s gone wrong</h4></div><div class="modal-body"><p>Sorry about this, there seems to have been a problem. You may have lost connection, or your session may have timed out. It could also be caused by having multiple instances of this attempt open at once. Please check your internet connection, ensure you don\'t have this attempt open in multiple tabs, and then try refreshing the page. </p><p>Unfortunately, this means that your most recent actions/inputs may be lost. This may include any unchecked questions, uncollected samples or assays that you haven\'t yet carried out. Reports are automatically saved every minute, but you may lose any text you have entered since the last save. Apologies for any inconvenience or annoyance this causes.</p><p>If you continue to experience problems, <email-msdlt></email-msdlt></p></div><div class="modal-footer"><div><button type="button" class="btn btn-primary" ng-click="ErrorModalCtrl.confirm()">Refresh</button></div></div>',
+				template: '<div class="modal-header"><h4 class="modal-title">Someting\'s gone wrong</h4></div><div class="modal-body"><p>Sorry about this, there seems to have been a problem. You may have lost connection, or your session may have timed out. It could also be caused by having multiple instances of this attempt open at once. Please check your internet connection, ensure you don\'t have this attempt open in multiple tabs, and then try refreshing the page. </p><p>Unfortunately, this means that your most recent actions/inputs may be lost. This may include any unchecked questions, uncollected samples or assays that you haven\'t yet carried out. Reports are automatically saved every minute, but you may lose any text you have entered since the last save. Apologies for any inconvenience or annoyance this causes.</p><p>If you continue to experience problems, <email-msdlt></email-msdlt></p></div><div class="modal-footer"><div><button type="button" class="btn btn-primary" ng-click="ErrorModalCtrl.confirm()">Reload</button></div></div>',
 				controller: 'ErrorModalController',
 				controllerAs: 'ErrorModalCtrl',
+			};
+			
+			return errorModalOptions;
+		}
+
+		function setMarkingLockedModalOptions() {
+			var errorModalOptions = {
+				animation: true,
+				size: 'md',
+				backdrop: 'static',
+				//templateUrl: '../../partials/modals/error-modal.html',
+				template: '<div class="modal-header"><h4 class="modal-title">Locked</h4></div><div class="modal-body"><p>Sorry, this student has been locked for marking by someone else since you loaded the page. Please reload the page to see the current status of all the students.</p></div><div class="modal-footer"><div><button type="button" class="btn btn-primary" ng-click="MarkingLockedModalCtrl.confirm()">Refresh</button></div></div>',
+				controller: 'MarkingLockedModalController',
+				controllerAs: 'MarkingLockedModalCtrl',
 			};
 			
 			return errorModalOptions;
