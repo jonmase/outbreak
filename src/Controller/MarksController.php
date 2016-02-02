@@ -173,11 +173,22 @@ class MarksController extends AppController
 				//Should never have more than one result for a particular user, but just check that we haven't already got this user
 				$userIndex = $userIdsInUsersArray[$mark['lti_user_id']];
 				if(empty($users[$userIndex]['marks'])) {
+					//If user is locked but it is either too long ago or by this user, then unlock them
 					if($mark->locked && (!$mark->locked->wasWithinLast('1 hour') || $mark->locker_id === $this->Auth->user('id'))) {
 						$mark->locked = null;
 						$mark->locker_id = null;
 						$mark->locker = null;
 					}
+					
+					//If user has been marked, set the 'marked' property to true
+					if($mark->mark) {
+						$users[$userIndex]['marked'] = true;
+					}
+					else {
+						$users[$userIndex]['marked'] = false;
+					}
+					$users[$userIndex]['editing'] = false;	//Set 'editing' property to false for all users, as they cannot be being edited when the data is loaded
+					
 					
 					$users[$userIndex]['marks'] = $mark;
 				}
@@ -266,8 +277,8 @@ class MarksController extends AppController
 					}
 					
 					if($type === 'save') {
-						$markData->mark = $mark['mark'];
-						$markData->mark_comment = $mark['comments'];
+						$markData->mark = $data['mark'];
+						$markData->comment = $data['comment'];
 						$markData->marker_id = $markerId;
 						$markData->locker_id = null;
 						$markData->locked = null;

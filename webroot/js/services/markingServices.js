@@ -82,6 +82,7 @@
 				function(result) {
 					if(typeof(result.status) !== "undefined" && result.status === 'success') {
 						users[userIndex].marked = 1;
+						users[userIndex].editing = 0;
 						deferred.resolve('Mark saved');
 					}
 					else {

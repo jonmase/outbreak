@@ -79,36 +79,38 @@
 							</tr>
 							<tr>
 								<th>Mark:</th>
-								<td ng-show="!markingCtrl.currentUser.marked">
+								<td ng-show="markingCtrl.currentUser.editing">
 									<select class="form-control" id="mark_select" name="mark_select" ng-model="markingCtrl.currentUser.marks.mark" ng-options="mark for mark in markingCtrl.markOptions">
-										<option value="">Select Mark</option>
+										<option value="">Select...</option>
 									</select>
 								</td>
-								<td ng-show="markingCtrl.currentUser.marked">
+								<td ng-show="!markingCtrl.currentUser.editing">
 									{{markingCtrl.currentUser.marks.mark}}
 								</td>
 							</tr>
 							<tr>
 								<th>Comments:</th>
-								<td ng-show="!markingCtrl.currentUser.marked">
+								<td ng-show="markingCtrl.currentUser.editing">
 									<textarea class="form-control" rows="3" id="mark_comments" name="mark_comments" ng-model="markingCtrl.currentUser.marks.comment"></textarea>
 								</td>
-								<td ng-show="markingCtrl.currentUser.marked">
+								<td ng-show="!markingCtrl.currentUser.editing">
 									{{markingCtrl.currentUser.marks.comment}}
 								</td>
 							</tr>
 							<tr ng-show="markingCtrl.currentUser.marked">
-								<th>Marked By:</th><td>{{markingCtrl.currentUser.marks.marker.lti_lis_person_name_full}}</td>
+								<th><span ng-show="markingCtrl.currentUser.editing">Last </span>Marked By:</th><td>{{markingCtrl.currentUser.marks.marker.lti_lis_person_name_full}}</td>
 							</tr>
 							<tr ng-show="markingCtrl.currentUser.marked">
-								<th>Marked On:</th><td>{{markingCtrl.currentUser.marks.modified | date: "d MMM yy 'at' H:mm"}}</td>
+								<th><span ng-show="markingCtrl.currentUser.editing">Last </span>Marked On:</th><td>{{markingCtrl.currentUser.marks.modified | date: "d MMM yy 'at' H:mm"}}</td>
 							</tr>
 							<tr>
 								<th></th>
 								<td>
-									<button type="button" class="btn btn-success" ng-show="!markingCtrl.currentUser.marks.mark || markingCtrl.currentUser.editing" ng-click="markingCtrl.save()"><i class="fa fa-check"></i>&nbsp; Save Mark</button>
-									<button type="button" class="btn btn-warning" ng-show="markingCtrl.currentUser.marks.mark && !markingCtrl.currentUser.editing" ng-click="markingCtrl.edit()"><i class="fa fa-check"></i>&nbsp; Edit Mark</button>
-									<button type="button" class="btn btn-danger" ng-show="!markingCtrl.currentUser.marks.mark || markingCtrl.currentUser.editing" ng-click="markingCtrl.cancel()"><i class="fa fa-times"></i>&nbsp; Cancel</button>
+									<div  ng-show="!markingCtrl.currentUser.marked || markingCtrl.currentUser.editing">
+										<button type="button" class="btn btn-success" ng-click="markingCtrl.save()"><i class="fa fa-check"></i>&nbsp; Save Mark</button>
+										<button type="button" class="btn btn-danger" ng-click="markingCtrl.cancel()"><i class="fa fa-times"></i>&nbsp; Cancel</button>
+									</div>
+									<button type="button" class="btn btn-warning" ng-show="markingCtrl.currentUser.marked && !markingCtrl.currentUser.editing" ng-click="markingCtrl.edit()"><i class="fa fa-check"></i>&nbsp; Edit Mark</button>
 								</td>
 							</tr>
 						</tbody>

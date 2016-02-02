@@ -110,22 +110,7 @@
 			vm.currentUser = vm.users[vm.currentUserIndex];		
 			//If user has not been marked, lock them and then take them to the marking interface
 			if(!vm.currentUser.marked) {
-				var lockPromise = markingFactory.setLock(vm.currentUserIndex, true);
-				lockPromise.then(
-					function(result) {
-						console.log(result);
-						vm.status = 'mark';
-					}, 
-					function(reason) {
-						console.log("Error: " + reason);
-						if(reason === 'locked') {
-							$uibModal.open(modalFactory.getMarkingLockedModalOptions());
-						}
-						else {
-							$uibModal.open(modalFactory.getErrorModalOptions());
-						}
-					}
-				);
+				lockUser();
 			}
 			//If user has already been marked, just take them to the marking interface
 			else {
@@ -148,13 +133,13 @@
 			);
 		}
 		
-		function setLock(userIndex, lock) {
-			//TODO
-			var lockPromise = markingFactory.setLock(userIndex, lock);
-			if(returnPromise) { return lockPromise; }
+		function lockUser() {
+			var lockPromise = markingFactory.setLock(vm.currentUserIndex, true);
 			lockPromise.then(
 				function(result) {
 					console.log(result);
+					vm.status = 'mark';
+					vm.currentUser.editing = 1;
 				}, 
 				function(reason) {
 					console.log("Error: " + reason);
@@ -166,12 +151,11 @@
 					}
 				}
 			);
+
 		}
 		
 		function edit() {
-			//TODO: Show select and text area
-			
-			setLock(vm.currentUserIndex, true);
+			lockUser();
 		}
 		
 		function save() {
