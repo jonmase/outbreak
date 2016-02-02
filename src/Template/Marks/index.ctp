@@ -9,12 +9,16 @@
 		<div ng-if="markingCtrl.status !== 'loading'" ng-show="markingCtrl.status === 'index'" ng-cloak> 
 			<div class="filters row">
 				<div class="col-xs-6 col-sm-3">
-					<label for="role_filter">Roles</label>
-					<select class="form-control" id="role_filter" name="role_filter" ng-model="markingCtrl.roleToShow" ng-options="role as role.label for role in markingCtrl.rolesForFilter"></select>
+					<label for="status_filter">Submitted</label>
+					<select class="form-control" id="status_filter" name="status_filter" ng-model="markingCtrl.submitStatusToShow" ng-options="status as status.label for status in markingCtrl.submitStatusesForFilter"></select>
 				</div>
 				<div class="col-xs-6 col-sm-3">
-					<label for="status_filter">Submitted</label>
-					<select class="form-control" id="status_filter" name="status_filter" ng-model="markingCtrl.statusToShow" ng-options="status as status.label for status in markingCtrl.statusesForFilter"></select>
+					<label for="status_filter">Marked</label>
+					<select class="form-control" id="status_filter" name="marked_filter" ng-model="markingCtrl.markStatusToShow" ng-options="status as status.label for status in markingCtrl.markStatusesForFilter"></select>
+				</div>
+				<div class="col-xs-6 col-sm-3">
+					<label for="role_filter">Roles</label>
+					<select class="form-control" id="role_filter" name="role_filter" ng-model="markingCtrl.roleToShow" ng-options="role as role.label for role in markingCtrl.rolesForFilter"></select>
 				</div>
 			</div>
 
@@ -33,7 +37,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr ng-repeat="(userIndex, user) in markingCtrl.users | filter: { most_recent_role: markingCtrl.roleToShow.value } | submittedFilter: markingCtrl.statusToShow ">
+					<tr ng-repeat="(userIndex, user) in markingCtrl.users | filter: { most_recent_role: markingCtrl.roleToShow.value } | submittedFilter: markingCtrl.submitStatusToShow | markedFilter: markingCtrl.markStatusToShow ">
 						<td>{{user.lti_displayid}}</td>
 						<td>{{user.lti_lis_person_name_full}}</td>
 						<td>{{user.most_recent_role}}</td>

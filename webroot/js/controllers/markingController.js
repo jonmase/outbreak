@@ -31,7 +31,7 @@
 		];
 		vm.roleToShow = vm.rolesForFilter[2];
 		
-		vm.statusesForFilter = [
+		vm.submitStatusesForFilter = [
 			{
 				value: 1,
 				label: 'Submitted',
@@ -45,7 +45,7 @@
 				label: 'Both',
 			},
 		];
-		vm.statusToShow = vm.statusesForFilter[2];
+		vm.submitStatusToShow = vm.submitStatusesForFilter[2];
 		
 		/*vm.markOptions = [
 			{
@@ -62,6 +62,23 @@
 			},
 		];*/
 		vm.markOptions = ['Satis plus', 'Satis', 'Fail',];
+		
+		vm.markStatusesForFilter = [
+			{
+				value: 1,
+				label: 'Marked',
+			},
+			{
+				value: 0,
+				label: 'Not Marked',
+			},
+			{
+				value: -1,
+				label: 'Both',
+			},
+		];
+		vm.markStatusToShow = vm.markStatusesForFilter[2];
+		
 		
 		//Bindable Members - methods
 		vm.hideUser = hideUser;

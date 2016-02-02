@@ -1,14 +1,11 @@
 (function() {
 	angular.module('flu.filters', [])
-		.filter('unsafe', ['$sce', unsafe])
 		.filter('assayedSampleFilter', assayedSampleFilter)
 		.filter('lineBreaksFilter', lineBreaksFilter)
+		.filter('markedFilter', markedFilter)
+		.filter('submittedFilter', submittedFilter)
 		.filter('subobjectFilter', subobjectFilter)
-		.filter('submittedFilter', submittedFilter);
-
-	function unsafe($sce) { 
-		return $sce.trustAsHtml; 
-	}
+		.filter('unsafe', ['$sce', unsafe]);
 
 	function assayedSampleFilter() { 
 		return function(samples, samplesPerformed, type) {
@@ -29,6 +26,25 @@
 			var result = input.replace(/\n/g, '<br />');
 			return result;
 		}
+	}
+
+	//Custom filter for filtering attempts on whether they have been submitted
+	function markedFilter() {
+		return function(users, statusToShow) { 
+			users = users.filter(function(user){
+				if(statusToShow.value === 1) {
+					return user.marked;
+				}
+				else if(statusToShow.value === 0) {
+					return !user.marked;
+				}
+				else {
+					return true;
+				}
+			});
+
+			return users;
+		};
 	}
 
 	//Custom filter for filtering attempts on whether they have been submitted
@@ -83,5 +99,9 @@
 			});
 			return result;
 		}
+	}
+	
+	function unsafe($sce) { 
+		return $sce.trustAsHtml; 
 	}
 })();
