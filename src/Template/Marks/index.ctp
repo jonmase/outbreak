@@ -185,7 +185,7 @@
 						
 						<!-- Assays -->
 						<div class="row panel-subsection" ng-if="attempt.assayCounts.total > 0">
-							<div class="col-xs-12">
+							<div class="col-lg-10 col-md-9 col-sm-8 col-xs-6">
 								<h3 class="no-top-margin">
 									Assays
 									<span class="marking-showhide subsection-showhide">
@@ -223,6 +223,18 @@
 									</div>
 								</div>
 							</div>
+							<div class="col-lg-2 col-md-3 col-sm-4 col-xs-6" ng-hide="attempt.assaysHidden">
+								<div class="panel panel-default">
+									<div class="panel-heading">
+										<h4 class="panel-title">Resources Used</h4>
+									</div>
+									<div class="panel-body">
+										<p>Time: {{attempt.timeSpent}} hours</p>
+										<p>Money: £{{attempt.moneySpent}}</p>
+									</div>
+								</div>
+							</div>
+
 						</div>
 						
 						<!-- Reports -->

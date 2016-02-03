@@ -47,6 +47,16 @@ class MarksController extends AppController
 			$attempts = $attemptsQuery->all();
 			//pr($attempts); exit;
 			
+			$techniquesQuery = $this->Marks->LtiResources->Attempts->Assays->Techniques->find('all', [
+				'conditions' => ['lab' => 1],
+				'fields' => ['id', 'code', 'time', 'money'],
+			]);
+			$techniquesRaw = $techniquesQuery->toArray();
+			$techniques = [];
+			foreach($techniquesRaw as $technique) {
+				$techniques[$technique['id']] = $technique;
+			}
+			
 			$users = [];
 			$userIdsInUsersArray = [];
 			foreach($attempts as $attempt) {
@@ -113,6 +123,8 @@ class MarksController extends AppController
 				$assayCounts = [
 					'total' => 0,
 				];
+				$attempt['timeSpent'] = 0;
+				$attempt['moneySpent'] = 0;
 				foreach($attempt['assays'] as $assay) {
 					$assays[$assay->technique_id][$assay->site_id][$assay->school_id][$assay->child_id][$assay->sample_stage_id] = 1;
 					
@@ -135,6 +147,8 @@ class MarksController extends AppController
 					$assayCounts[$assay->technique_id]['total']++;
 					$assayCounts[$assay->technique_id]['sites'][$assay->site_id]['total']++;
 					$assayCounts[$assay->technique_id]['sites'][$assay->site_id]['schools'][$assay->school_id]++;
+					//$attempt['timeSpent'] += $techniques[$assay->technique_id]['time'];
+					$attempt['moneySpent'] += $techniques[$assay->technique_id]['money'];
 				}
 				
 				//Process standards assays
@@ -154,6 +168,8 @@ class MarksController extends AppController
 					$assayCounts['total']++;	//Increment the total assay count (for idenitfying whether to show Assays section)
 					$assayCounts[$standardAssay->technique_id]['total']++;	//Increment the total assay count for this technique (for idenitfying whether to show the technique section)
 					$standardAssayCounts[$standardAssay->technique_id]++;
+					//$attempt['timeSpent'] += $techniques[$standardAssay->technique_id]['time'];
+					$attempt['moneySpent'] += $techniques[$standardAssay->technique_id]['money'];
 				}
 				unset($attempt['standard_assays']);
 				$attempt['assays'] = $assays;
@@ -161,6 +177,8 @@ class MarksController extends AppController
 				$attempt['standardAssays'] = $standardAssays;
 				$attempt['standardAssayCounts'] = $standardAssayCounts;
 				$attempt['assaysHidden'] = false;
+				
+				$attempt['timeSpent'] = 48 - $attempt['time'];
 			}
 			//pr($users); exit;
 			
