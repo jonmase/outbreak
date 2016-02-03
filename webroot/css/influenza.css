@@ -86,6 +86,9 @@ th, td {
 .no-top-margin {
 	margin-top: 0 !important;
 }
+.no-bottom-border {
+	border-bottom: none;
+}
 .align-left {
 	text-align: left;
 }
@@ -744,4 +747,16 @@ td.assays-convalescent div.checkbox {
 		top: 0 !important;
 		margin-top: 0;
    }
+}
+.marking-buttons button {
+	margin-bottom: 5px;
+}
+.panel-subsection {
+	margin-bottom: 15px;
+}
+.panel-subsection:last-child {
+	margin-bottom: 0;
+}
+.marking-showhide a:focus, .marking-showhide a:hover {
+	text-decoration: none;
 }

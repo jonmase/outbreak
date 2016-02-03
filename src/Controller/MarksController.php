@@ -76,6 +76,10 @@ class MarksController extends AppController
 					if(!$users[$index]['last_submit'] || $attempt['reports'][0]['modified'] > $users[$index]['last_submit']) {
 						$users[$index]['last_submit'] = $attempt['reports'][0]['modified'];
 					}
+					$attempt['hidden'] = false;
+				}
+				else {
+					$attempt['hidden'] = true;
 				}
 				
 				//Process samples

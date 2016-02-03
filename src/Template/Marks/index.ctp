@@ -109,7 +109,7 @@
 							</tr>
 							<tr>
 								<th></th>
-								<td>
+								<td class="marking-buttons">
 									<div  ng-show="!markingCtrl.currentUser.marked || markingCtrl.currentUser.editing">
 										<button type="button" class="btn btn-success" ng-click="markingCtrl.save()"><i class="fa fa-check"></i>&nbsp; Save Mark</button>
 										<button type="button" class="btn btn-danger" ng-click="markingCtrl.cancel()"><i class="fa fa-times"></i>&nbsp; Cancel</button>
@@ -134,12 +134,18 @@
 			</div>
 			<div class="col-xs-12 col-md-8 col-lg-9">
 				<div ng-repeat="attempt in markingCtrl.currentUser.attempts" class="panel" ng-class="{ 'panel-success':attempt.report, 'panel-default':!attempt.report }">
-					<div class="panel-heading">
-						<h3 class="panel-title">Attempt {{attempt.id}} - {{attempt.report?"Submitted on ":"Not Submitted"}}{{(attempt.report?attempt.reports[0].modified:null) | date: "d MMM yy 'at' H:mm"}} - Last modified on {{attempt.modified | date: "d MMM yy 'at' H:mm"}}</h3>
+					<div class="panel-heading" ng-class="{ 'no-bottom-border': attempt.hidden }">
+						<h3 class="panel-title">
+							<div class="pull-right" class="marking-showhide">
+								<a href="" ng-click="attempt.hidden = true" ng-show="!attempt.hidden"><i class="fa fa-chevron-up"></i> Hide</a>
+								<a href="" ng-click="attempt.hidden = false" ng-show="attempt.hidden"><i class="fa fa-chevron-down"></i> Show</a>
+							</div>
+							Attempt {{attempt.id}} - {{attempt.report?"Submitted on ":"Not Submitted"}}{{(attempt.report?attempt.reports[0].modified:null) | date: "d MMM yy 'at' H:mm"}} - Last modified on {{attempt.modified | date: "d MMM yy 'at' H:mm"}}
+						</h3>
 					</div>
-					<div class="panel-body">
+					<div class="panel-body" ng-class="{ 'hidden': attempt.hidden }">
 						<!-- Samples -->
-						<div class="row" ng-if="attempt.sampleCounts.total > 0">
+						<div class="row panel-subsection" ng-if="attempt.sampleCounts.total > 0">
 							<div class="col-lg-10 col-md-9 col-sm-8 col-xs-6">
 								<h3 class="no-top-margin">Samples</h3>
 								<div ng-repeat="(siteIndex, site) in markingCtrl.sites" ng-if="attempt.sampleCounts[site.id].total > 0">
@@ -172,9 +178,9 @@
 						</div>
 						
 						<!-- Assays -->
-						<div class="row" ng-if="attempt.assayCounts.total > 0">
+						<div class="row panel-subsection" ng-if="attempt.assayCounts.total > 0">
 							<div class="col-xs-12">
-								<h3>Assays</h3>
+								<h3 class="no-top-margin">Assays</h3>
 								<div ng-repeat="(techniqueIndex, technique) in markingCtrl.techniques" ng-if="attempt.assayCounts[technique.id].total > 0">
 									<h4>{{technique.menu}}</h5>
 									<div ng-if="attempt.standardAssayCounts[technique.id] > 0" style="margin-bottom: 10px">
@@ -208,9 +214,9 @@
 						</div>
 						
 						<!-- Reports -->
-						<div class="row" ng-if="attempt.reports.length > 0">
+						<div class="row panel-subsection" ng-if="attempt.reports.length > 0">
 							<div class="col-xs-12">
-								<h3>Report</h3>
+								<h3 class="no-top-margin">Report</h3>
 								<div ng-repeat="section in attempt.reports[0].reports_sections">
 									<h4>{{section.section.label}}</h4>
 									<div ng-bind-html="section.text | unsafe"></div>
