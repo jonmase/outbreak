@@ -760,3 +760,6 @@ td.assays-convalescent div.checkbox {
 .marking-showhide a:focus, .marking-showhide a:hover {
 	text-decoration: none;
 }
+.subsection-showhide {
+	font-size: 70%;
+}

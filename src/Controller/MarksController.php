@@ -81,6 +81,7 @@ class MarksController extends AppController
 				else {
 					$attempt['hidden'] = true;
 				}
+				$attempt['reportHidden'] = false;
 				
 				//Process samples
 				$samples = [];
@@ -105,6 +106,7 @@ class MarksController extends AppController
 				}
 				$attempt['samples'] = $samples;
 				$attempt['sampleCounts'] = $sampleCounts;
+				$attempt['samplesHidden'] = false;
 				
 				//Process assays
 				$assays = [];
@@ -158,6 +160,7 @@ class MarksController extends AppController
 				$attempt['assayCounts'] = $assayCounts;
 				$attempt['standardAssays'] = $standardAssays;
 				$attempt['standardAssayCounts'] = $standardAssayCounts;
+				$attempt['assaysHidden'] = false;
 			}
 			//pr($users); exit;
 			
