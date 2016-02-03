@@ -57,7 +57,7 @@
 			//API: Lock user, so no-one else can edit them, or unlock it (if lock is false)
 			var userId = users[userId].id;
 			var deferred = $q.defer();
-			var ReportCall = $resource(URL_MODIFIER + 'marks/save/lock', {});
+			var ReportCall = $resource(URL_MODIFIER + 'marks/save/lock.json', {});
 			ReportCall.save({}, {userId: userId, data: lock},
 				function(result) {
 					if(typeof(result.status) !== "undefined" && result.status === 'success') {
@@ -83,10 +83,12 @@
 			var userId = users[userId].id;
 			var mark = users[userId].marks;
 			var deferred = $q.defer();
-			var ReportCall = $resource(URL_MODIFIER + 'marks/save', {});
+			var ReportCall = $resource(URL_MODIFIER + 'marks/save.json', {});
 			ReportCall.save({}, {userId: userId, data: mark},
 				function(result) {
 					if(typeof(result.status) !== "undefined" && result.status === 'success') {
+						users[userId].marks.modified = result.marked_on;
+						users[userId].marks.marker.lti_lis_person_name_full = result.marker.lti_lis_person_name_full;
 						users[userId].marked = 1;
 						users[userId].editing = 0;
 						deferred.resolve('Mark saved');

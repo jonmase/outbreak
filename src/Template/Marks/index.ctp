@@ -110,10 +110,12 @@
 								</td>
 							</tr>
 							<tr ng-show="markingCtrl.currentUser.marked">
-								<th><span ng-show="markingCtrl.currentUser.editing">Last </span>Marked By:</th><td>{{markingCtrl.currentUser.marks.marker.lti_lis_person_name_full}}</td>
+								<th><span ng-show="markingCtrl.currentUser.editing">Last </span>Marked By:</th>
+								<td>{{markingCtrl.currentUser.marks.marker.lti_lis_person_name_full}}</td>
 							</tr>
 							<tr ng-show="markingCtrl.currentUser.marked">
-								<th><span ng-show="markingCtrl.currentUser.editing">Last </span>Marked On:</th><td>{{markingCtrl.currentUser.marks.modified | date: "d MMM yy 'at' H:mm"}}</td>
+								<th><span ng-show="markingCtrl.currentUser.editing">Last </span>Marked On:</th>
+								<td>{{markingCtrl.currentUser.marks.modified | date: "d MMM yy 'at' H:mm"}}</td>
 							</tr>
 							<tr>
 								<th></th>

@@ -3,6 +3,7 @@ namespace App\Controller;
 
 use App\Controller\AppController;
 use Cake\Datasource\ConnectionManager;
+use Cake\Mailer\Email;
 
 /**
  * Marks Controller
@@ -25,7 +26,7 @@ class MarksController extends AppController
 			//Include learners (students) and instructors, but only show students initially
 			//Get through attempts, and then post-process
 			$ltiResourceId = $session->read('LtiResource.id');
-			$ltiResourceId = 1;
+			//$ltiResourceId = 1;
 			
 			$attemptsQuery = $this->Marks->LtiResources->Attempts->find('all', [
 				'conditions' => ['lti_resource_id' => $ltiResourceId],
@@ -190,7 +191,7 @@ class MarksController extends AppController
 			]);
 			$marks = $marksQuery->all();
 			//pr($ltiResourceId);
-			//pr($marks);
+			//pr($marks->toArray());
 			
 			foreach($marks as $mark) {
 				//$user['marks'] = ['mark' => null];
@@ -263,24 +264,26 @@ class MarksController extends AppController
 			$session = $this->request->session();	//Set Session to variable
 			//pr($this->request->data);
 			
-			$userId = $this->request->data['userId'];
 			$data = $this->request->data['data'];
 			$ltiResourceId = $session->read('LtiResource.id');
 			$markerId = $this->Auth->user('id');
 			
-
-			$this->infolog("Mark Save attempted. User: " . $userId . "; Lti Resource ID: " . $ltiResourceId . "; Marker: " . $markerId . "; data: " . serialize($data));
+			$user = $this->Marks->LtiUsers->get($this->request->data['userId']);
+			$marker = $this->Marks->LtiUsers->get($markerId);
+			$this->set('marker', $marker);
+			
+			$this->infolog("Mark Save attempted. User: " . $user->id . "; Lti Resource ID: " . $ltiResourceId . "; Marker: " . $markerId . "; data: " . serialize($data));
 			
 			//Get the latest mark for this resource and user
 			$markQuery = $this->Marks->find('all', [
-				'conditions' => ['Marks.lti_resource_id' => $ltiResourceId, 'Marks.lti_user_id' => $userId, 'Marks.revision' => 0],
+				'conditions' => ['Marks.lti_resource_id' => $ltiResourceId, 'Marks.lti_user_id' => $user->id, 'Marks.revision' => 0],
 				'order' => ['modified' => 'DESC'],
 			]);
 			$lastMark = $markQuery->first();
 			//pr($lastMark);
 		
 			//Make sure we have a user ID and the marker is an instructor
-			if($userId && $session->read('User.role') === "Instructor") {
+			if(!empty($user) && $session->read('User.role') === "Instructor") {
 				//Make sure the last mark is either not locked, locked by this marker, or locked > 1 hour ago
 				if(!$lastMark['locked'] || $lastMark['locker_id'] === $markerId || !$lastMark['locked']->wasWithinLast('1 hour')) {
 					if($type === 'save' && !$markQuery->isEmpty()) {
@@ -295,7 +298,7 @@ class MarksController extends AppController
 					if($type === 'save' || ($type === 'lock' && $markQuery->isEmpty())) {
 						$markData = $this->Marks->newEntity();
 						$markData->lti_resource_id = $ltiResourceId;
-						$markData->lti_user_id = $userId;
+						$markData->lti_user_id = $user->id;
 						$markData->revision = false;
 					}
 					
@@ -325,37 +328,49 @@ class MarksController extends AppController
 					//pr($oldMarkData);
 					//exit;
 					$connection = ConnectionManager::get('default');
-					$connection->transactional(function () use ($type, $markData, $oldMarkData, $userId, $ltiResourceId) {
+					$connection->transactional(function () use ($type, $markData, $oldMarkData, $user, $ltiResourceId) {
 						if(!$this->Marks->save($markData)) {
 							$this->set('status', 'failed');
-							$this->infolog("Mark Save failed (new mark). User: " . $userId . "; Lti Resource ID: " . $ltiResourceId);
+							$this->infolog("Mark Save failed (new mark). User: " . $user->id . "; Lti Resource ID: " . $ltiResourceId);
 							return false;
 						}
+						$this->set('marked_on', $markData->modified);
 						if(!is_null($oldMarkData) && !$this->Marks->save($oldMarkData)) {
 							$this->set('status', 'failed');
-							$this->infolog("Mark Save failed (old mark). User: " . $userId . "; Lti Resource ID: " . $ltiResourceId);
+							$this->infolog("Mark Save failed (old mark). User: " . $user->id . "; Lti Resource ID: " . $ltiResourceId);
 							return false;
 						}
 						$this->set('status', 'success');
-						$this->infolog("Mark Save succeeded. User: " . $userId . "; Lti Resource ID: " . $ltiResourceId);
+						
+						$this->infolog("Mark Save succeeded. User: " . $user->id . "; Lti Resource ID: " . $ltiResourceId);
+						if($type === 'save') {
+							$email = new Email('smtp');
+							$email->from(['msdlt@medsci.ox.ac.uk' => 'Dr Kenny Moore'])
+								->to('jon.mason@medsci.ox.ac.uk')	//$user->lti_lis_person_contact_email_primary
+								->subject('Viral Outbreak iCase Report Marked')
+								->emailFormat('html')
+								->send('<p>Dear student,</p><p>Your Viral Outbreak iCase report has been marked. To view your mark, please <a href="https://weblearn.ox.ac.uk/access/basiclti/site/8dd25ab4-a0ca-4e16-0073-d2a9667b58ce/content:122">go to the iCase</a> (<a href="https://weblearn.ox.ac.uk/access/basiclti/site/8dd25ab4-a0ca-4e16-0073-d2a9667b58ce/content:122">https://weblearn.ox.ac.uk/access/basiclti/site/8dd25ab4-a0ca-4e16-0073-d2a9667b58ce/content:122</a>).</p><p>If you have not passed, you will need to read the marker\'s comments and deal with any issues raised.</p><p>If you have not yet looked at the extension material in the "Grant Funded Research" section of the iCase, we recommend that you do so.</p><p>If you have not given your feedback on this iCase, we would be very grateful if you could do so, here: <a href="https://learntech.imsu.ox.ac.uk/feedback/showsurvey.php?surveyInstanceID=501">https://learntech.imsu.ox.ac.uk/feedback/showsurvey.php?surveyInstanceID=501</a>.</p><p>Best wishes,</p><p>Kenny Moore</p>');
+						}
 					});
 				}
 				else {
 					$this->set('status', 'locked');
-					$this->infolog("Mark Save locked. User: " . $userId . "; Lti Resource ID: " . $ltiResourceId . "; Marker: " . $markerId . "; Locked By: " . $lastMark['marker_id']);
+					$this->infolog("Mark Save locked. User: " . $user->id . "; Lti Resource ID: " . $ltiResourceId . "; Marker: " . $markerId . "; Locked By: " . $lastMark['marker_id']);
 				}
 			}
 			else {
 				$this->set('status', 'denied');
-				$this->infolog("Mark Save denied. User: " . $userId . "; Lti Resource ID: " . $ltiResourceId);
+				$this->infolog("Mark Save denied. User: " . $user->id . "; Lti Resource ID: " . $ltiResourceId);
 			}
 		}
 		else {
 			$this->set('status', 'notpost');
 			$this->infolog("Mark Save not POST ");
 		}
-		$this->viewBuilder()->layout('ajax');
-		$this->render('/Element/ajaxmessage');
+		//$this->viewBuilder()->layout('ajax');
+		//$this->render('/Element/ajaxmessage');
+		//$this->set(compact('users', 'userCount', 'status'));
+		$this->set('_serialize', ['status', 'marker', 'marked_on']);
 	}
 
     /**

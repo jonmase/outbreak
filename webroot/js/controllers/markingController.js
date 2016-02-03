@@ -27,7 +27,7 @@
 				label: 'Both',
 			}
 		];
-		vm.roleToShow = vm.rolesForFilter[0];
+		vm.roleToShow = vm.rolesForFilter[2];
 		
 		vm.submitStatusesForFilter = [
 			{
@@ -43,7 +43,7 @@
 				label: 'Both',
 			},
 		];
-		vm.submitStatusToShow = vm.submitStatusesForFilter[0];
+		vm.submitStatusToShow = vm.submitStatusesForFilter[2];
 		
 		/*vm.markOptions = [
 			{
@@ -75,7 +75,7 @@
 				label: 'Both',
 			},
 		];
-		vm.markStatusToShow = vm.markStatusesForFilter[1];
+		vm.markStatusToShow = vm.markStatusesForFilter[2];
 		
 		vm.orderOptions = [
 			{
