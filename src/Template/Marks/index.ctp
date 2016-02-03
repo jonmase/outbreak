@@ -119,19 +119,9 @@
 							</tr>
 						</tbody>
 					</table>
-					
-					<!--dl>			
-						<dt>Username:</dt><dd>{{markingCtrl.currentUser.lti_displayid}}</dd>
-						<dt>Name:</dt><dd>{{markingCtrl.currentUser.lti_lis_person_name_full}}</dd>
-						<dt>Role:</dt><dd>{{markingCtrl.currentUser.most_recent_role}}</dd>
-						<dt>Starts:</dt><dd>{{markingCtrl.currentUser.attempts_count}}</dd>
-						<dt>Submissions:</dt><dd>{{markingCtrl.currentUser.submissions}}</dd>
-						<dt>Last Submission:</dt><dd>{{markingCtrl.currentUser.last_submit | date: "d MMM yy 'at' H:mm" }}</dd>
-						<dt>Mark:</dt><dd>{{}}</dd>
-						<dt>Marked By:</dt><dd>{{}}</dd>
-					</dl-->
 				</div>
 			</div>
+			
 			<div class="col-xs-12 col-md-8 col-lg-9">
 				<div ng-repeat="attempt in markingCtrl.currentUser.attempts" class="panel" ng-class="{ 'panel-success':attempt.report, 'panel-default':!attempt.report }">
 					<div class="panel-heading" ng-class="{ 'no-bottom-border': attempt.hidden }">
@@ -145,7 +135,7 @@
 					</div>
 					<div class="panel-body" ng-class="{ 'hidden': attempt.hidden }">
 						<!-- Samples -->
-						<div class="row panel-subsection" ng-if="attempt.sampleCounts.total > 0">
+						<div class="row" ng-if="attempt.sampleCounts.total > 0">
 							<div class="col-lg-10 col-md-9 col-sm-8 col-xs-6">
 								<h3 class="no-top-margin">
 									Samples
@@ -182,9 +172,10 @@
 								<img ng-src="img/smileys/cry.svg" ng-show="attempt.happiness == 0" />
 							</div>
 						</div>
+						<hr class="marking-subsection" ng-hide="attempt.samplesHidden" />
 						
 						<!-- Assays -->
-						<div class="row panel-subsection" ng-if="attempt.assayCounts.total > 0">
+						<div class="row" ng-if="attempt.assayCounts.total > 0">
 							<div class="col-lg-10 col-md-9 col-sm-8 col-xs-6">
 								<h3 class="no-top-margin">
 									Assays
@@ -193,15 +184,15 @@
 										<a href="" ng-click="attempt.assaysHidden = true" ng-show="!attempt.assaysHidden"><i class="fa fa-chevron-up"></i> Hide</a>
 									</span>
 								</h3>
-								<div ng-repeat="(techniqueIndex, technique) in markingCtrl.techniques" ng-if="attempt.assayCounts[technique.id].total > 0" ng-hide="attempt.assaysHidden">
+								<div ng-repeat="(techniqueIndex, technique) in markingCtrl.techniques" ng-if="attempt.assayCounts[technique.id].total > 0" ng-hide="attempt.assaysHidden" class="marking-assays-technique">
 									<h4>{{technique.menu}}</h5>
-									<div ng-if="attempt.standardAssayCounts[technique.id] > 0" style="margin-bottom: 10px">
+									<div ng-if="attempt.standardAssayCounts[technique.id] > 0" class="marking-assays-site">
 										<h6 class="no-top-margin">Standards</h6>
 										<span ng-repeat="(standardIndex, standard) in attempt.standardAssays[technique.id]" ng-if="standard">
 											{{markingCtrl.standards[standardIndex].name}} &nbsp; &nbsp; 
 										</span>
 									</div>
-									<div ng-repeat="(siteIndex, site) in markingCtrl.sites" ng-if="attempt.assayCounts[technique.id].sites[site.id].total > 0">
+									<div ng-repeat="(siteIndex, site) in markingCtrl.sites" ng-if="attempt.assayCounts[technique.id].sites[site.id].total > 0" class="marking-assays-site">
 										<h6 class="no-top-margin">{{site.name}}</h6>
 										<div class="row">
 											<div class="col-xs-12 col-md-6 assays-school" ng-repeat="(schoolIndex, school) in markingCtrl.schools" ng-if="attempt.assayCounts[technique.id].sites[site.id].schools[school.id] > 0">
@@ -230,15 +221,15 @@
 									</div>
 									<div class="panel-body">
 										<p>Time: {{attempt.timeSpent}} hours</p>
-										<p>Money: £{{attempt.moneySpent}}</p>
+										<p class="no-margin">Money: £{{attempt.moneySpent}}</p>
 									</div>
 								</div>
 							</div>
-
 						</div>
+						<hr class="marking-subsection" ng-hide="attempt.assaysHidden" />
 						
 						<!-- Reports -->
-						<div class="row panel-subsection" ng-if="attempt.reports.length > 0">
+						<div class="row" ng-if="attempt.reports.length > 0">
 							<div class="col-xs-12">
 								<h3 class="no-top-margin">
 									Report

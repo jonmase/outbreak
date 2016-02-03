@@ -751,15 +751,18 @@ td.assays-convalescent div.checkbox {
 .marking-buttons button {
 	margin-bottom: 5px;
 }
-.panel-subsection {
-	margin-bottom: 15px;
-}
-.panel-subsection:last-child {
-	margin-bottom: 0;
-}
 .marking-showhide a:focus, .marking-showhide a:hover {
 	text-decoration: none;
 }
 .subsection-showhide {
 	font-size: 70%;
+}
+hr.marking-subsection {
+	margin-top: 0;
+}
+.marking-assays-technique {
+	margin-bottom: 15px;
+}
+.marking-assays-site {
+	margin-bottom: 10px;
 }
