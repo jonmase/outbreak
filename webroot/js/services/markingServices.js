@@ -6,12 +6,13 @@
 	
 	function markingFactory($resource, $q) {
 		//Variables
-		var users; 
+		var users, userCount; 
 		
 		//Exposed Methods
 		var factory = {
 			//cancelAutosaveTimeout: cancelAutosaveTimeout,
 			setup: setup,
+			getUserCount: getUserCount,
 			getUsers: getUsers,
 			loadUsers: loadUsers,
 			save: save,
@@ -21,6 +22,10 @@
 		
 		//Methods
 		function setup() {
+		}
+		
+		function getUserCount() {
+			return userCount;
 		}
 		
 		function getUsers() {
@@ -34,6 +39,7 @@
 				function(result) {
 					if(typeof(result.status) !== "undefined" && result.status === 'success') {
 						users = result.users;
+						userCount = result.userCount;
 						deferred.resolve('Marks loaded');
 					}
 					else {
@@ -47,9 +53,9 @@
 			return deferred.promise;
 		}
 		
-		function setLock(userIndex, lock) {
+		function setLock(userId, lock) {
 			//API: Lock user, so no-one else can edit them, or unlock it (if lock is false)
-			var userId = users[userIndex].id;
+			var userId = users[userId].id;
 			var deferred = $q.defer();
 			var ReportCall = $resource(URL_MODIFIER + 'marks/save/lock', {});
 			ReportCall.save({}, {userId: userId, data: lock},
@@ -72,17 +78,17 @@
 			//return now;
 		}
 
-		function save(userIndex) {
+		function save(userId) {
 			//API: Save mark
-			var userId = users[userIndex].id;
-			var mark = users[userIndex].marks;
+			var userId = users[userId].id;
+			var mark = users[userId].marks;
 			var deferred = $q.defer();
 			var ReportCall = $resource(URL_MODIFIER + 'marks/save', {});
 			ReportCall.save({}, {userId: userId, data: mark},
 				function(result) {
 					if(typeof(result.status) !== "undefined" && result.status === 'success') {
-						users[userIndex].marked = 1;
-						users[userIndex].editing = 0;
+						users[userId].marked = 1;
+						users[userId].editing = 0;
 						deferred.resolve('Mark saved');
 					}
 					else {

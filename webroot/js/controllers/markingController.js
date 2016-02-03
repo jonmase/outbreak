@@ -9,12 +9,10 @@
 		
 		vm.me = MY_ID;
 		vm.status = 'loading';
-		vm.currentUserIndex = null;
+		vm.currentUserId = null;
 		vm.currentUser = null;
 		
 		//Bindable Members - variables
-		vm.marks = [];
-		
 		vm.rolesForFilter = [
 			{
 				value: 'Student',
@@ -29,7 +27,7 @@
 				label: 'Both',
 			}
 		];
-		vm.roleToShow = vm.rolesForFilter[2];
+		vm.roleToShow = vm.rolesForFilter[0];
 		
 		vm.submitStatusesForFilter = [
 			{
@@ -45,7 +43,7 @@
 				label: 'Both',
 			},
 		];
-		vm.submitStatusToShow = vm.submitStatusesForFilter[2];
+		vm.submitStatusToShow = vm.submitStatusesForFilter[0];
 		
 		/*vm.markOptions = [
 			{
@@ -77,8 +75,26 @@
 				label: 'Both',
 			},
 		];
-		vm.markStatusToShow = vm.markStatusesForFilter[2];
+		vm.markStatusToShow = vm.markStatusesForFilter[1];
 		
+		vm.orderOptions = [
+			{
+				value: 'lti_displayid',
+				label: 'Username',
+			},
+			{
+				value: 'lti_lis_person_name_family',
+				label: 'Last name',
+			},
+			{
+				value: 'lti_lis_person_name_given',
+				label: 'Given name',
+			},
+		];
+		vm.orderBy = 'lti_displayid';
+	
+
+
 		
 		//Bindable Members - methods
 		vm.hideUser = hideUser;
@@ -101,6 +117,7 @@
 			function(result) {
 				console.log(result);
 				vm.users = markingFactory.getUsers();
+				vm.userCount = markingFactory.getUserCount();
 				vm.techniques = techniqueFactory.getTechniques('lab');
 				vm.sites = siteFactory.getSites();;
 				vm.schools = schoolFactory.getSchools();
@@ -115,17 +132,17 @@
 		);
 		
 		//Functions
-		function hideUser(userIndex) {
-			//alert(userIndex);
+		function hideUser(userId) {
+			//alert(userId);
 		}
-		function showUser(userIndex) {
-			//alert(userIndex);
+		function showUser(userId) {
+			//alert(userId);
 		}
 		
-		function markUser(userIndex) {
-			vm.currentUserIndex = userIndex;
-			vm.currentUser = vm.users[vm.currentUserIndex];		
-			//If user has not been marked, lock them and then take them to the marking interface
+		function markUser(userId) {
+			vm.currentUserId = userId;
+			vm.currentUser = vm.users[vm.currentUserId];		
+			//If user has not been marked, lock them and then go to the marking interface
 			if(!vm.currentUser.marked) {
 				lockUser();
 			}
@@ -133,10 +150,11 @@
 			else {
 				vm.status = 'mark';
 			}
+			document.body.scrollTop = 0;
 		}
 		
 		function cancel() {
-			var lockPromise = markingFactory.setLock(vm.currentUserIndex, false);
+			var lockPromise = markingFactory.setLock(vm.currentUserId, false);
 			
 			lockPromise.then(
 				function(result) {
@@ -151,7 +169,7 @@
 		}
 		
 		function lockUser() {
-			var lockPromise = markingFactory.setLock(vm.currentUserIndex, true);
+			var lockPromise = markingFactory.setLock(vm.currentUserId, true);
 			lockPromise.then(
 				function(result) {
 					console.log(result);
@@ -176,7 +194,7 @@
 		}
 		
 		function save() {
-			var markPromise = markingFactory.save(vm.currentUserIndex);
+			var markPromise = markingFactory.save(vm.currentUserId);
 			markPromise.then(
 				function(result) {
 					console.log(result);

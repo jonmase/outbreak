@@ -20,8 +20,16 @@
 					<label for="role_filter">Roles</label>
 					<select class="form-control" id="role_filter" name="role_filter" ng-model="markingCtrl.roleToShow" ng-options="role as role.label for role in markingCtrl.rolesForFilter"></select>
 				</div>
+				<div class="col-xs-6 col-sm-3">
+					<label for="role_filter">Order By</label>
+					<select class="form-control" id="role_filter" name="role_filter" ng-model="markingCtrl.orderBy" ng-options="order.value as order.label for order in markingCtrl.orderOptions"></select>
+				</div>
 			</div>
-
+			
+			<div>
+				Showing {{filteredUsers.length}} out of {{markingCtrl.userCount}} users.
+			</div>
+			
 			<table class="table">
 				<thead>
 					<tr>
@@ -37,7 +45,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr ng-repeat="(userIndex, user) in markingCtrl.users | filter: { most_recent_role: markingCtrl.roleToShow.value } | submittedFilter: markingCtrl.submitStatusToShow | markedFilter: markingCtrl.markStatusToShow ">
+					<tr ng-repeat="(userId, user) in filteredUsers = (markingCtrl.users | toArray | filter: { most_recent_role: markingCtrl.roleToShow.value } | submittedFilter: markingCtrl.submitStatusToShow | markedFilter: markingCtrl.markStatusToShow | orderBy: markingCtrl.orderBy)">
 						<td>{{user.lti_displayid}}</td>
 						<td>{{user.lti_lis_person_name_full}}</td>
 						<td>{{user.most_recent_role}}</td>
@@ -47,10 +55,10 @@
 						<td>{{user.marks.mark}}</td>
 						<td>{{user.marks.marker.lti_lis_person_name_full}}</td>
 						<td class="actions" style="font-size: 140%; padding: 4px 8px;">
-							<a href="" ng-click="markingCtrl.markUser(userIndex)" ng-attr-title="{{user.marks.mark?'Edit Mark':'Mark'}}" ng-show="!user.marks.locked" ng-class="{grey: user.marks.mark}"><i class="fa fa-check"></i></a>
+							<a href="" ng-click="markingCtrl.markUser(user.id)" ng-attr-title="{{user.marks.mark?'Edit Mark':'Mark'}}" ng-show="!user.marks.locked" ng-class="{grey: user.marks.mark}"><i class="fa fa-check"></i></a>
 							<i class="fa fa-lock grey not-allowed" title="Locked by {{user.marks.locker.lti_lis_person_name_full}}" ng-show="user.marks.locked"></i>
-							<!--a href="" ng-click="markingCtrl.hideUser(userIndex)" title="Hide"><i class="fa fa-eye-slash"></i></a>
-							<a href="" ng-click="markingCtrl.showUser(userIndex)" title="Show"><i class="fa fa-eye"></i></a-->
+							<!--a href="" ng-click="markingCtrl.hideUser(user.id)" title="Hide"><i class="fa fa-eye-slash"></i></a>
+							<a href="" ng-click="markingCtrl.showUser(user.id)" title="Show"><i class="fa fa-eye"></i></a-->
 						</td>
 					</tr>
 				</tbody>

@@ -25,11 +25,11 @@ class MarksController extends AppController
 			//Include learners (students) and instructors, but only show students initially
 			//Get through attempts, and then post-process
 			$ltiResourceId = $session->read('LtiResource.id');
-			$ltiResourceId = 5;
+			$ltiResourceId = 1;
 			
 			$attemptsQuery = $this->Marks->LtiResources->Attempts->find('all', [
 				'conditions' => ['lti_resource_id' => $ltiResourceId],
-				'order' => ['Attempts.modified' => 'DESC'],
+				'order' => ['LtiUsers.lti_displayid' => 'ASC'],
 				'contain' => [
 					'LtiUsers', 
 					'Samples',
@@ -45,7 +45,7 @@ class MarksController extends AppController
 				],
 			]);
 			$attempts = $attemptsQuery->all();
-			//pr($attempts); exit;
+			//pr($attempts->toArray()); exit;
 			
 			$techniquesQuery = $this->Marks->LtiResources->Attempts->Assays->Techniques->find('all', [
 				'conditions' => ['lab' => 1],
@@ -58,33 +58,33 @@ class MarksController extends AppController
 			}
 			
 			$users = [];
-			$userIdsInUsersArray = [];
+			//$userIdsInUsersArray = [];
 			foreach($attempts as $attempt) {
-				$attemptUserId = $attempt['lti_user_id'];
+				$userId = $attempt['lti_user_id'];
 				
 				//Create an array for this user, if there isn't one already
-				if(!isset($userIdsInUsersArray[$attemptUserId])) {
-					$index = count($users);
-					$userIdsInUsersArray[$attemptUserId] = $index;
-					$users[$index] = $attempt['lti_user'];
-					$users[$index]['attempts'] = [];	//Create array for attempts
-					$users[$index]['attempts_count'] = 0;
-					$users[$index]['submissions'] = 0;
-					$users[$index]['last_submit'] = null;
-					$users[$index]['most_recent_role'] = $attempt['user_role']==="Instructor"?"Demonstrator":"Student";	//Get the user's most recent role
+				if(!isset($users[$userId])) {
+					//$index = count($users);
+					//$userIdsInUsersArray[$userId] = $index;
+					$users[$userId] = $attempt['lti_user'];
+					$users[$userId]['attempts'] = [];	//Create array for attempts
+					$users[$userId]['attempts_count'] = 0;
+					$users[$userId]['submissions'] = 0;
+					$users[$userId]['last_submit'] = null;
+					$users[$userId]['most_recent_role'] = $attempt['user_role']==="Instructor"?"Demonstrator":"Student";	//Get the user's most recent role
 				}
-				else {
-					$index = $userIdsInUsersArray[$attemptUserId];
-				}
+				//else {
+				//	$index = $userIdsInUsersArray[$userId];
+				//}
 				unset($attempt['lti_user']);	//Delete the user details from the attempt
 				
 				//Process basic user, attempt and submission info/counts
-				$users[$index]['attempts'][] = $attempt;	//Add the attempt to the attempts array for the user
-				$users[$index]['attempts_count']++; //Count the attempt
+				$users[$userId]['attempts'][] = $attempt;	//Add the attempt to the attempts array for the user
+				$users[$userId]['attempts_count']++; //Count the attempt
 				if(!empty($attempt['reports'])) {
-					$users[$index]['submissions']++;
-					if(!$users[$index]['last_submit'] || $attempt['reports'][0]['modified'] > $users[$index]['last_submit']) {
-						$users[$index]['last_submit'] = $attempt['reports'][0]['modified'];
+					$users[$userId]['submissions']++;
+					if(!$users[$userId]['last_submit'] || $attempt['reports'][0]['modified'] > $users[$userId]['last_submit']) {
+						$users[$userId]['last_submit'] = $attempt['reports'][0]['modified'];
 					}
 					$attempt['hidden'] = false;
 				}
@@ -196,8 +196,8 @@ class MarksController extends AppController
 				//$user['marks'] = ['mark' => null];
 				//pr($mark);
 				//Should never have more than one result for a particular user, but just check that we haven't already got this user
-				$userIndex = $userIdsInUsersArray[$mark['lti_user_id']];
-				if(empty($users[$userIndex]['marks'])) {
+				$userId = $mark['lti_user_id'];
+				if(empty($users[$userId]['marks'])) {
 					//If user is locked but it is either too long ago or by this user, then unlock them
 					if($mark->locked && (!$mark->locked->wasWithinLast('1 hour') || $mark->locker_id === $this->Auth->user('id'))) {
 						$mark->locked = null;
@@ -207,26 +207,24 @@ class MarksController extends AppController
 					
 					//If user has been marked, set the 'marked' property to true
 					if($mark->mark) {
-						$users[$userIndex]['marked'] = true;
+						$users[$userId]['marked'] = true;
 					}
 					else {
-						$users[$userIndex]['marked'] = false;
+						$users[$userId]['marked'] = false;
 					}
-					$users[$userIndex]['editing'] = false;	//Set 'editing' property to false for all users, as they cannot be being edited when the data is loaded
-					
-					
-					$users[$userIndex]['marks'] = $mark;
+					$users[$userId]['editing'] = false;	//Set 'editing' property to false for all users, as they cannot be being edited when the data is loaded
+					$users[$userId]['marks'] = $mark;
 				}
 			}
-
-			//pr($users); 
+			$userCount = count($users);
+			//pr($userCount); 
 			//exit;
 			
 			$status = 'success';
 		}
 		
-		$this->set(compact('users', 'status'));
-		$this->set('_serialize', ['users', 'status']);
+		$this->set(compact('users', 'userCount', 'status'));
+		$this->set('_serialize', ['users', 'userCount', 'status']);
     }
 	
     /**
