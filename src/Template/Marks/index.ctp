@@ -186,7 +186,9 @@
 								<img ng-src="img/smileys/frown-o.svg" ng-show="attempt.happiness == 1" />
 								<img ng-src="img/smileys/cry.svg" ng-show="attempt.happiness == 0" />
 							</div>
-							<hr class="marking-subsection" ng-hide="attempt.samplesHidden" />
+							<div class="col-xs-12">
+								<hr class="marking-subsection" ng-hide="attempt.samplesHidden" />
+							</div>
 						</div>
 						
 						<!-- Assays -->
@@ -240,7 +242,9 @@
 									</div>
 								</div>
 							</div>
-							<hr class="marking-subsection" ng-hide="attempt.assaysHidden" />
+							<div class="col-xs-12">
+								<hr class="marking-subsection" ng-hide="attempt.assaysHidden" />
+							</div>
 						</div>
 						
 						<!-- Reports -->
