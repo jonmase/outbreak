@@ -144,6 +144,11 @@
 						</h3>
 					</div>
 					<div class="panel-body" ng-class="{ 'hidden': attempt.hidden }">
+						<!-- Nothing -->
+						<div ng-if="!attempt.sampling">
+							No samples have been collected, assays performed or reports written for this attempt.
+						</div>
+					
 						<!-- Samples -->
 						<div class="row" ng-if="attempt.sampleCounts.total > 0">
 							<div class="col-lg-10 col-md-9 col-sm-8 col-xs-6">
@@ -181,8 +186,8 @@
 								<img ng-src="img/smileys/frown-o.svg" ng-show="attempt.happiness == 1" />
 								<img ng-src="img/smileys/cry.svg" ng-show="attempt.happiness == 0" />
 							</div>
+							<hr class="marking-subsection" ng-hide="attempt.samplesHidden" />
 						</div>
-						<hr class="marking-subsection" ng-hide="attempt.samplesHidden" />
 						
 						<!-- Assays -->
 						<div class="row" ng-if="attempt.assayCounts.total > 0">
@@ -235,8 +240,8 @@
 									</div>
 								</div>
 							</div>
+							<hr class="marking-subsection" ng-hide="attempt.assaysHidden" />
 						</div>
-						<hr class="marking-subsection" ng-hide="attempt.assaysHidden" />
 						
 						<!-- Reports -->
 						<div class="row" ng-if="attempt.reports.length > 0">
