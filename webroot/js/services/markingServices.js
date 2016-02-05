@@ -88,7 +88,7 @@
 				function(result) {
 					if(typeof(result.status) !== "undefined" && result.status === 'success') {
 						users[userId].marks.modified = result.marked_on;
-						users[userId].marks.marker.lti_lis_person_name_full = result.marker.lti_lis_person_name_full;
+						users[userId].marks.marker = result.marker;
 						users[userId].marked = 1;
 						users[userId].editing = 0;
 						deferred.resolve('Mark saved');
