@@ -12,8 +12,9 @@
 		vm.confirm = confirm;
 		
 		function confirm() {
-			console.log("Reloading page to update statuses");
-			$window.location.reload();
+			//console.log("Reloading page to update statuses");
+			//$window.location.reload();
+			 $uibModalInstance.close();
 		}
 	}
 })();

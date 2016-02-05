@@ -84,7 +84,7 @@
 				size: 'md',
 				backdrop: 'static',
 				//templateUrl: '../../partials/modals/error-modal.html',
-				template: '<div class="modal-header"><h4 class="modal-title">Locked</h4></div><div class="modal-body"><p>Sorry, this student has been locked for marking by someone else since you loaded the page. Please reload the page to see the current status of all the students.</p></div><div class="modal-footer"><div><button type="button" class="btn btn-primary" ng-click="MarkingLockedModalCtrl.confirm()">Refresh</button></div></div>',
+				template: '<div class="modal-header"><h4 class="modal-title">Locked</h4></div><div class="modal-body"><p>Sorry, this user has been locked for marking by someone else since you loaded the page. Please use the button below to refresh the list of users and update their current statuses.</p></div><div class="modal-footer"><div><button type="button" class="btn btn-primary" ng-click="MarkingLockedModalCtrl.confirm()">Refresh</button></div></div>',
 				controller: 'MarkingLockedModalController',
 				controllerAs: 'MarkingLockedModalCtrl',
 			};

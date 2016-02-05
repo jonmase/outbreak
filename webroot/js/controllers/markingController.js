@@ -93,9 +93,6 @@
 		];
 		vm.orderBy = 'lti_displayid';
 	
-
-
-		
 		//Bindable Members - methods
 		vm.hideUser = hideUser;
 		vm.markUser = markUser;
@@ -159,7 +156,8 @@
 			lockPromise.then(
 				function(result) {
 					console.log(result);
-					$window.location.reload();
+					//$window.location.reload();
+					reloadUsers();
 				}, 
 				function(reason) {
 					console.log("Error: " + reason);
@@ -174,12 +172,17 @@
 				function(result) {
 					console.log(result);
 					vm.status = 'mark';
-					vm.currentUser.editing = 1;
+					vm.currentUser.editing = true;
 				}, 
 				function(reason) {
 					console.log("Error: " + reason);
 					if(reason === 'locked') {
-						$uibModal.open(modalFactory.getMarkingLockedModalOptions());
+						var lockedModalInstance = $uibModal.open(modalFactory.getMarkingLockedModalOptions());
+						lockedModalInstance.result.then(
+							function () {
+								reloadUsers();
+							}
+						)
 					}
 					else {
 						$uibModal.open(modalFactory.getErrorModalOptions());
@@ -191,6 +194,24 @@
 		
 		function edit() {
 			lockUser();
+		}
+		
+		function reloadUsers() {
+			vm.status = 'loading';
+			vm.currentUser.editing = false;
+			var usersPromise = markingFactory.loadUsers();
+			usersPromise.then(
+				function(result) {
+					console.log(result);
+					vm.users = markingFactory.getUsers();
+					vm.userCount = markingFactory.getUserCount();
+					vm.status = 'index';
+				}, 
+				function(reason) {
+					console.log("Error: " + reason);
+					$uibModal.open(modalFactory.getErrorModalOptions());
+				}
+			);
 		}
 		
 		function save() {

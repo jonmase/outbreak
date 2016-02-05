@@ -1,31 +1,31 @@
 <div ng-app="flu.marking" class="col-xs-12">
 	<h2 class="page-title">Viral Outbreak - Marking</h2>
 	<div ng-controller="MarkingController as markingCtrl">
-		<div ng-show="markingCtrl.status === 'loading'">
-			<i class="fa fa-3x fa-circle-o-notch fa-spin"></i>&nbsp;
-			<span style="vertical-align: text-bottom; font-size: 1.8em;">Loading attempts for marking, please wait...</span>
+		<div class="filters row" ng-show="markingCtrl.status === 'index' || markingCtrl.status === 'loading'">
+			<div class="col-xs-6 col-sm-3">
+				<label for="status_filter">Submitted</label>
+				<select class="form-control" id="status_filter" name="status_filter" ng-model="markingCtrl.submitStatusToShow" ng-options="status as status.label for status in markingCtrl.submitStatusesForFilter"></select>
+			</div>
+			<div class="col-xs-6 col-sm-3">
+				<label for="status_filter">Marked</label>
+				<select class="form-control" id="status_filter" name="marked_filter" ng-model="markingCtrl.markStatusToShow" ng-options="status as status.label for status in markingCtrl.markStatusesForFilter"></select>
+			</div>
+			<div class="col-xs-6 col-sm-3">
+				<label for="role_filter">Roles</label>
+				<select class="form-control" id="role_filter" name="role_filter" ng-model="markingCtrl.roleToShow" ng-options="role as role.label for role in markingCtrl.rolesForFilter"></select>
+			</div>
+			<div class="col-xs-6 col-sm-3">
+				<label for="role_filter">Order By</label>
+				<select class="form-control" id="role_filter" name="role_filter" ng-model="markingCtrl.orderBy" ng-options="order.value as order.label for order in markingCtrl.orderOptions"></select>
+			</div>
 		</div>
 		
+		<div ng-show="markingCtrl.status === 'loading'">
+			<i class="fa fa-3x fa-circle-o-notch fa-spin"></i>&nbsp;
+			<span style="vertical-align: text-bottom; font-size: 1.8em;">Loading users for marking, please wait...</span>
+		</div>
+
 		<div ng-if="markingCtrl.status !== 'loading'" ng-show="markingCtrl.status === 'index'" ng-cloak> 
-			<div class="filters row">
-				<div class="col-xs-6 col-sm-3">
-					<label for="status_filter">Submitted</label>
-					<select class="form-control" id="status_filter" name="status_filter" ng-model="markingCtrl.submitStatusToShow" ng-options="status as status.label for status in markingCtrl.submitStatusesForFilter"></select>
-				</div>
-				<div class="col-xs-6 col-sm-3">
-					<label for="status_filter">Marked</label>
-					<select class="form-control" id="status_filter" name="marked_filter" ng-model="markingCtrl.markStatusToShow" ng-options="status as status.label for status in markingCtrl.markStatusesForFilter"></select>
-				</div>
-				<div class="col-xs-6 col-sm-3">
-					<label for="role_filter">Roles</label>
-					<select class="form-control" id="role_filter" name="role_filter" ng-model="markingCtrl.roleToShow" ng-options="role as role.label for role in markingCtrl.rolesForFilter"></select>
-				</div>
-				<div class="col-xs-6 col-sm-3">
-					<label for="role_filter">Order By</label>
-					<select class="form-control" id="role_filter" name="role_filter" ng-model="markingCtrl.orderBy" ng-options="order.value as order.label for order in markingCtrl.orderOptions"></select>
-				</div>
-			</div>
-			
 			<div>
 				Showing {{filteredUsers.length}} out of {{markingCtrl.userCount}} users.
 			</div>
