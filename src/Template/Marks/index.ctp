@@ -1,5 +1,8 @@
 <div ng-app="flu.marking" class="col-xs-12">
-	<h2 class="page-title">Viral Outbreak - Marking</h2>
+	<h2 class="page-title">
+		<div class="pull-right"><?= $this->Html->link('<i class="fa fa-arrow-left"></i>&nbsp; Back to Your Attempts', ['controller' => 'attempts', 'action' => 'index'], ['class' => 'btn btn-primary', 'role' => 'button', 'escape' => false]) ?></div>
+		Viral Outbreak - Marking
+	</h2>
 	<div ng-controller="MarkingController as markingCtrl">
 		<div class="filters row" ng-show="markingCtrl.status === 'index' || markingCtrl.status === 'loading'">
 			<div class="col-xs-6 col-sm-3">
@@ -41,6 +44,7 @@
 						<!--th>Last Submission</th-->
 						<th>Mark</th>
 						<th>Marked By</th>
+						<th>Resubmitted</th>
 						<th class="actions"><?= __('Actions') ?></th>
 					</tr>
 				</thead>
@@ -54,9 +58,13 @@
 						<!--td>{{user.last_submit | date: "d MMM yy 'at' H:mm" }}</td-->
 						<td>{{user.marks.mark}}</td>
 						<td>{{user.marks.marker.lti_lis_person_name_full}}</td>
+						<td>{{user.resubmitted?"Yes":""}}</td>
 						<td class="actions" style="font-size: 140%; padding: 4px 8px;">
-							<a href="" ng-click="markingCtrl.markUser(user.id)" ng-attr-title="{{user.marks.mark?'Edit Mark':'Mark'}}" ng-show="!user.marks.locked" ng-class="{grey: user.marks.mark}"><i class="fa fa-check"></i></a>
-							<i class="fa fa-lock grey not-allowed" title="Locked by {{user.marks.locker.lti_lis_person_name_full}}" ng-show="user.marks.locked"></i>
+							<!--a href="" ng-click="markingCtrl.markUser(user.id)" ng-attr-title="{{user.marks.mark?'Edit Mark':'Mark'}}" ng-show="!user.marks.locked" ng-class="{grey: user.marks.mark}"><i class="fa fa-check"></i></a>
+							<i class="fa fa-lock grey not-allowed" title="Locked by {{user.marks.locker.lti_lis_person_name_full}}" ng-show="user.marks.locked"></i-->
+							<button type="button" class="btn btn-success" ng-click="markingCtrl.markUser(user.id)" ng-show="!user.marks.locked && !user.marks.mark" title="Mark"><i class="fa fa-check"></i>&nbsp; Mark</button>
+							<button type="button" class="btn btn-warning" ng-click="markingCtrl.markUser(user.id)" ng-show="!user.marks.locked && user.marks.mark" title="View/Edit Mark"><i class="fa fa-pencil-square-o"></i>&nbsp; View/Edit Mark</button>
+							<button type="button" class="btn btn-default not-allowed" disabled title="Locked by {{user.marks.locker.lti_lis_person_name_full}}" ng-show="user.marks.locked"><i class="fa fa-lock"></i>&nbsp; Locked</button>
 							<!--a href="" ng-click="markingCtrl.hideUser(user.id)" title="Hide"><i class="fa fa-eye-slash"></i></a>
 							<a href="" ng-click="markingCtrl.showUser(user.id)" title="Show"><i class="fa fa-eye"></i></a-->
 						</td>
@@ -115,7 +123,7 @@
 							</tr>
 							<tr ng-show="markingCtrl.currentUser.marked">
 								<th><span ng-show="markingCtrl.currentUser.editing">Last </span>Marked On:</th>
-								<td>{{markingCtrl.currentUser.marks.modified | date: "d MMM yy 'at' H:mm"}}</td>
+								<td>{{markingCtrl.currentUser.marks.created | date: "d MMM yy 'at' H:mm"}}</td>
 							</tr>
 							<tr>
 								<th></th>
@@ -133,14 +141,14 @@
 			</div>
 			
 			<div class="col-xs-12 col-md-8 col-lg-9">
-				<div ng-repeat="attempt in markingCtrl.currentUser.attempts" class="panel" ng-class="{ 'panel-success':attempt.report, 'panel-default':!attempt.report }">
+				<div ng-repeat="attempt in markingCtrl.currentUser.attempts" class="panel" ng-class="{ 'panel-success':attempt.reports.length > 0, 'panel-default':attempt.reports.length === 0 }">
 					<div class="panel-heading" ng-class="{ 'no-bottom-border': attempt.hidden }">
 						<h3 class="panel-title">
 							<div class="pull-right marking-showhide">
 								<a href="" ng-click="attempt.hidden = false" ng-show="attempt.hidden"><i class="fa fa-chevron-down"></i> Show</a>
 								<a href="" ng-click="attempt.hidden = true" ng-show="!attempt.hidden"><i class="fa fa-chevron-up"></i> Hide</a>
 							</div>
-							Attempt {{attempt.id}} - {{attempt.report?"Submitted on ":"Not Submitted"}}{{(attempt.report?attempt.reports[0].modified:null) | date: "d MMM yy 'at' H:mm"}} - Last modified on {{attempt.modified | date: "d MMM yy 'at' H:mm"}}
+							Attempt {{attempt.id}} - {{attempt.reports.length > 0?"Submitted on ":"Not Submitted"}}{{(attempt.reports.length > 0?attempt.reports[0].modified:null) | date: "d MMM yy 'at' H:mm"}}<!-- - Last modified on {{attempt.modified | date: "d MMM yy 'at' H:mm"}}-->
 						</h3>
 					</div>
 					<div class="panel-body" ng-class="{ 'hidden': attempt.hidden }">

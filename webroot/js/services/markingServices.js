@@ -87,7 +87,7 @@
 			ReportCall.save({}, {userId: userId, data: mark},
 				function(result) {
 					if(typeof(result.status) !== "undefined" && result.status === 'success') {
-						users[userId].marks.modified = result.marked_on;
+						users[userId].marks.created = result.marked_on;
 						users[userId].marks.marker = result.marker;
 						users[userId].marked = 1;
 						users[userId].editing = 0;

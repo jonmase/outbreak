@@ -39,7 +39,7 @@ class MarksController extends AppController
 					'Reports' => function ($q) {
 					   return $q
 							->select(['id', 'type', 'attempt_id', 'modified'])
-							->where(['Reports.type' => 'submit'])
+							->where(['Reports.type' => 'submit', 'Reports.revision' => 0])
 							->contain(['ReportsSections' => ['Sections']])
 							->order(['Reports.modified' => 'DESC']);
 					},
@@ -215,6 +215,19 @@ class MarksController extends AppController
 					}
 					$users[$userId]['editing'] = false;	//Set 'editing' property to false for all users, as they cannot be being edited when the data is loaded
 					$users[$userId]['marks'] = $mark;
+					
+					//If user failed, check whether they have resubmitted since being failed
+					$users[$userId]['resubmitted'] = false;
+					if($mark->mark === 'Fail') {
+						foreach($users[$userId]['attempts'] as $attempt) {
+							//pr($attempt);
+							if(!empty($attempt['reports'])) {
+								if($attempt['reports'][0]['modified'] > $mark->created) {
+									$users[$userId]['resubmitted'] = true;
+								}
+							}
+						}
+					}
 				}
 			}
 			$userCount = count($users);
@@ -264,26 +277,27 @@ class MarksController extends AppController
 			$session = $this->request->session();	//Set Session to variable
 			//pr($this->request->data);
 			
-			$data = $this->request->data['data'];
-			$ltiResourceId = $session->read('LtiResource.id');
-			$markerId = $this->Auth->user('id');
-			
 			$user = $this->Marks->LtiUsers->get($this->request->data['userId']);
-			$marker = $this->Marks->LtiUsers->get($markerId);
-			$this->set('marker', $marker);
 			
-			$this->infolog("Mark Save attempted. User: " . $user->id . "; Lti Resource ID: " . $ltiResourceId . "; Marker: " . $markerId . "; data: " . serialize($data));
-			
-			//Get the latest mark for this resource and user
-			$markQuery = $this->Marks->find('all', [
-				'conditions' => ['Marks.lti_resource_id' => $ltiResourceId, 'Marks.lti_user_id' => $user->id, 'Marks.revision' => 0],
-				'order' => ['modified' => 'DESC'],
-			]);
-			$lastMark = $markQuery->first();
-			//pr($lastMark);
-		
 			//Make sure we have a user ID and the marker is an instructor
 			if(!empty($user) && $session->read('User.role') === "Instructor") {
+				$data = $this->request->data['data'];
+				$ltiResourceId = $session->read('LtiResource.id');
+				$markerId = $this->Auth->user('id');
+				
+				$marker = $this->Marks->LtiUsers->get($markerId);
+				$this->set('marker', $marker);
+				
+				$this->infolog("Mark Save attempted. User: " . $user->id . "; Lti Resource ID: " . $ltiResourceId . "; Marker: " . $markerId . "; data: " . serialize($data));
+				
+				//Get the latest mark for this resource and user
+				$markQuery = $this->Marks->find('all', [
+					'conditions' => ['Marks.lti_resource_id' => $ltiResourceId, 'Marks.lti_user_id' => $user->id, 'Marks.revision' => 0],
+					'order' => ['modified' => 'DESC'],
+				]);
+				$lastMark = $markQuery->first();
+				//pr($lastMark);
+		
 				//Make sure the last mark is either not locked, locked by this marker, or locked > 1 hour ago
 				if(!$lastMark['locked'] || $lastMark['locker_id'] === $markerId || !$lastMark['locked']->wasWithinLast('1 hour')) {
 					if($type === 'save' && !$markQuery->isEmpty()) {
@@ -340,16 +354,42 @@ class MarksController extends AppController
 							$this->infolog("Mark Save failed (old mark). User: " . $user->id . "; Lti Resource ID: " . $ltiResourceId);
 							return false;
 						}
+						//If we are saving a failure, reopen the reports for this user's attempts
+						if($type === 'save' && $markData->mark === 'Fail') {
+							//Get the attempts for this user where the report has been submitted
+							$attemptsQuery = $this->Marks->LtiResources->Attempts->find('all', [
+								'conditions' => ['lti_resource_id' => $ltiResourceId, 'lti_user_id' => $user->id, 'report' => 1],
+								'contain' => [
+									'Reports' => function ($q) {
+									   return $q
+											->select(['id', 'type', 'attempt_id', 'revision', 'modified'])
+											->where(['Reports.type' => 'submit', 'Reports.revision' => 0]);
+									},
+								],
+							]);
+							$attempts = $attemptsQuery->all();
+
+							foreach($attempts as $attempt) {
+								list($status, $logMessage) = $this->Marks->LtiResources->Attempts->Reports->reopen($attempt->id);
+								$this->infolog($logMessage);
+								if($status === 'failed') {
+									$this->infolog("Mark Save failed (error reopening reports). User: " . $user->id . "; Lti Resource ID: " . $ltiResourceId);
+									return false;
+								}
+							}
+						}
+						
 						$this->set('status', 'success');
 						
 						$this->infolog("Mark Save succeeded. User: " . $user->id . "; Lti Resource ID: " . $ltiResourceId);
 						if($type === 'save') {
 							$email = new Email('smtp');
-							$email->from(['msdlt@medsci.ox.ac.uk' => 'Dr Kenny Moore'])
-								->to('jon.mason@medsci.ox.ac.uk')	//$user->lti_lis_person_contact_email_primary
+							$email->from(['msdlt@medsci.ox.ac.uk' => 'Kenny Moore'])
+								//->to('jon.mason@medsci.ox.ac.uk')	
+								->to($user->lti_lis_person_contact_email_primary)
 								->subject('Viral Outbreak iCase Report Marked')
 								->emailFormat('html')
-								->send('<p>Dear student,</p><p>Your Viral Outbreak iCase report has been marked. To view your mark, please <a href="https://weblearn.ox.ac.uk/access/basiclti/site/8dd25ab4-a0ca-4e16-0073-d2a9667b58ce/content:122">go to the iCase</a> (<a href="https://weblearn.ox.ac.uk/access/basiclti/site/8dd25ab4-a0ca-4e16-0073-d2a9667b58ce/content:122">https://weblearn.ox.ac.uk/access/basiclti/site/8dd25ab4-a0ca-4e16-0073-d2a9667b58ce/content:122</a>).</p><p>If you have not passed, you will need to read the marker\'s comments and deal with any issues raised.</p><p>If you have not yet looked at the extension material in the "Grant Funded Research" section of the iCase, we recommend that you do so.</p><p>If you have not given your feedback on this iCase, we would be very grateful if you could do so, here: <a href="https://learntech.imsu.ox.ac.uk/feedback/showsurvey.php?surveyInstanceID=501">https://learntech.imsu.ox.ac.uk/feedback/showsurvey.php?surveyInstanceID=501</a>.</p><p>Best wishes,</p><p>Kenny Moore</p>');
+								->send('<div style="font-family: Verdana, Tahoma, sans-serif; font-size: 12px;"<p>Dear student,</p><p>Your Viral Outbreak iCase report has been marked. To view your mark, please <a href="https://weblearn.ox.ac.uk/access/basiclti/site/8dd25ab4-a0ca-4e16-0073-d2a9667b58ce/content:122">go to the iCase</a> (<a href="https://weblearn.ox.ac.uk/access/basiclti/site/8dd25ab4-a0ca-4e16-0073-d2a9667b58ce/content:122">https://weblearn.ox.ac.uk/access/basiclti/site/8dd25ab4-a0ca-4e16-0073-d2a9667b58ce/content:122</a>).</p><p>If you have not passed, you will need to read the marker\'s comments and deal with any issues raised, then resubmit your report.</p><p>If you have not yet looked at the extension material in the "Grant Funded Research" section of the iCase, we recommend that you do so.</p><p>If you have not given your feedback on this iCase, we would be very grateful if you could do so, here: <a href="https://learntech.imsu.ox.ac.uk/feedback/showsurvey.php?surveyInstanceID=501">https://learntech.imsu.ox.ac.uk/feedback/showsurvey.php?surveyInstanceID=501</a>.</p><p>Best wishes,</p><p>Kenny Moore</p></div>');
 						}
 					});
 				}

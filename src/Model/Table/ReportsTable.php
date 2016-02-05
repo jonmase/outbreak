@@ -79,4 +79,32 @@ class ReportsTable extends Table
         $rules->add($rules->existsIn(['attempt_id'], 'Attempts'));
         return $rules;
     }
+	
+	public function reopen($attemptId) {
+		$reportQuery = $this->find('all', [
+			'conditions' => ['Reports.attempt_id' => $attemptId, 'Reports.type' => 'submit', 'Reports.revision' => 0],
+			'order' => ['created' => 'DESC'],
+		]);
+		$lastSavedReport = $reportQuery->first();
+		if($reportQuery->isEmpty()) {
+			$status = "Report not submitted, so can't reopen";
+			$logMessage = "Report Reopen rejected - report not submitted. Attempt: " . $attemptId;
+		}
+		else {
+			$reportData = $lastSavedReport;
+			
+			$reportData->attempt_id = $attemptId;
+			$reportData->revision = false;
+			$reportData->type = 'reopen';
+			
+			if(!$this->save($reportData)) {
+				$status = 'failed';
+				$logMessage = "Report Reopen failed. Attempt: " . $attemptId;
+				return false;
+			}
+			$status = 'success';
+			$logMessage = "Report Reopen succeeded. Attempt: " . $attemptId;
+		}
+		return array($status, $logMessage);
+	}
 }
