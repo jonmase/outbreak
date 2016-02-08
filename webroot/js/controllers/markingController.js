@@ -45,37 +45,10 @@
 		];
 		vm.submitStatusToShow = vm.submitStatusesForFilter[2];
 		
-		/*vm.markOptions = [
-			{
-				value: 'plus',
-				label: 'Satis plus',
-			},
-			{
-				value: 'satis',
-				label: 'Satis',
-			},
-			{
-				value: 'fail',
-				label: 'Fail',
-			},
-		];*/
-		vm.markOptions = ['Satis plus', 'Satis', 'Fail',];
-		
-		vm.markStatusesForFilter = [
-			{
-				value: 1,
-				label: 'Marked',
-			},
-			{
-				value: 0,
-				label: 'Not Marked',
-			},
-			{
-				value: -1,
-				label: 'Both',
-			},
-		];
-		vm.markStatusToShow = vm.markStatusesForFilter[2];
+		vm.markOptions = ['Satis plus', 'Satis', 'Fail'];
+		vm.markOptionsForFilter = vm.markOptions;
+		vm.markOptionsForFilter.unshift('All', 'Unmarked', 'Marked');
+		vm.markToShow = vm.markOptionsForFilter[0];
 		
 		vm.orderOptions = [
 			{

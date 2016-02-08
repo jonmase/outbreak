@@ -2,7 +2,7 @@
 	angular.module('flu.filters', [])
 		.filter('assayedSampleFilter', assayedSampleFilter)
 		.filter('lineBreaksFilter', lineBreaksFilter)
-		.filter('markedFilter', markedFilter)
+		.filter('markFilter', markFilter)
 		.filter('submittedFilter', submittedFilter)
 		.filter('subobjectFilter', subobjectFilter)
 		.filter('toArray', toArray)
@@ -29,18 +29,21 @@
 		}
 	}
 
-	//Custom filter for filtering attempts on whether they have been submitted
-	function markedFilter() {
-		return function(users, statusToShow) { 
+	//Custom filter for filtering attempts on the mark
+	function markFilter() {
+		return function(users, markToShow) { 
 			users = users.filter(function(user){
-				if(statusToShow.value === 1) {
-					return user.marked;
+				if(markToShow === 'All') {
+					return true;
 				}
-				else if(statusToShow.value === 0) {
-					return !user.marked;
+				if(markToShow === 'Unmarked') {
+					return !user.marks.mark;
+				}
+				if(markToShow === 'Marked') {
+					return user.marks.mark;
 				}
 				else {
-					return true;
+					return user.marks.mark === markToShow;
 				}
 			});
 

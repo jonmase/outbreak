@@ -6,16 +6,16 @@
 	<div ng-controller="MarkingController as markingCtrl">
 		<div class="filters row" ng-show="markingCtrl.status === 'index' || markingCtrl.status === 'loading'">
 			<div class="col-xs-6 col-sm-3">
-				<label for="status_filter">Submitted</label>
-				<select class="form-control" id="status_filter" name="status_filter" ng-model="markingCtrl.submitStatusToShow" ng-options="status as status.label for status in markingCtrl.submitStatusesForFilter"></select>
-			</div>
-			<div class="col-xs-6 col-sm-3">
-				<label for="status_filter">Marked</label>
-				<select class="form-control" id="status_filter" name="marked_filter" ng-model="markingCtrl.markStatusToShow" ng-options="status as status.label for status in markingCtrl.markStatusesForFilter"></select>
-			</div>
-			<div class="col-xs-6 col-sm-3">
 				<label for="role_filter">Roles</label>
 				<select class="form-control" id="role_filter" name="role_filter" ng-model="markingCtrl.roleToShow" ng-options="role as role.label for role in markingCtrl.rolesForFilter"></select>
+			</div>
+			<div class="col-xs-6 col-sm-3">
+				<label for="status_filter">Submitted</label>
+				<select class="form-control" id="status_filter" name="status_filter" ng-model="markingCtrl.submitStatusToShow" ng-options="submitted as submitted.label for submitted in markingCtrl.submitStatusesForFilter"></select>
+			</div>
+			<div class="col-xs-6 col-sm-3">
+				<label for="status_filter">Mark</label>
+				<select class="form-control" id="mark_filter" name="mark_filter" ng-model="markingCtrl.markToShow" ng-options="mark for mark in markingCtrl.markOptions"></select>
 			</div>
 			<div class="col-xs-6 col-sm-3">
 				<label for="role_filter">Order By</label>
@@ -49,7 +49,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr ng-repeat="(userId, user) in filteredUsers = (markingCtrl.users | toArray | filter: { most_recent_role: markingCtrl.roleToShow.value } | submittedFilter: markingCtrl.submitStatusToShow | markedFilter: markingCtrl.markStatusToShow | orderBy: markingCtrl.orderBy)">
+					<tr ng-repeat="(userId, user) in filteredUsers = (markingCtrl.users | toArray | filter: { most_recent_role: markingCtrl.roleToShow.value } | submittedFilter: markingCtrl.submitStatusToShow | markFilter: markingCtrl.markToShow | orderBy: markingCtrl.orderBy)">
 						<td>{{user.lti_displayid}}</td>
 						<td>{{user.lti_lis_person_name_full}}</td>
 						<td>{{user.most_recent_role}}</td>
