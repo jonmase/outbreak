@@ -382,7 +382,9 @@ class MarksController extends AppController
 						$this->set('status', 'success');
 						
 						$this->infolog("Mark Save succeeded. User: " . $user->id . "; Lti Resource ID: " . $ltiResourceId);
-						if($type === 'save') {
+						
+						//Send email to user notifiying that their attempt has been marked
+						/*if($type === 'save') {
 							$email = new Email('smtp');
 							$email->from(['msdlt@medsci.ox.ac.uk' => 'Kenny Moore'])
 								//->to('jon.mason@medsci.ox.ac.uk')	
@@ -390,7 +392,7 @@ class MarksController extends AppController
 								->subject('Viral Outbreak iCase Report Marked')
 								->emailFormat('html')
 								->send('<div style="font-family: Verdana, Tahoma, sans-serif; font-size: 12px;"<p>Dear student,</p><p>Your Viral Outbreak iCase report has been marked. To view your mark, please <a href="https://weblearn.ox.ac.uk/access/basiclti/site/8dd25ab4-a0ca-4e16-0073-d2a9667b58ce/content:122">go to the iCase</a> (<a href="https://weblearn.ox.ac.uk/access/basiclti/site/8dd25ab4-a0ca-4e16-0073-d2a9667b58ce/content:122">https://weblearn.ox.ac.uk/access/basiclti/site/8dd25ab4-a0ca-4e16-0073-d2a9667b58ce/content:122</a>).</p><p>If you have not passed, you will need to read the marker\'s comments and deal with any issues raised, then resubmit your report.</p><p>If you have not yet looked at the extension material in the "Grant Funded Research" section of the iCase, we recommend that you do so.</p><p>If you have not given your feedback on this iCase, we would be very grateful if you could do so, here: <a href="https://learntech.imsu.ox.ac.uk/feedback/showsurvey.php?surveyInstanceID=501">https://learntech.imsu.ox.ac.uk/feedback/showsurvey.php?surveyInstanceID=501</a>.</p><p>Best wishes,</p><p>Kenny Moore</p></div>');
-						}
+						}*/
 					});
 				}
 				else {
