@@ -22,7 +22,7 @@
 					<p>You will need to some further work in order to pass. Please refer to the comments above for guidance on what you need to do. Unless specifically requested to do so, do not start again, simply modify your current attempt. Once you have finished, please resubmit your report, and it will then be remarked.</p> 
 				<?php else: ?>
 					<p>If you have not already filled in the feedback survey on this iCase, we would be very grateful if you could do so here: <a href="https://learntech.imsu.ox.ac.uk/feedback/showsurvey.php?surveyInstanceID=501" target="_blank">https://learntech.imsu.ox.ac.uk/feedback/showsurvey.php?surveyInstanceID=501</a></p>
-					<p>You can come back to the iCase at any point to review the revision material, etc. If you have not yet looked at the additional information in the Grant Funded Research section, we would recommend that you do so.</p>
+					<p>You can come back to the iCase at any point to review the revision material, etc. If you have not yet looked at the additional information in the Grant Funded Research section, we recommend that you do so.</p>
 				<?php endif; ?>
 			</div>
 		<?php endif; ?>

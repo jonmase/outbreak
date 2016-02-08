@@ -1,9 +1,9 @@
 <div ng-app="flu.marking" class="col-xs-12">
-	<h2 class="page-title">
-		<div class="pull-right"><?= $this->Html->link('<i class="fa fa-arrow-left"></i>&nbsp; Back to Your Attempts', ['controller' => 'attempts', 'action' => 'index'], ['class' => 'btn btn-primary', 'role' => 'button', 'escape' => false]) ?></div>
-		Viral Outbreak - Marking
-	</h2>
 	<div ng-controller="MarkingController as markingCtrl">
+		<h2 class="page-title">
+			<div class="pull-right" ng-show="markingCtrl.status === 'index' || markingCtrl.status === 'loading'"><?= $this->Html->link('<i class="fa fa-arrow-left"></i>&nbsp; Back to Your Attempts', ['controller' => 'attempts', 'action' => 'index'], ['class' => 'btn btn-primary', 'role' => 'button', 'escape' => false]) ?></div>
+			Viral Outbreak - Marking
+		</h2>
 		<div class="filters row" ng-show="markingCtrl.status === 'index' || markingCtrl.status === 'loading'">
 			<div class="col-xs-6 col-sm-3">
 				<label for="role_filter">Roles</label>
