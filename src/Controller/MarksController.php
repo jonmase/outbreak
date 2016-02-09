@@ -13,7 +13,7 @@ use Cake\Mailer\Email;
 class MarksController extends AppController
 {
 
-    public function load()
+    public function loadUsers()
     {
 		//Check user is an Instructor
 		$session = $this->request->session();	//Set Session to variable
@@ -27,7 +27,7 @@ class MarksController extends AppController
 			//Get through attempts, and then post-process
 			$ltiResourceId = $session->read('LtiResource.id');
 			
-			$users = $this->Marks->getUsers($ltiResourceId);
+			$users = $this->Marks->getUsersForMarking($ltiResourceId, $this->Auth->user('id'));
 			$userCount = count($users);
 			
 			$status = 'success';
@@ -35,6 +35,29 @@ class MarksController extends AppController
 		
 		$this->set(compact('users', 'userCount', 'status'));
 		$this->set('_serialize', ['users', 'userCount', 'status']);
+    }
+	
+    public function loadUserAttempts($userId)
+    {
+		//Check user is an Instructor
+		$session = $this->request->session();	//Set Session to variable
+		if($session->read('User.role') !== "Instructor") {
+			$status = 'denied';
+			$this->infolog("User Attempts Load denied (not Instructor)");
+		}
+		else {
+			//Get all of the user's who have attempts for this resource
+			//Include learners (students) and instructors, but only show students initially
+			//Get through attempts, and then post-process
+			$ltiResourceId = $session->read('LtiResource.id');
+			
+			$attempts = $this->Marks->getUserAttempts($ltiResourceId, $userId);
+			$status = 'success';
+		}
+		//pr($attempts); exit;
+		
+		$this->set(compact('attempts', 'status'));
+		$this->set('_serialize', ['attempts', 'status']);
     }
 	
     /**
@@ -202,7 +225,7 @@ class MarksController extends AppController
 		}
 		$ltiResourceId = $session->read('LtiResource.id');
 		
-		$users = $this->Marks->getUsers($ltiResourceId);
+		$users = $this->Marks->getUsersForMarking($ltiResourceId, $this->Auth->user('id'));
 		$userStartedCount = count($users);
 		$usersSubmittedCount = 0;
 		$usersMarkedCount = 0;
@@ -218,6 +241,5 @@ class MarksController extends AppController
 		
 		$this->set(compact('users', 'userStartedCount', 'usersSubmittedCount', 'usersMarkedCount'));
 		$this->viewBuilder()->layout('ajax');
-
 	}
 }

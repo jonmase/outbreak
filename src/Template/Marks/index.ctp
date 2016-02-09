@@ -28,7 +28,7 @@
 			<span style="vertical-align: text-bottom; font-size: 1.8em;">Loading users for marking, please wait...</span>
 		</div>
 
-		<div ng-if="markingCtrl.status !== 'loading'" ng-show="markingCtrl.status === 'index'" ng-cloak> 
+		<div ng-if="markingCtrl.status === 'index'" ng-cloak> 
 			<div>
 				Showing {{filteredUsers.length}} out of {{markingCtrl.userCount}} users.
 				<div class="pull-right download-button"><?= $this->Html->link('<i class="fa fa-arrow-circle-down"></i>&nbsp; Download All', ['controller' => 'marks', 'action' => 'download'], ['class' => 'btn btn-primary', 'role' => 'button', 'escape' => false]) ?></div> &nbsp; 
@@ -75,7 +75,7 @@
 			</table>
 		</div>
 		
-		<div ng-show="markingCtrl.status === 'mark'" ng-cloak class="row">
+		<div ng-if="markingCtrl.status === 'mark'" ng-cloak class="row">
 			<div class="col-xs-12 col-md-4 col-lg-3">
 				<div id="marking-info" role="complementary" data-offset-top="62" bs-affix>
 					<button type="button" class="btn btn-primary" ng-click="markingCtrl.cancel()"><i class="fa fa-arrow-left"></i>&nbsp; Back to List</button>

@@ -110,17 +110,31 @@
 		}
 		
 		function markUser(userId) {
-			vm.currentUserId = userId;
-			vm.currentUser = vm.users[vm.currentUserId];		
-			//If user has not been marked, lock them and then go to the marking interface
-			if(!vm.currentUser.marked) {
-				lockUser();
+			if(!vm.users[userId].marked) {
+				var lockPromise = markingFactory.setLock(userId, true);
 			}
-			//If user has already been marked, just take them to the marking interface
 			else {
-				vm.status = 'mark';
+				lockPromise = true;
 			}
-			document.body.scrollTop = 0;
+			var usersPromise = markingFactory.loadUserAttempts(userId);
+			
+			$q.all([lockPromise, usersPromise]).then(
+				function(result) {
+					console.log(result);
+					vm.currentUserId = userId;
+					vm.currentUser = vm.users[vm.currentUserId];
+					
+					if(!vm.users[userId].marked) {
+						vm.currentUser.editing = true;
+					}
+					vm.status = 'mark';
+					document.body.scrollTop = 0;
+				}, 
+				function(reason) {
+					console.log("Error: " + reason);
+					$uibModal.open(modalFactory.getErrorModalOptions());
+				}
+			);
 		}
 		
 		function cancel() {
@@ -129,7 +143,6 @@
 			lockPromise.then(
 				function(result) {
 					console.log(result);
-					//$window.location.reload();
 					reloadUsers();
 				}, 
 				function(reason) {
@@ -139,7 +152,7 @@
 			);
 		}
 		
-		function lockUser() {
+		function edit() {
 			var lockPromise = markingFactory.setLock(vm.currentUserId, true);
 			lockPromise.then(
 				function(result) {
@@ -162,11 +175,6 @@
 					}
 				}
 			);
-
-		}
-		
-		function edit() {
-			lockUser();
 		}
 		
 		function reloadUsers() {

@@ -94,20 +94,20 @@ class MarksTable extends Table
         return $rules;
     }
 	
-	public function getUsers($ltiResourceId) {
+	public function getUsersForMarking($ltiResourceId, $loggedInUserId) {
 		$attemptsQuery = $this->LtiResources->Attempts->find('all', [
 			'conditions' => ['lti_resource_id' => $ltiResourceId],
 			'order' => ['LtiUsers.lti_displayid' => 'ASC'],
 			'contain' => [
 				'LtiUsers', 
-				'Samples',
-				'Assays',
-				'StandardAssays',
+				//'Samples',
+				//'Assays',
+				//'StandardAssays',
 				'Reports' => function ($q) {
 				   return $q
 						->select(['id', 'type', 'attempt_id', 'modified'])
 						->where(['Reports.type' => 'submit', 'Reports.revision' => 0])
-						->contain(['ReportsSections' => ['Sections']])
+						//->contain(['ReportsSections' => ['Sections']])
 						->order(['Reports.modified' => 'DESC']);
 				},
 			],
@@ -147,13 +147,86 @@ class MarksTable extends Table
 				if(!$users[$userId]['last_submit'] || $attempt['reports'][0]['modified'] > $users[$userId]['last_submit']) {
 					$users[$userId]['last_submit'] = $attempt['reports'][0]['modified'];
 				}
-				$attempt['hidden'] = false;
 			}
-			else {
-				$attempt['hidden'] = true;
+		}
+		
+		//Get all the marks
+		$marksQuery = $this->find('all', [
+			'conditions' => ['lti_resource_id' => $ltiResourceId, 'revision' => 0],
+			'order' => ['Marks.created' => 'DESC'],
+			'contain' => ['Marker', 'Locker'],
+		]);
+		$marks = $marksQuery->all();
+		
+		foreach($marks as $mark) {
+			//Should never have more than one result for a particular user, but just check that we haven't already got this user
+			$userId = $mark['lti_user_id'];
+			if(empty($users[$userId]['marks'])) {
+				//If user is locked but it is either too long ago or by this user, then unlock them
+				if($mark->locked && (!$mark->locked->wasWithinLast('1 hour') || $mark->locker_id === $loggedInUserId)) {
+					$mark->locked = null;
+					$mark->locker_id = null;
+					$mark->locker = null;
+				}
+				
+				//If user has been marked, set the 'marked' property to true
+				$users[$userId]['marks'] = $mark;
+				if($mark->mark) {
+					$users[$userId]['marked'] = true;
+					
+					//If user failed, check whether they have resubmitted since being failed
+					$users[$userId]['resubmitted'] = false;
+					if($mark->mark === 'Fail') {
+						foreach($users[$userId]['attempts'] as $attempt) {
+							//pr($attempt);
+							if(!empty($attempt['reports'])) {
+								if($attempt['reports'][0]['modified'] > $mark->created) {
+									$users[$userId]['resubmitted'] = true;
+								}
+							}
+						}
+					}
+				}
+				else {
+					$users[$userId]['marked'] = false;
+				}
+				$users[$userId]['editing'] = false;	//Set 'editing' property to false for all users, as they cannot be being edited when the data is loaded
+				
 			}
-			$attempt['reportHidden'] = false;
-			
+		}
+		return $users;
+	}
+	
+	public function getUserAttempts($ltiResourceId, $userId) {
+		$attemptsQuery = $this->LtiResources->Attempts->find('all', [
+			'conditions' => ['lti_resource_id' => $ltiResourceId, 'lti_user_id' => $userId],
+			//'order' => ['LtiUsers.lti_displayid' => 'ASC'],
+			'contain' => [
+				'Samples',
+				'Assays',
+				'StandardAssays',
+				'Reports' => function ($q) {
+				   return $q
+						->select(['id', 'type', 'attempt_id', 'modified'])
+						->where(['Reports.type' => 'submit', 'Reports.revision' => 0])
+						->contain(['ReportsSections' => ['Sections']])
+						->order(['Reports.modified' => 'DESC']);
+				},
+			],
+		]);
+		$attempts = $attemptsQuery->all()->toArray();
+		
+		$techniquesQuery = $this->LtiResources->Attempts->Assays->Techniques->find('all', [
+			'conditions' => ['lab' => 1],
+			'fields' => ['id', 'code', 'time', 'money'],
+		]);
+		$techniquesRaw = $techniquesQuery->toArray();
+		$techniques = [];
+		foreach($techniquesRaw as $technique) {
+			$techniques[$technique['id']] = $technique;
+		}
+		
+		foreach($attempts as $attempt) {
 			//Process samples
 			$samples = [];
 			$sampleCounts = [
@@ -240,52 +313,19 @@ class MarksTable extends Table
 			$attempt['assaysHidden'] = false;
 			
 			$attempt['timeSpent'] = 48 - $attempt['time'];
-		}
-		
-		//Get all the marks
-		$marksQuery = $this->find('all', [
-			'conditions' => ['lti_resource_id' => $ltiResourceId, 'revision' => 0],
-			'order' => ['Marks.created' => 'DESC'],
-			'contain' => ['Marker', 'Locker'],
-		]);
-		$marks = $marksQuery->all();
-		
-		foreach($marks as $mark) {
-			//Should never have more than one result for a particular user, but just check that we haven't already got this user
-			$userId = $mark['lti_user_id'];
-			if(empty($users[$userId]['marks'])) {
-				//If user is locked but it is either too long ago or by this user, then unlock them
-				if($mark->locked && (!$mark->locked->wasWithinLast('1 hour') || $mark->locker_id === $this->Auth->user('id'))) {
-					$mark->locked = null;
-					$mark->locker_id = null;
-					$mark->locker = null;
-				}
-				
-				//If user has been marked, set the 'marked' property to true
-				$users[$userId]['marks'] = $mark;
-				if($mark->mark) {
-					$users[$userId]['marked'] = true;
-					
-					//If user failed, check whether they have resubmitted since being failed
-					$users[$userId]['resubmitted'] = false;
-					if($mark->mark === 'Fail') {
-						foreach($users[$userId]['attempts'] as $attempt) {
-							//pr($attempt);
-							if(!empty($attempt['reports'])) {
-								if($attempt['reports'][0]['modified'] > $mark->created) {
-									$users[$userId]['resubmitted'] = true;
-								}
-							}
-						}
-					}
-				}
-				else {
-					$users[$userId]['marked'] = false;
-				}
-				$users[$userId]['editing'] = false;	//Set 'editing' property to false for all users, as they cannot be being edited when the data is loaded
-				
+			
+			//Work out whether the attempt should be shown or not
+			if(!empty($attempt['reports'])) {
+				$attempt['hidden'] = false;
 			}
+			else {
+				$attempt['hidden'] = true;
+			}
+			//Alsways show reports by default
+			$attempt['reportHidden'] = false;
 		}
-		return $users;
+		
+		return $attempts;
 	}
+
 }

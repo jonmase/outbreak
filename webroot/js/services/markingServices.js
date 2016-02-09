@@ -15,6 +15,7 @@
 			getUserCount: getUserCount,
 			getUsers: getUsers,
 			loadUsers: loadUsers,
+			loadUserAttempts: loadUserAttempts,
 			save: save,
 			setLock: setLock,
 		}
@@ -34,7 +35,7 @@
 		
 		function loadUsers() {
 			var deferred = $q.defer();
-			var UsersCall = $resource('marks/load.json', {});
+			var UsersCall = $resource('marks/loadUsers.json', {});
 			UsersCall.get({},
 				function(result) {
 					if(typeof(result.status) !== "undefined" && result.status === 'success') {
@@ -48,6 +49,26 @@
 				},
 				function(result) {
 					deferred.reject('Marks load error (' + result.status + ')');
+				}
+			);
+			return deferred.promise;
+		}
+		
+		function loadUserAttempts(userId) {
+			var deferred = $q.defer();
+			var UsersCall = $resource('marks/loadUserAttempts/:userId.json', {userId: null});
+			UsersCall.get({userId: userId},
+				function(result) {
+					if(typeof(result.status) !== "undefined" && result.status === 'success') {
+						users[userId]['attempts'] = result.attempts;
+						deferred.resolve('Attempts loaded for user ID: ' + userId);
+					}
+					else {
+						deferred.reject('Marks load failed for user ID: ' + userId + ' (' + result.status + ')');
+					}
+				},
+				function(result) {
+					deferred.reject('Marks load error for user ID: ' + userId + ' (' + result.status + ')');
 				}
 			);
 			return deferred.promise;
