@@ -31,6 +31,8 @@
 		<div ng-if="markingCtrl.status !== 'loading'" ng-show="markingCtrl.status === 'index'" ng-cloak> 
 			<div>
 				Showing {{filteredUsers.length}} out of {{markingCtrl.userCount}} users.
+				<div class="pull-right download-button"><?= $this->Html->link('<i class="fa fa-arrow-circle-down"></i>&nbsp; Download All', ['controller' => 'marks', 'action' => 'download'], ['class' => 'btn btn-primary', 'role' => 'button', 'escape' => false]) ?></div> &nbsp; 
+				<!--div class="pull-right download-button"><?= $this->Html->link('<i class="fa fa-arrow-circle-o-down"></i>&nbsp; Download Filtered', ['controller' => 'marks', 'action' => 'download'], ['class' => 'btn btn-primary', 'role' => 'button', 'escape' => false]) ?></div-->
 			</div>
 			
 			<table class="table">

@@ -37,13 +37,13 @@
 					return true;
 				}
 				if(markToShow === 'Unmarked') {
-					return !user.marks.mark;
+					return typeof(user.marks) === "undefined" || !user.marks.mark;
 				}
 				if(markToShow === 'Marked') {
-					return user.marks.mark;
+					return typeof(user.marks) !== "undefined" && user.marks.mark;
 				}
 				else {
-					return user.marks.mark === markToShow;
+					return typeof(user.marks) !== "undefined" && user.marks.mark === markToShow;
 				}
 			});
 
