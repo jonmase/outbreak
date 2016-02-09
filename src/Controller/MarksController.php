@@ -26,12 +26,9 @@ class MarksController extends AppController
 			//Include learners (students) and instructors, but only show students initially
 			//Get through attempts, and then post-process
 			$ltiResourceId = $session->read('LtiResource.id');
-			//$ltiResourceId = 1;
 			
 			$users = $this->Marks->getUsers($ltiResourceId);
 			$userCount = count($users);
-			//pr($userCount); 
-			//exit;
 			
 			$status = 'success';
 		}
@@ -59,23 +56,9 @@ class MarksController extends AppController
 		$this->viewBuilder()->layout('angular');
 	}
 	
-	/*public function lock() {
-		//Create new mark record with blank mark comments etc, but with marker_id and checked_out set
-		//This gets deleted if the marker cancels the marking
-		if($this->request->is('post')) {
-			$userId = $this->request->data['userId'];
-			$ltiResourceId = $session->read('LtiResource.id');
-			$markerId = $this->Auth->user('id');
-			
-			$this->infolog("Mark Lock setting attempted. User: " . $userId . "; Lti Resource ID: " . $ltiResourceId . "; Marker: " . $markerId . "; Lock: " . $lock);
-
-			
-	}*/
-	
 	public function save($type = 'save') {
 		if($this->request->is('post')) {
 			$session = $this->request->session();	//Set Session to variable
-			//pr($this->request->data);
 			
 			$user = $this->Marks->LtiUsers->get($this->request->data['userId']);
 			
@@ -96,7 +79,6 @@ class MarksController extends AppController
 					'order' => ['modified' => 'DESC'],
 				]);
 				$lastMark = $markQuery->first();
-				//pr($lastMark);
 		
 				//Make sure the last mark is either not locked, locked by this marker, or locked > 1 hour ago
 				if(!$lastMark['locked'] || $lastMark['locker_id'] === $markerId || !$lastMark['locked']->wasWithinLast('1 hour')) {
@@ -209,9 +191,7 @@ class MarksController extends AppController
 			$this->set('status', 'notpost');
 			$this->infolog("Mark Save not POST ");
 		}
-		//$this->viewBuilder()->layout('ajax');
-		//$this->render('/Element/ajaxmessage');
-		//$this->set(compact('users', 'userCount', 'status'));
+
 		$this->set('_serialize', ['status', 'marker', 'marked_on']);
 	}
 
@@ -220,14 +200,13 @@ class MarksController extends AppController
 		if($session->read('User.role') !== "Instructor") {
 			$this->redirect(['controller' => 'attempts', 'action' => 'index']);
 		}
-        //pr($session->read());
 		$ltiResourceId = $session->read('LtiResource.id');
 		
 		$users = $this->Marks->getUsers($ltiResourceId);
 		$userStartedCount = count($users);
 		$usersSubmittedCount = 0;
 		$usersMarkedCount = 0;
-		//pr($users[1]);
+
 		foreach($users as $user) {
 			if($user['submissions'] > 0) {
 				$usersSubmittedCount++;

@@ -113,7 +113,6 @@ class MarksTable extends Table
 			],
 		]);
 		$attempts = $attemptsQuery->all();
-		//pr($attempts->toArray()); exit;
 		
 		$techniquesQuery = $this->LtiResources->Attempts->Assays->Techniques->find('all', [
 			'conditions' => ['lab' => 1],
@@ -126,14 +125,11 @@ class MarksTable extends Table
 		}
 		
 		$users = [];
-		//$userIdsInUsersArray = [];
 		foreach($attempts as $attempt) {
 			$userId = $attempt['lti_user_id'];
 			
 			//Create an array for this user, if there isn't one already
 			if(!isset($users[$userId])) {
-				//$index = count($users);
-				//$userIdsInUsersArray[$userId] = $index;
 				$users[$userId] = $attempt['lti_user'];
 				$users[$userId]['attempts'] = [];	//Create array for attempts
 				$users[$userId]['attempts_count'] = 0;
@@ -141,9 +137,6 @@ class MarksTable extends Table
 				$users[$userId]['last_submit'] = null;
 				$users[$userId]['most_recent_role'] = $attempt['user_role']==="Instructor"?"Demonstrator":"Student";	//Get the user's most recent role
 			}
-			//else {
-			//	$index = $userIdsInUsersArray[$userId];
-			//}
 			unset($attempt['lti_user']);	//Delete the user details from the attempt
 			
 			//Process basic user, attempt and submission info/counts
@@ -248,7 +241,6 @@ class MarksTable extends Table
 			
 			$attempt['timeSpent'] = 48 - $attempt['time'];
 		}
-		//pr($users); exit;
 		
 		//Get all the marks
 		$marksQuery = $this->find('all', [
@@ -257,12 +249,8 @@ class MarksTable extends Table
 			'contain' => ['Marker', 'Locker'],
 		]);
 		$marks = $marksQuery->all();
-		//pr($ltiResourceId);
-		//pr($marks->toArray());
 		
 		foreach($marks as $mark) {
-			//$user['marks'] = ['mark' => null];
-			//pr($mark);
 			//Should never have more than one result for a particular user, but just check that we haven't already got this user
 			$userId = $mark['lti_user_id'];
 			if(empty($users[$userId]['marks'])) {

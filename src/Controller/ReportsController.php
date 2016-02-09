@@ -78,7 +78,6 @@ class ReportsController extends AppController
 
 	public function save() {
 		if($this->request->is('post')) {
-			//pr($this->request->data);
 			$attemptId = $this->request->data['attemptId'];
 			$token = $this->request->data['token'];
 			$report = $this->request->data['report'];
@@ -126,9 +125,6 @@ class ReportsController extends AppController
 					}
 					$reportData->reports_sections = $sectionsData;
 					
-					//pr($reportData);
-					//pr($oldReportData);
-					//exit;
 					$connection = ConnectionManager::get('default');
 					$connection->transactional(function () use ($reportData, $oldReportData, $attemptId, $type) {
 						if(!$this->Reports->save($reportData)) {
