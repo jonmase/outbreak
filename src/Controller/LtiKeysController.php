@@ -23,7 +23,7 @@ class LtiKeysController extends AppController
 			$session = $this->request->session();	//Set Session to variable
 			$session->delete('LtiContext');
 			$session->delete('LtiResource');
-			//pr($session);
+
 			$denied = ['controller' => 'pages', 'action' => 'display', 'denied'];	//Denied redirect
 			$this->autoRender = false;	//Do not render a page
 
@@ -31,16 +31,15 @@ class LtiKeysController extends AppController
 			$oauthConsumerKey = $_REQUEST['oauth_consumer_key'];
 			$keysQuery = $this->LtiKeys->find('all', ['conditions' => ['oauth_consumer_key' => $oauthConsumerKey]]);
 			$key = $keysQuery->first();
-			//pr($key);
 			
 			if(empty($key)) {
 				//There is no key that matches this oauth_consumer_key, so redirect to denied page
 			    $this->redirect($denied);
+				exit;
 			}
 			
 			//Create new BLTI object
 			$context = new \BLTI($key->secret, true, false);
-			//pr($context);
 			
 			//If context is complete (i.e. has it's own redirect), exit
 			if ( $context->complete ) exit();
@@ -61,7 +60,6 @@ class LtiKeysController extends AppController
 			//Check whether this context exists in the database
 			$contextQuery = $this->LtiKeys->LtiContexts->find('all', ['conditions' => ['lti_context_id' => $contextId, 'lti_key_id' => $key->id]]);
 			$savedContext = $contextQuery->first();
-			//pr($savedContext);
 			
 			//Create or update the context
 			if(empty($savedContext)) {
@@ -103,7 +101,6 @@ class LtiKeysController extends AppController
 			//Check whether this resource exists in the database
 			$resourceQuery = $this->LtiKeys->LtiResources->find('all', ['conditions' => ['lti_resource_link_id' => $resourceId, 'lti_key_id' => $key->id, 'lti_context_id' => $contextData->id]]);
 			$savedResource = $resourceQuery->first();
-			//pr($savedContext);
 			
 			//Create or update the context
 			if(empty($savedResource)) {
@@ -121,7 +118,6 @@ class LtiKeysController extends AppController
 			//Add/update the label and title
 			$resourceData->lti_resource_link_title = $context->info['resource_link_title'];
 			$resourceData->lti_resource_link_description = !empty($context->info['resource_link_description'])?$context->info['resource_link_description']:null;
-			//pr($resourceData);
 			
 			//Save the context
 			if ($this->LtiKeys->LtiResources->save($resourceData)) {
@@ -160,32 +156,35 @@ class LtiKeysController extends AppController
 			}
 
 			//Add/update the lti user data
-			$userData->lti_eid = $context->info['lis_person_sourcedid'];
+			if(isset($context->info['lis_person_sourcedid'])) {
+				$userData->lti_eid = $context->info['lis_person_sourcedid'];
+			}
 			if(isset($context->info['ext_sakai_provider_displayid'])) {
 				$userData->lti_displayid = $context->info['ext_sakai_provider_displayid'];
 			}
 			else if(isset($context->info['lis_person_sourcedid'])) {
 				$userData->lti_displayid = $context->info['lis_person_sourcedid'];
 			}
-			else {
-				$userData->lti_displayid = null;
-			}
+
 			//Do not save roles here, as this can change for each launch. Instead, role that they user had when they start each attempt will be saved
-			//$userData->lti_roles = $context->info['roles'];
-			//$userData->lti_sakai_role = $context->info['ext_sakai_role'];
 			$session->write('User.role', $context->info['roles']);
 			
 			//Save user details
-			$userData->lti_lis_person_contact_email_primary = $context->info['lis_person_contact_email_primary'];
-			$userData->lti_lis_person_name_family = $context->info['lis_person_name_family'];
-			$userData->lti_lis_person_name_full = $context->info['lis_person_name_full'];
-			$userData->lti_lis_person_name_given = $context->info['lis_person_name_given'];
-			//pr($userData);
+			if(isset($context->info['lis_person_contact_email_primary'])) {
+				$userData->lti_lis_person_contact_email_primary = $context->info['lis_person_contact_email_primary'];
+			}
+			if(isset($context->info['lis_person_name_family'])) {
+				$userData->lti_lis_person_name_family = $context->info['lis_person_name_family'];
+			}
+			if(isset($context->info['lis_person_name_full'])) {
+				$userData->lti_lis_person_name_full = $context->info['lis_person_name_full'];
+			}
+			if(isset($context->info['lis_person_name_given'])) {
+				$userData->lti_lis_person_name_given = $context->info['lis_person_name_given'];
+			}
 
 			if($this->LtiKeys->LtiUsers->save($userData)) {
-				//$this->Flash->success('The user has been saved');
 				$this->Auth->setUser($userData->toArray());
-				//$session->write('User', $userData);	//Add user to Session. Read using $this->Session->read('user')
 			}
 			else {
 				//Save failed - redirect to access denied page
@@ -199,13 +198,9 @@ class LtiKeysController extends AppController
 				$session->write('LtiResource.unlocked', true);
 			}
 			
-			//pr($session->read());
-			//exit;
 			$this->redirect(['controller' => 'attempts', 'action' => 'index']);
-			//exit;
 		}
 		else {
-			//pr("Not an LTI request");
 			$this->Flash->error('This application can only be accessed using an LTI launch');
 			$this->redirect($denied);
 		}
