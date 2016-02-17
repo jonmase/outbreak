@@ -113,7 +113,7 @@
 							<tr>
 								<th>Comments:</th>
 								<td ng-show="markingCtrl.currentUser.editing">
-									<textarea class="form-control" rows="3" id="mark_comments" name="mark_comments" ng-model="markingCtrl.currentUser.marks.comment"></textarea>
+									<textarea class="form-control" rows="8" id="mark_comments" name="mark_comments" ng-model="markingCtrl.currentUser.marks.comment"></textarea>
 								</td>
 								<td ng-show="!markingCtrl.currentUser.editing">
 									{{markingCtrl.currentUser.marks.comment}}

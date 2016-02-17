@@ -740,7 +740,7 @@ td.assays-convalescent div.checkbox {
 	margin-top: 15px;
 
 }
-@media(max-width:767px){
+@media(max-width:991px){
 	#marking-info.affix {
 		position: static !important;
 		width: auto !important;
