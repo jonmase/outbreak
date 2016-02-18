@@ -6,7 +6,7 @@
 </h2>
 <div class="row attempts index content">
 	<div class="col-xs-12">
-		<?php /*if(!empty($marks)): ?>
+		<?php if(!empty($marks)): ?>
 			<?php 
 				$class = "alert";
 				if($marks->mark == 'Fail'):
@@ -19,13 +19,13 @@
 				<h5 class="no-top-margin">Your Mark: <?php echo $marks->mark; ?></h5>
 				<p><strong>Marker's comments:</strong> <?php echo $marks->comment; ?></p>
 				<?php if($marks->mark == 'Fail'): ?>
-					<p>You will need to some further work in order to pass. Please refer to the comments above for guidance on what you need to do. Unless specifically requested to do so, do not start again, simply modify your current attempt. Once you have finished, please resubmit your report, and it will then be remarked.</p> 
+					<p>You will need to do some further work in order to pass. Please refer to the comments above for guidance on what you need to do. Unless specifically requested to do so, do not start again, simply modify your current attempt. Once you have finished, please resubmit your report, and it will then be remarked.</p> 
 				<?php else: ?>
 					<p>If you have not already filled in the feedback survey on this iCase, we would be very grateful if you could do so here: <a href="https://learntech.imsu.ox.ac.uk/feedback/showsurvey.php?surveyInstanceID=501" target="_blank">https://learntech.imsu.ox.ac.uk/feedback/showsurvey.php?surveyInstanceID=501</a></p>
 					<p>You can come back to the iCase at any point to review the revision material, etc. If you have not yet looked at the additional information in the Grant Funded Research section, we recommend that you do so.</p>
 				<?php endif; ?>
 			</div>
-		<?php endif;*/ ?>
+		<?php endif; ?>
 		
 		<p>Click the "Start New Attempt" button below to begin<?php if(!$attempts->isEmpty()): ?>, or resume an attempt you have already started by clicking the "Resume" button for the appropriate attempt<?php endif; ?>. </p>
 		<p>You can have as many attempts as you wish. In each attempt you will have to work through some revision material and questions, before collecting and testing samples and then writing up your findings in a report. Your mark will be based on your report, with consideration given to the samples you collected and the tests you carried out. The revision questions are to aid your learning and understanding, and do not affect your mark, so there is no need to restart just to improve your scores on those.</p>
