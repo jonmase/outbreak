@@ -12,6 +12,7 @@
 		document.body.scrollTop = 0;
 		
 		//Bindable Members
+		vm.oxford = OXFORD_VERSION;
 		vm.sections = sectionsConstant();
 		$scope.currentSectionId = getSectionFromPath();
 

@@ -3,8 +3,8 @@
 		<page-title section="infoCtrl.section"></page-title>
 		<h4>Info</h4>
 		<p>This iCase is intended to provide you with an experience of the sort of complex and potentially confusing situation you might encounter in real medical practice. It is a substantial piece of investigative work, often taking upwards of six hours to complete.</p>
-		<h6>Forum</h6>
-		<p>Please use the <a href="https://weblearn.ox.ac.uk/x/GNY01y" target="_blank">forum on WebLearn</a> to ask any questions you may have about this iCase and we will endeavour to answer them as soon as possible.</p>
+		<h6 ng-if="mainCtrl.oxford">Forum</h6>
+		<p ng-if="mainCtrl.oxford">Please use the <a href="https://weblearn.ox.ac.uk/x/GNY01y" target="_blank">forum on WebLearn</a> to ask any questions you may have about this iCase and we will endeavour to answer them as soon as possible.</p>
 		<h6>Query or Problem?</h6>
 		<p>If you have any technical queries about this exercise, or experience any problems when using it, <email-msdlt></email-msdlt>.</p>
 		

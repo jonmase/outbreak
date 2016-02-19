@@ -34,6 +34,7 @@
 <?= $this->Html->scriptBlock('var ATTEMPT_ID = ' . $attemptId . ';', ['block' => true]) ?>
 <?= $this->Html->scriptBlock('var ATTEMPT_TOKEN = "' . $attemptToken . '";', ['block' => true]) ?>
 <?= $this->Html->scriptBlock('var URL_MODIFIER = "../../";', ['block' => true]) ?>
+<?= $this->Html->scriptBlock('var OXFORD_VERSION = 0;', ['block' => true]) ?>
 <?= $this->Html->script('app.js', ['block' => true]) ?>
 <?= $this->Html->script('controllers/techniquesController.js', ['block' => true]) ?>
 <?= $this->Html->script('controllers/fluAlertModalController.js', ['block' => true]) ?>

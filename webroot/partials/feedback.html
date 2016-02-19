@@ -1,8 +1,16 @@
 <div class="row">
 	<div class="col-xs-12">
 		<page-title section="feedbackCtrl.section"></page-title>
-		<p>In order to help us improve this exercise, please complete the feedback survey below. When you have finished, make sure you click the "Final Submission" button at the end. Thank you!</p>
-		<p>If the survey does not appear below, it can be found here: <a href="https://learntech.imsu.ox.ac.uk/feedback/showsurvey.php?surveyInstanceID=501" target="_blank">https://learntech.imsu.ox.ac.uk/feedback/showsurvey.php?surveyInstanceID=501</a></p>
-		<iframe src="https://learntech.imsu.ox.ac.uk/feedback/showsurvey.php?surveyInstanceID=501" style="width: 100%; height: 2800px">iFrames not supported</iframe>
+		<div ng-if="mainCtrl.oxford">
+			<p>In order to help us improve this exercise, please complete the feedback survey below. When you have finished, make sure you click the "Final Submission" button at the end. Thank you!</p>
+			<p>If the survey does not appear below, it can be found here: <a href="https://learntech.imsu.ox.ac.uk/feedback/showsurvey.php?surveyInstanceID=501" target="_blank">https://learntech.imsu.ox.ac.uk/feedback/showsurvey.php?surveyInstanceID=501</a></p>
+			<iframe src="https://learntech.imsu.ox.ac.uk/feedback/showsurvey.php?surveyInstanceID=501" style="width: 100%; height: 2800px">iFrames not supported</iframe>
+		</div>
+		<div ng-if="!mainCtrl.oxford">
+			<p ng-if="!mainCtrl.oxford">We would be grateful if you could give us any comments or feedback on this exercise using the anonymous survey below. Please make sure to click Save when you have finished. Thank you!</p>
+			<p>If the survey does not appear below, it can be found here: <a href="https://weblearn.ox.ac.uk/direct/eval-evaluation/12761" target="_blank">https://weblearn.ox.ac.uk/direct/eval-evaluation/12761</a></p>
+			<iframe src="https://weblearn.ox.ac.uk/direct/eval-evaluation/12761" style="width: 100%; height: 300px">iFrames not supported</iframe>
+		</div>
+		
 	</div>
 </div>
