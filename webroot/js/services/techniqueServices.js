@@ -169,12 +169,19 @@
 		function readRevisionExtra() { 
 			var revisionExtra = {
 				id: 'xrevision',
-				menu: 'Lecture Notes',
-				name: 'Lecture Notes',
 				video: null,
-				content: '<ul><li><a href="../../files/WSJames_Flu_Lecture_Notes.pdf" target="_blank">WS James Lecture notes on Influenza HA, antigenic variation and vaccines (.pdf, 6.59MB)</a></li><li><a href="../../files/EFodor_Influenza_Viruses_Part_I.pdf" target="_blank">E Fodor Lecture notes on Influenza viruses, Part I (.pdf, 2.90MB)</a></li><li><a href="../../files/EFodor_Influenza_Viruses_Part_II.pdf" target="_blank">E Fodor Lecture notes on Influenza viruses, Part II (.pdf, 1.98MB)</a></li></ul>',
 				infoOnly: true,
 			};
+			if(OXFORD_VERSION) {
+				revisionExtra.menu = 'Lecture Notes';
+				revisionExtra.name = 'Lecture Notes';
+				revisionExtra.content = '<ul><li><a href="../../files/WSJames_Flu_Lecture_Notes.pdf" target="_blank">WS James Lecture notes on Influenza HA, antigenic variation and vaccines (.pdf, 6.59MB)</a></li><li><a href="../../files/EFodor_Influenza_Viruses_Part_I.pdf" target="_blank">E Fodor Lecture notes on Influenza viruses, Part I (.pdf, 2.90MB)</a></li><li><a href="../../files/EFodor_Influenza_Viruses_Part_II.pdf" target="_blank">E Fodor Lecture notes on Influenza viruses, Part II (.pdf, 1.98MB)</a></li></ul>';
+			}
+			else {
+				revisionExtra.menu = 'Further Info';
+				revisionExtra.name = 'Further Info';
+				revisionExtra.content = '<p>A range of further Virology resources can be found at <a href="http://virology.net/" target="_blank">All the Virology on the WWW (http://virology.net/)</a></p>';
+			}
 			return revisionExtra;
 		}
 		
