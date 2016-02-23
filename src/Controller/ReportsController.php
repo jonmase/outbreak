@@ -1,4 +1,23 @@
 <?php
+/**
+    Copyright 2016 Jon Mason
+	
+	This file is part of Oubreak.
+
+    Oubreak is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Oubreak is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Oubreak.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 namespace App\Controller;
 
 use App\Controller\AppController;
@@ -22,7 +41,6 @@ class ReportsController extends AppController
 			]);
 
 			$report = $reportsQuery->first();
-			//pr($report->reports_sections);
 			if(!empty($report)) {
 				$reports_sections = [];
 				foreach($report->reports_sections as $section) {
@@ -52,7 +70,6 @@ class ReportsController extends AppController
 
 	public function reopen() {
 		if($this->request->is('post')) {
-			//pr($this->request->data);
 			$attemptId = $this->request->data['attemptId'];
 			$token = $this->request->data['token'];
 			$this->infolog("Report Reopen attempted. Attempt: " . $attemptId);
@@ -81,7 +98,6 @@ class ReportsController extends AppController
 			$attemptId = $this->request->data['attemptId'];
 			$token = $this->request->data['token'];
 			$report = $this->request->data['report'];
-			//$status = $this->request->data['status'];	//'revision', 'draft' or 'submitted'
 			$type = $this->request->data['type'];	//'save', 'autosave', 'submit'
 			$this->infolog("Report Save attempted. Attempt: " . $attemptId . "; Type: " . $type . "; Report: " . serialize($report));
 			
@@ -102,7 +118,6 @@ class ReportsController extends AppController
 					
 					if(!$reportQuery->isEmpty()) {
 						//Change old version to a revision
-						//$oldReportData = $this->Reports->newEntity();
 						$oldReportData = $lastSavedReport;
 						$oldReportData->revision = true;
 					}
@@ -152,10 +167,7 @@ class ReportsController extends AppController
 							
 							if(!$markQuery->isEmpty()) {
 								$mark = $markQuery->first();
-								//pr($mark);
 								$message = '<div style="font-family: Verdana, Tahoma, sans-serif; font-size: 12px;"><p>Dear ' . $mark->marker->lti_lis_person_name_given . ',</p><p>' . $mark->lti_user->lti_lis_person_name_full . ' (' . $mark->lti_user->lti_displayid . '), whose Viral Outbreak iCase report you marked as a fail, has resubmitted their report for remarking.</p><p>Please <a href="https://weblearn.ox.ac.uk/access/basiclti/site/8dd25ab4-a0ca-4e16-0073-d2a9667b58ce/content:122">go to the iCase</a> (<a href="https://weblearn.ox.ac.uk/access/basiclti/site/8dd25ab4-a0ca-4e16-0073-d2a9667b58ce/content:122">https://weblearn.ox.ac.uk/access/basiclti/site/8dd25ab4-a0ca-4e16-0073-d2a9667b58ce/content:122</a>) and remark this student. You can filter the marks to show only those that failed to make it easier to find this student.</p><p>Thank you!</p></div>';
-								//pr($message);
-								//exit;
 								
 								$email = new Email('smtp');
 								$email->from(['msdlt@medsci.ox.ac.uk' => 'Viral Outbreak iCase Admin'])

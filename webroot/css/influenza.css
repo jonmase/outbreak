@@ -1,3 +1,22 @@
+/**
+    Copyright 2016 Jon Mason
+	
+	This file is part of Oubreak.
+
+    Oubreak is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Oubreak is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Oubreak.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 /* Basic Elements */
 html, body {
 	height: 100%;
@@ -724,12 +743,22 @@ td.assays-convalescent div.checkbox {
 }
 
 /* Info Page */
-.info-logos img {
-	margin-top: 20px;
-	margin-right: 30px;
-	max-height: 93px;
+.info-logos {
+	/*margin-top: 20px;*/
+	margin-right: 0;
+	margin-bottom: 20px;
+	text-align: right;
 }
-
+.info-logos img {
+	max-height: 93px;
+	width: 100%;
+}
+.info-logos img#dunnschool {
+	max-width: 500px;
+}
+.info-logos img#msdlt {
+	max-width: 93px;
+}
 
 /* Marking */
 #marking-info-table th, #marking-info-table td {

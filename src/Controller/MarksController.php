@@ -1,4 +1,23 @@
 <?php
+/**
+    Copyright 2016 Jon Mason
+	
+	This file is part of Oubreak.
+
+    Oubreak is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Oubreak is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Oubreak.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 namespace App\Controller;
 
 use App\Controller\AppController;
@@ -54,7 +73,6 @@ class MarksController extends AppController
 			$attempts = $this->Marks->getUserAttempts($ltiResourceId, $userId);
 			$status = 'success';
 		}
-		//pr($attempts); exit;
 		
 		$this->set(compact('attempts', 'status'));
 		$this->set('_serialize', ['attempts', 'status']);
@@ -71,7 +89,7 @@ class MarksController extends AppController
 		if($session->read('User.role') !== "Instructor") {
 			$this->redirect(['controller' => 'attempts', 'action' => 'index']);
 		}
-        //pr($session->read());
+
 		$ltiResourceId = $session->read('LtiResource.id');
 		$myUserId = $this->Auth->user('id');
 		
@@ -143,9 +161,6 @@ class MarksController extends AppController
 						}
 					}
 					
-					//pr($markData);
-					//pr($oldMarkData);
-					//exit;
 					$connection = ConnectionManager::get('default');
 					$connection->transactional(function () use ($type, $markData, $oldMarkData, $user, $ltiResourceId) {
 						if(!$this->Marks->save($markData)) {

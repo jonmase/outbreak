@@ -1,4 +1,23 @@
 <?php
+/**
+    Copyright 2016 Jon Mason
+	
+	This file is part of Oubreak.
+
+    Oubreak is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Oubreak is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Oubreak.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 namespace App\Controller;
 
 use App\Controller\AppController;
@@ -20,17 +39,11 @@ class SamplesController extends AppController
 			$samplesRaw = $samplesQuery->all();
 			$samples = [];
 			foreach($samplesRaw as $sample) {
-				//if(!isset($samples[$sample->site_id])) { $samples[$sample->site_id] = []; }
-				//if(!isset($samples[$sample->site_id][$sample->school_id])) { $samples[$sample->site_id][$sample->school_id] = []; }
-				//if(!isset($samples[$sample->site_id][$sample->school_id][$sample->child_id])) { $samples[$sample->site_id][$sample->school_id][$sample->child_id] = []; }
-				//if(!isset($samples[$sample->site_id][$sample->school_id][$sample->child_id][$sample->sample_stage_id])) { $samples[$sample->site_id][$sample->school_id][$sample->child_id][$sample->sample_stage_id] = []; }
-
 				$samples[$sample->site_id][$sample->school_id][$sample->child_id][$sample->sample_stage_id] = 1;
 			}
 			
 			$status = 'success';
 			$this->infolog("Samples Loaded. Attempt: " . $attemptId);
-			//pr($resources);
 		}
 		else {
 			$status = 'denied';
@@ -42,7 +55,6 @@ class SamplesController extends AppController
 	
 	public function save() {
 		if($this->request->is('post')) {
-			//pr($this->request->data);
 			$attemptId = $this->request->data['attemptId'];
 			$token = $this->request->data['token'];
 			$rawSamples = $this->request->data['samples'];
@@ -84,14 +96,9 @@ class SamplesController extends AppController
 					$attempt = null;
 				}
 				
-				//pr($samplesData);
-				//pr($attempt);
-				//exit;
 				$connection = ConnectionManager::get('default');
-				//$this->QuestionAnswers->connection()->transactional(function () use ($answers) {
 				$connection->transactional(function () use ($samplesData, $attempt, $attemptId) {
 					foreach ($samplesData as $sample) {
-						//pr($sample);
 						if(!$this->Samples->save($sample)) {
 							$this->set('status', 'failed');
 							$this->infolog("Samples Save failed Attempt: " . $attemptId);

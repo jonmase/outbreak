@@ -1,4 +1,23 @@
 <?php
+/**
+    Copyright 2016 Jon Mason
+	
+	This file is part of Oubreak.
+
+    Oubreak is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Oubreak is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Oubreak.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 namespace App\Controller;
 
 use App\Controller\AppController;
@@ -16,11 +35,6 @@ use Cake\Network\Exception\ForbiddenException;
 class AttemptsController extends AppController
 {
 	public $helpers = ['Time'];
-	
-	/*public funciton load($attemptId = null) {
-		if($attemptId && $this->Attempts->checkUserAttempt($this->Auth->user('id'), $attemptId)) {
-	
-	}*/
 	
 	public function loadProgress($attemptId = null, $token = null) {
 		$userId = $this->Auth->user('id');
@@ -58,8 +72,6 @@ class AttemptsController extends AppController
 					}
 				}
 
-				//pr($attempt);
-				//exit;
 				if ($this->Attempts->save($attempt)) {
 					$this->set('status', 'success');
 					$this->infolog("Progress Save succeeded. Attempt: " . $attemptId . "; Sections: " . serialize($sections));
@@ -67,8 +79,6 @@ class AttemptsController extends AppController
 					$this->set('status', 'failed');
 					$this->infolog("Progress Save failed. Attempt: " . $attemptId . "; Sections: " . serialize($sections));
 				}
-				//$this->Attempts->save($attempt);
-				//pr($attempt);
 			}
 			else {
 				$this->set('status', 'denied');
@@ -88,7 +98,6 @@ class AttemptsController extends AppController
 			$resources = $this->Attempts->get($attemptId, ['fields' => $this->Attempts->resourceFields]);
 			$status = 'success';
 			$this->infolog("Resources Loaded. Attempt: " . $attemptId);
-			//pr($resources);
 		}
 		else {
 			$status = 'denied';
@@ -100,7 +109,6 @@ class AttemptsController extends AppController
 	
 	public function saveResources() {
 		if($this->request->is('post')) {
-			//pr($this->request->data);
 			$attemptId = $this->request->data['attemptId'];
 			$token = $this->request->data['token'];
 			$money = $this->request->data['money'];
@@ -241,7 +249,6 @@ class AttemptsController extends AppController
     {
 		$user = $this->Auth->user();
         $attempt = $this->Attempts->newEntity();
-		//pr($user);
 		$attempt->lti_user_id = $user['id'];
 		
 		//If unlocked is set to true in the session for this launch, set all the progress fields to complete
@@ -255,22 +262,10 @@ class AttemptsController extends AppController
 		$attempt->lti_resource_id = $session->read('LtiResource.id');
 		$attempt->user_role = $session->read('User.role');
 		
-		//pr($session->read());
-		//pr($attempt);
-		//exit;
-		//$attempt->time = 48;
-		//$attempt->money = 200;
-		//$attempt->happiness = 3;
-		
 		if ($this->Attempts->save($attempt)) {
-			//$this->Flash->success(__('The attempt has been saved.'));
 			$this->infolog("Attempt Started. Attempt: " . $attempt->id);
 			return $this->redirect(['action' => 'view', $attempt->id]);
 		} else {
-			//$view = new View($this);
-			//$Html = $view->loadHelper('Html');
-			//$emailLink = $html->link('msdlt@medsci.ox.ac.uk', 'mailto:msdlt@medsci.ox.ac.uk');
-			//$this->Flash->error(__('The attempt could not be started. Please, try again. If problems persist, please contact ' . $emailLink));
 			$this->infolog("Attempt Start Failed. Attempt: " . $attempt->id);
 			$this->Flash->error(__('The attempt could not be started. Please try again. If the problem persists, please contact msdlt@medsci.ox.ac.uk'));
 			return $this->redirect(['action' => 'index']);

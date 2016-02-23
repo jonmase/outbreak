@@ -1,3 +1,22 @@
+/**
+    Copyright 2016 Jon Mason
+	
+	This file is part of Oubreak.
+
+    Oubreak is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Oubreak is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Oubreak.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 (function() {
 	angular.module('flu.techniques')
 		.factory('techniqueFactory', techniqueFactory);
@@ -175,7 +194,7 @@
 			if(OXFORD_VERSION) {
 				revisionExtra.menu = 'Lecture Notes';
 				revisionExtra.name = 'Lecture Notes';
-				revisionExtra.content = '<ul><li><a href="../../files/WSJames_Flu_Lecture_Notes.pdf" target="_blank">WS James Lecture notes on Influenza HA, antigenic variation and vaccines (.pdf, 6.59MB)</a></li><li><a href="../../files/EFodor_Influenza_Viruses_Part_I.pdf" target="_blank">E Fodor Lecture notes on Influenza viruses, Part I (.pdf, 2.90MB)</a></li><li><a href="../../files/EFodor_Influenza_Viruses_Part_II.pdf" target="_blank">E Fodor Lecture notes on Influenza viruses, Part II (.pdf, 1.98MB)</a></li></ul>';
+				revisionExtra.content = '<ul><li><a href="../../files/ox_only/WSJames_Flu_Lecture_Notes.pdf" target="_blank">WS James Lecture notes on Influenza HA, antigenic variation and vaccines (.pdf, 6.59MB)</a></li><li><a href="../../files/ox_only/EFodor_Influenza_Viruses_Part_I.pdf" target="_blank">E Fodor Lecture notes on Influenza viruses, Part I (.pdf, 2.90MB)</a></li><li><a href="../../files/ox_only/EFodor_Influenza_Viruses_Part_II.pdf" target="_blank">E Fodor Lecture notes on Influenza viruses, Part II (.pdf, 1.98MB)</a></li></ul>';
 			}
 			else {
 				revisionExtra.menu = 'Further Info';

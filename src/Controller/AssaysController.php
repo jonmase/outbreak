@@ -1,4 +1,23 @@
 <?php
+/**
+	Copyright 2016 Jon Mason
+	
+	This file is part of Oubreak.
+
+    Oubreak is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Oubreak is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Oubreak.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 namespace App\Controller;
 
 use App\Controller\AppController;
@@ -19,12 +38,6 @@ class AssaysController extends AppController
 			$assaysRaw = $assaysQuery->all();
 			$assays = [];
 			foreach($assaysRaw as $assay) {
-				//if(!isset($assays[$assay->technique_id])) { $assays[$assay->technique_id] = []; }
-				//if(!isset($assays[$assay->technique_id][$assay->site_id])) { $assays[$assay->technique_id][$assay->site_id] = []; }
-				//if(!isset($assays[$assay->technique_id][$assay->site_id][$assay->school_id])) { $assays[$assay->technique_id][$assay->site_id][$assay->school_id] = []; }
-				//if(!isset($assays[$assay->technique_id][$assay->site_id][$assay->school_id][$assay->child_id])) { $assays[$assay->technique_id][$assay->site_id][$assay->school_id][$assay->child_id] = []; }
-				//if(!isset($assays[$assay->site_id][$assay->school_id][$assay->child_id][$assay->sample_stage_id])) { $assays[$assay->site_id][$assay->school_id][$assay->child_id][$assay->sample_stage_id] = []; }
-
 				$assays[$assay->technique_id][$assay->site_id][$assay->school_id][$assay->child_id][$assay->sample_stage_id] = 1;
 			}
 			$status = 'success';
@@ -104,14 +117,9 @@ class AssaysController extends AppController
 					$attemptData = null;
 				}
 				
-				//pr($assaysData);
-				//pr($attemptData);
-				//exit;
 				$connection = ConnectionManager::get('default');
-				//$this->QuestionAnswers->connection()->transactional(function () use ($answers) {
 				$connection->transactional(function () use ($assaysData, $standardAssaysData, $attemptData, $attemptId, $techniqueId) {
 					foreach ($assaysData as $assay) {
-						//pr($sample);
 						if(!$this->Assays->save($assay)) {
 							$this->set('status', 'failed');
 							$this->infolog("Assays Save failed. Attempt: " . $attemptId . "; Technique: " . $techniqueId);
@@ -119,7 +127,6 @@ class AssaysController extends AppController
 						}
 					}
 					foreach ($standardAssaysData as $assay) {
-						//pr($sample);
 						if(!$this->Assays->Attempts->StandardAssays->save($assay)) {
 							$this->set('status', 'failed');
 							$this->infolog("Assays Save failed. Attempt: " . $attemptId . "; Technique: " . $techniqueId);

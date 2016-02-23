@@ -1,3 +1,24 @@
+<?php 
+/**
+    Copyright 2016 Jon Mason
+	
+	This file is part of Oubreak.
+
+    Oubreak is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Oubreak is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Oubreak.  If not, see <http://www.gnu.org/licenses/>.
+*/
+?>
+
 <?php $this->assign('title', ''); ?>
 <div ng-app="flu">
 	<div ng-controller="MainController as mainCtrl" style="width: 100%; height: 100%">
@@ -24,7 +45,7 @@
 <?= $this->Html->script('lib/angular-route.min.js', ['block' => true]) ?>
 <?= $this->Html->script('lib/angular-sanitize.min.js', ['block' => true]) ?>
 <?= $this->Html->script('lib/angular-resource.min.js', ['block' => true]) ?>
-<?= $this->Html->script('lib/ui-bootstrap-tpls-0.14.3.js', ['block' => true]) ?>
+<?= $this->Html->script('lib/ui-bootstrap-tpls-1.1.2.min.js', ['block' => true]) ?>
 <?= $this->Html->script('lib/ckeditor/ckeditor.js', ['block' => true]) ?>
 <?= $this->Html->script('lib/ng-ckeditor.js', ['block' => true]) ?>
 <?= $this->Html->script('lib/angular-bootstrap-checkbox.js', ['block' => true]) ?>
