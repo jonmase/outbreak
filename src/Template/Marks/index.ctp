@@ -301,7 +301,6 @@
 	</div>
 </div>
 
-<?= $this->Html->scriptBlock('var MY_ID = ' . $myUserId . ';', ['block' => true]) ?>
 <?= $this->Html->script('lib/angular.min.js', ['block' => true]) ?>
 <?= $this->Html->script('lib/angular-resource.min.js', ['block' => true]) ?>
 <?= $this->Html->script('lib/ui-bootstrap-tpls-1.1.2.min.js', ['block' => true]) ?>
@@ -311,6 +310,7 @@
 <?= $this->Html->script('lib/angular-strap-helper-debounce.js', ['block' => true]) ?>
 <?= $this->Html->script('lib/angular-strap-helper-dimensions.js', ['block' => true]) ?>
 <?= $this->Html->script('lib/angular-strap-affix.js', ['block' => true]) ?>
+<?= $this->Html->scriptBlock('var MY_ID = ' . $myUserId . ';', ['block' => true]) ?>
 <?= $this->Html->scriptBlock('var URL_MODIFIER = "";', ['block' => true]) ?>
 <?= $this->Html->script('markingapp.js', ['block' => true]) ?>
 <?= $this->Html->script('controllers/markingController.js', ['block' => true]) ?>

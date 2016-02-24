@@ -31,7 +31,7 @@
 		document.body.scrollTop = 0;
 		
 		//Bindable Members
-		vm.oxford = OXFORD_VERSION;
+		vm.oxford = (typeof(OXFORD_VERSION) !== "undefined")?OXFORD_VERSION:0;
 		vm.sections = sectionsConstant();
 		$scope.currentSectionId = getSectionFromPath();
 

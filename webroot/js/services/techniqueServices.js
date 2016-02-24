@@ -191,7 +191,7 @@
 				video: null,
 				infoOnly: true,
 			};
-			if(OXFORD_VERSION) {
+			if(typeof(OXFORD_VERSION) !== "undefined" && OXFORD_VERSION) {
 				revisionExtra.menu = 'Lecture Notes';
 				revisionExtra.name = 'Lecture Notes';
 				revisionExtra.content = '<ul><li><a href="../../files/ox_only/WSJames_Flu_Lecture_Notes.pdf" target="_blank">WS James Lecture notes on Influenza HA, antigenic variation and vaccines (.pdf, 6.59MB)</a></li><li><a href="../../files/ox_only/EFodor_Influenza_Viruses_Part_I.pdf" target="_blank">E Fodor Lecture notes on Influenza viruses, Part I (.pdf, 2.90MB)</a></li><li><a href="../../files/ox_only/EFodor_Influenza_Viruses_Part_II.pdf" target="_blank">E Fodor Lecture notes on Influenza viruses, Part II (.pdf, 1.98MB)</a></li></ul>';
