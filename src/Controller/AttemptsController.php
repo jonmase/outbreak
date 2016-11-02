@@ -182,7 +182,7 @@ class AttemptsController extends AppController
 		$session = $this->request->session();	//Set Session to variable
 		$ltiResourceId = $session->read('LtiResource.id');
 		$user = $this->Auth->user();
-		$conditions = ['Attempts.lti_user_id' => $user['id'], 'Attempts.lti_resource_id' => $ltiResourceId];
+		$conditions = ['Attempts.lti_user_id' => $user['id'], 'Attempts.lti_resource_id' => $ltiResourceId, 'Attempts.archived' => 0];
         $this->paginate = [
             'conditions' => $conditions,
 			'order' => ['modified' => 'DESC'],
@@ -193,7 +193,7 @@ class AttemptsController extends AppController
 		$role = $session->read('User.role');
 		
 		$marksQuery = $this->Attempts->LtiUsers->Marks->find('all', [
-			'conditions' => ['Marks.lti_resource_id' => $ltiResourceId, 'Marks.lti_user_id' => $user['id'], 'Marks.revision' => 0],
+			'conditions' => ['Marks.lti_resource_id' => $ltiResourceId, 'Marks.lti_user_id' => $user['id'], 'Marks.revision' => 0, 'Marks.archived' => 0],
 			'order' => ['modified' => 'DESC'],
 		]);
 		$marks = $marksQuery->first();

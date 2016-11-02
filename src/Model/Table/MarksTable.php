@@ -115,7 +115,7 @@ class MarksTable extends Table
 	
 	public function getUsersForMarking($ltiResourceId, $loggedInUserId) {
 		$attemptsQuery = $this->LtiResources->Attempts->find('all', [
-			'conditions' => ['lti_resource_id' => $ltiResourceId],
+			'conditions' => ['lti_resource_id' => $ltiResourceId, 'archived' => 0],
 			'order' => ['LtiUsers.lti_displayid' => 'ASC'],
 			'contain' => [
 				'LtiUsers', 
@@ -180,7 +180,7 @@ class MarksTable extends Table
 		foreach($marks as $mark) {
 			//Should never have more than one result for a particular user, but just check that we haven't already got this user
 			$userId = $mark['lti_user_id'];
-			if(empty($users[$userId]['marks'])) {
+			if(!empty($users[$userId]) && empty($users[$userId]['marks'])) {
 				//If user is locked but it is either too long ago or by this user, then unlock them
 				if($mark->locked && (!$mark->locked->wasWithinLast('1 hour') || $mark->locker_id === $loggedInUserId)) {
 					$mark->locked = null;
@@ -218,7 +218,7 @@ class MarksTable extends Table
 	
 	public function getUserAttempts($ltiResourceId, $userId) {
 		$attemptsQuery = $this->LtiResources->Attempts->find('all', [
-			'conditions' => ['lti_resource_id' => $ltiResourceId, 'lti_user_id' => $userId],
+			'conditions' => ['lti_resource_id' => $ltiResourceId, 'lti_user_id' => $userId, 'archived' => 0],
 			//'order' => ['LtiUsers.lti_displayid' => 'ASC'],
 			'contain' => [
 				'Samples',
