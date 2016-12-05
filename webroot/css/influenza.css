@@ -446,6 +446,7 @@ li.home-block.locked  a {
 	padding-top:30px;
 	height:0;
 	overflow:hidden;
+    z-index: 100;
 }
 
 .video-container iframe {
