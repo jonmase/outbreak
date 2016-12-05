@@ -119,9 +119,11 @@ class AttemptsController extends AppController
 				$attempt = $this->Attempts->get($attemptId);
 				if(!is_null($money)) {
 					$attempt->money = $money;
+                    $attempt->beg_money_count += 1;
 				}
 				if(!is_null($time)) {
 					$attempt->time = $time;
+                    $attempt->beg_time_count += 1;
 				}
 
 				if ($this->Attempts->save($attempt)) {
