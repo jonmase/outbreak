@@ -614,6 +614,7 @@ td.samples-convalescent div.checkbox {
 
 .lab-standard span {
 	display: inline-block;
+    vertical-align: middle;
 }
 .lab-standard .checkbox {
 	margin: 8px 0;
