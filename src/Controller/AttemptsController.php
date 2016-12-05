@@ -261,6 +261,14 @@ class AttemptsController extends AppController
 				$attempt->$field = 1;
 			}
 		}
+        
+        //Set the money and time spent, and beg counts, to 0
+        //This is so they do not default to NULL, in order to differentiate them from attempts before these things were recorded
+        $attempt->money_spent = 0;
+        $attempt->time_spent = 0;
+        $attempt->beg_money_count = 0;
+        $attempt->beg_time_count = 0;
+        
 		$attempt->lti_resource_id = $session->read('LtiResource.id');
 		$attempt->user_role = $session->read('User.role');
 		

@@ -107,10 +107,16 @@ class AssaysController extends AppController
 
 				if(!is_null($money) || !is_null($time)) {
 					if(!is_null($money)) {
+                        $moneyBefore = $attemptData->money;
+                        $moneySpent = $moneyBefore - $money;
 						$attemptData->money = $money;
+						$attemptData->money_spent += $moneySpent;
 					}
 					if(!is_null($time)) {
+                        $timeBefore = $attemptData->time;
+                        $timeSpent = $timeBefore - $time;
 						$attemptData->time = $time;
+						$attemptData->time_spent += $timeSpent;
 					}
 				}
 				else {
