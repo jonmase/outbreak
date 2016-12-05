@@ -268,8 +268,45 @@
 										<h4 class="panel-title">Resources Used</h4>
 									</div>
 									<div class="panel-body">
-										<p>Time: {{attempt.timeSpent}} hours</p>
-										<p class="no-margin">Money: £{{attempt.moneySpent}}</p>
+										<p>Time: 
+                                            <span ng-if="attempt.time_spent !== null">
+                                                {{attempt.time_spent}} hours
+                                                <span ng-if="attempt.beg_time_count !== null"> 
+                                                    <span ng-if="attempt.beg_time_count == 0"> 
+                                                        (did not beg)
+                                                    </span>
+                                                    <span ng-if="attempt.beg_time_count == 1"> 
+                                                        (begged once)
+                                                    </span>
+                                                    <span ng-if="attempt.beg_time_count > 1"> 
+                                                        (begged {{attempt.beg_time_count}} times)
+                                                    </span>
+                                                </span>
+                                            </span>    
+                                            <span ng-if="attempt.time_spent === null">
+                                                Unknown
+                                            </span>
+                                        </p>
+										<p class="no-margin">
+                                            Money:
+                                            <span ng-if="attempt.money_spent !== null">
+                                                £{{attempt.money_spent}}
+                                                <span ng-if="attempt.beg_money_count !== null"> 
+                                                    <span ng-if="attempt.beg_money_count == 0"> 
+                                                        (did not beg)
+                                                    </span>
+                                                    <span ng-if="attempt.beg_money_count == 1"> 
+                                                        (begged once)
+                                                    </span>
+                                                    <span ng-if="attempt.beg_money_count > 1"> 
+                                                        (begged {{attempt.beg_money_count}} times)
+                                                    </span>
+                                                </span>
+                                            </span>    
+                                            <span ng-if="attempt.money_spent === null">
+                                                Unknown
+                                            </span>
+                                        </p>
 									</div>
 								</div>
 							</div>
