@@ -324,7 +324,16 @@
 				info: false,
 			};
 			if(typeof(techniqueId) !== "undefined") {
-				activeTabs[techniqueId] = angular.copy(activeTab);
+                if(techniqueId === 'xflu') {
+                    activeTabs[techniqueId] = {
+                        assay: false,
+                        results: false,
+                        info: true,
+                    }
+                }
+                else {
+                    activeTabs[techniqueId] = angular.copy(activeTab);
+                }
 			}
 			else {
 				activeTabs = [];
