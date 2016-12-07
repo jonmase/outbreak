@@ -60,7 +60,7 @@
 							<table>
 								<tr>
 									<th><!--Child--></th>
-									<th ng-repeat="(typeIndex, type) in samplesCtrl.types" ng-class="'samples-' + type.stage">{{type.stage.charAt(0).toUpperCase() + type.stage.slice(1)}}<br /><span ng-class="{'all-or-none-disabled': samplesCtrl.samples.saved.counts.schools[school.id][samplesCtrl.currentSite.id][type.stage] >= school.children.length || school[type.stage + 'Disabled']}" class="all-or-none">(<all-or-none school-id="school.id" type-id="type.id" on-click="samplesCtrl.selectAllOrNone(allOrNone, school.id, type.id)"></all-or-none>)</span></th>
+									<th ng-repeat="(typeIndex, type) in samplesCtrl.types" ng-class="'samples-' + type.stage">{{type.stage.charAt(0).toUpperCase() + type.stage.slice(1)}}<br /><span ng-class="{'all-or-none-disabled': samplesCtrl.samples.saved.counts.schools[school.id][samplesCtrl.currentSite.id][type.stage] >= school.children.length || school[type.stage + 'Disabled']}" class="all-or-none"><all-or-none school-id="school.id" type-id="type.id" on-click="samplesCtrl.selectAllOrNone(allOrNone, school.id, type.id)" brackets="true"></all-or-none></span></th>
 								</tr>
 								<!--tr>
 									<th>All {{school.children.length}}</th>

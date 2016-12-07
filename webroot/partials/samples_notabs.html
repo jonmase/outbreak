@@ -37,7 +37,7 @@
 							<table>
 								<tr>
 									<th>Child</th>
-									<th ng-repeat="(typeId, type) in samplesCtrl.types">{{type.charAt(0).toUpperCase() + type.slice(1)}} (<all-or-none school-id="schoolId" type-id="typeId" on-click="samplesCtrl.selectAllOrNone(allOrNone, schoolId, typeId)"></all-or-none>)</th>
+									<th ng-repeat="(typeId, type) in samplesCtrl.types">{{type.charAt(0).toUpperCase() + type.slice(1)}} <all-or-none school-id="schoolId" type-id="typeId" on-click="samplesCtrl.selectAllOrNone(allOrNone, schoolId, typeId)" brackets="true"></all-or-none></th>
 								</tr>
 								<tr ng-repeat="(childId, child) in school.children">
 									<th>{{child.name}}</th>

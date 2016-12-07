@@ -187,6 +187,7 @@
 				scope.typeId = attrs.typeid;
 			},*/
 			scope: {
+				brackets: '=',
 				siteId: '=',
 				schoolId: '=',
 				childId: '=',

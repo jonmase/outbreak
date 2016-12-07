@@ -15,4 +15,4 @@
     along with Oubreak.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
-<a href="" ng-click="click({ allOrNone: 1, siteId: siteId, schoolId: schoolId, childId: childId, typeId: typeId })">All</a>/<a href="" ng-click="click({ allOrNone: 0, siteId: siteId, schoolId: schoolId, childId: childId, typeId: typeId })">None</a>
+<span ng-if="brackets">(</span><a href="" ng-click="click({ allOrNone: 1, siteId: siteId, schoolId: schoolId, childId: childId, typeId: typeId })">All</a>/<a href="" ng-click="click({ allOrNone: 0, siteId: siteId, schoolId: schoolId, childId: childId, typeId: typeId })">None</a><span ng-if="brackets">)</span>
