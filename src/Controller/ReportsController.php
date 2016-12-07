@@ -169,7 +169,8 @@ class ReportsController extends AppController
 								$mark = $markQuery->first();
 								$message = '<div style="font-family: Verdana, Tahoma, sans-serif; font-size: 12px;"><p>Dear ' . $mark->marker->lti_lis_person_name_given . ',</p><p>' . $mark->lti_user->lti_lis_person_name_full . ' (' . $mark->lti_user->lti_displayid . '), whose Viral Outbreak iCase report you marked as a fail, has resubmitted their report for remarking.</p><p>Please <a href="https://weblearn.ox.ac.uk/access/basiclti/site/8dd25ab4-a0ca-4e16-0073-d2a9667b58ce/content:122">go to the iCase</a> (<a href="https://weblearn.ox.ac.uk/access/basiclti/site/8dd25ab4-a0ca-4e16-0073-d2a9667b58ce/content:122">https://weblearn.ox.ac.uk/access/basiclti/site/8dd25ab4-a0ca-4e16-0073-d2a9667b58ce/content:122</a>) and remark this student. You can filter the marks to show only those that failed to make it easier to find this student.</p><p>Thank you!</p></div>';
 								
-								$email = new Email('smtp');
+								//$email = new Email(); //Use PHP Mail
+								$email = new Email('smtp'); //Use SMTP (dev version)
 								$email->from(['msdlt@medsci.ox.ac.uk' => 'Viral Outbreak iCase Admin'])
 									//->to('jon.mason@medsci.ox.ac.uk')	
 									->to($mark->marker->lti_lis_person_contact_email_primary)

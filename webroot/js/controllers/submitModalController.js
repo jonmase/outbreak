@@ -28,7 +28,6 @@
 		
 		//Bindable Members - values
 		vm.saving = false;
-		//vm.failed = false;
 
 		//Bindable Members - methods
 		vm.confirm = confirm;
@@ -36,7 +35,6 @@
 
 		function confirm() {
 			reportFactory.setEditorsReadOnly(true);
-			//vm.failed = false;
 			vm.saving = true;
 			
 			var reportPromise = reportFactory.save('submit');
@@ -62,13 +60,10 @@
 		}
 		
 		function fail() {
-			//progressFactory.subtractResources(-moneyCost, -timeCost);	//Add the costs back on to the remaining resources
-			//alert("Saving failed, please try again. If you continue to experience problems, please refresh the page and try again. Contact msdlt@medsci.ox.ac.uk if this does not fix it");
 			$uibModalInstance.close();
 			console.log("Error: " + reason);
-			uibModal.open(modalFactory.getErrorModalOptions());
+			uibModal.open(modalFactory.getReportErrorModalOptions());
 			vm.saving = false;
-			//vm.failed = true;
 		}
 		
 		function cancel() {

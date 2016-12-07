@@ -84,6 +84,7 @@
 <?= $this->Html->script('controllers/errorModalController.js', ['block' => true]) ?>
 <?= $this->Html->script('controllers/introModalController.js', ['block' => true]) ?>
 <?= $this->Html->script('controllers/outbreakAlertModalController.js', ['block' => true]) ?>
+<?= $this->Html->script('controllers/reportErrorModalController.js', ['block' => true]) ?>
 <?= $this->Html->script('controllers/feedbackController.js', ['block' => true]) ?>
 <?= $this->Html->script('controllers/infoController.js', ['block' => true]) ?>
 <?= $this->Html->script('services/sectionServices.js', ['block' => true]) ?>

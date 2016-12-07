@@ -29,6 +29,7 @@
 		var labModalOptions = setLabModalOptions();
 		var markingLockedModalOptions = setMarkingLockedModalOptions();
 		var outbreakAlertModalOptions = setOutbreakAlertModalOptions();
+		var reportErrorModalOptions = setReportErrorModalOptions();
 		
 		var factory = {
 			getBeggingModalOptions: getBeggingModalOptions,
@@ -38,6 +39,7 @@
 			getLabModalOptions: getLabModalOptions,
 			getMarkingLockedModalOptions: getMarkingLockedModalOptions,
 			getOutbreakAlertModalOptions: getOutbreakAlertModalOptions,
+			getReportErrorModalOptions: getReportErrorModalOptions,
 		}
 		return factory;
 		
@@ -67,6 +69,10 @@
 		
 		function getOutbreakAlertModalOptions() {
 			return outbreakAlertModalOptions;
+		}
+		
+		function getReportErrorModalOptions() {
+			return reportErrorModalOptions;
 		}
 		
 		
@@ -165,6 +171,19 @@
 			};
 			
 			return outbreakAlertModalOptions;
+		}
+        
+		function setReportErrorModalOptions() {
+			var beggingModalOptions = {
+				animation: true,
+				size: 'lg',
+				backdrop: 'static',
+				template: '<div class="modal-header"><h4 class="modal-title">Someting\'s gone wrong</h4></div><div class="modal-body"><p>Sorry about this, there seems to have been a problem. You may have lost connection, or your session may have timed out. It could also be caused by having multiple instances of this attempt open at once. Please check your internet connection, ensure you don\'t have this attempt open in multiple tabs, and then try refreshing the page. </p><p>Unfortunately, this means that any changes you have made since the last save, at {{ReportErrorModalCtrl.lastSaved | date: \'H:mm:ss on d MMM yyyy\' }}<span ng-show="ReportErrorModalCtrl.lastSaveType === \'auto\'"> (Auto save)</span><span ng-show="ReportErrorModalCtrl.lastSaveType === \'save\'"> (Manual save)</span><span ng-show="ReportErrorModalCtrl.lastSaveType === \'leave\'"> (Saved on page exit)</span>, will not be saved. However, your current report is shown below, so you can copy this and paste it somewhere else, so you do not lose any changes.</p><p>Apologies for any inconvenience or annoyance this causes. If you continue to experience problems, <email-msdlt></email-msdlt></p><div><h4 style="margin-top: 20px">Report</h4><p class="alert alert-danger" role="alert">If you have made changes that may not have been saved, please copy your report and paste it somewhere else, so that you can paste it back in after reloading the page.</p><div ng-repeat="box in ReportErrorModalCtrl.boxes"><h6 style="margin-top: 20px">{{box.label}}</h6><div ng-bind-html="ReportErrorModalCtrl.report.reports_sections[box.id] | unsafe"></div></div></div></div><div class="modal-footer"><button type="button" class="btn btn-primary" ng-click="ReportErrorModalCtrl.confirm()">Reload</button></div>',
+				controller: 'ReportErrorModalController',
+				controllerAs: 'ReportErrorModalCtrl',
+			};
+			
+			return beggingModalOptions;
 		}
 	}
 	

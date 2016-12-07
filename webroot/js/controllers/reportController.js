@@ -86,7 +86,7 @@
 				}, 
 				function(reason) {
 					console.log("Error: " + reason);
-					$uibModal.open(modalFactory.getErrorModalOptions());
+					$uibModal.open(modalFactory.getReportErrorModalOptions());
 				}
 			);
 		}
@@ -124,7 +124,7 @@
 				}, 
 				function(reason) {
 					console.log("Error: " + reason);
-					$uibModal.open(modalFactory.getErrorModalOptions());
+					$uibModal.open(modalFactory.getReportErrorModalOptions());
 					vm.saving = false;
 				}
 			);
