@@ -24,7 +24,14 @@
 	ReportController.$inject = ['$scope', '$sce', '$uibModal', '$timeout', 'dateFilter', 'sectionFactory', 'lockFactory', 'modalFactory', 'reportFactory', 'resultFactory', 'techniqueFactory'];
 		
 	function ReportController($scope, $sce, $uibModal, $timeout, dateFilter, sectionFactory, lockFactory, modalFactory, reportFactory, resultFactory, techniqueFactory) {
-		var vm = this;
+		var submitted = reportFactory.getSubmitted();
+        
+        //If report has not been submitted add unload listener to prevent loss of reports through accidental page exit
+        if(!submitted) {
+            addUnloadListener();
+        }
+        
+        var vm = this;
 		var sectionId = 'report';
 		var autoSaveTimeout;
 		
@@ -44,7 +51,7 @@
 		vm.report = reportFactory.getReport();
 		vm.lastSaved = reportFactory.getLastSaved();
 		vm.lastSaveType = reportFactory.getLastSaveType();
-		vm.submitted = reportFactory.getSubmitted();
+		vm.submitted = submitted;
 		vm.notes = resultFactory.getNotes();
 		//vm.firstNote = reportFactory.getFirstNote();
 		vm.allNotesEmpty = reportFactory.getAllNotesEmpty();
@@ -181,6 +188,7 @@
 							reportFactory.setEditorsReadOnly(false);
 							vm.submitted = reportFactory.getSubmitted();
 							vm.saving = false;
+                            addUnloadListener();    //add unload listener to prevent loss of reports through accidental page exit
 							setAutosaveTimeout();
 						}, 
 						function(reason) {
@@ -199,5 +207,21 @@
 			$uibModal.open(modalFactory.getErrorModalOptions());
 			vm.saving = false;
 		}
+        
+        function addUnloadListener() {
+            window.onbeforeunload = function (event) {
+                var message = 'Changes that you have made may not have been saved';
+                
+                if (typeof event == 'undefined') {
+                    event = window.event;
+                }
+                
+                if (event) {
+                    event.returnValue = message;
+                }
+                
+                return message;
+            }
+        }
 	}
 })();

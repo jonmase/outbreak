@@ -24,6 +24,8 @@
 	HomeController.$inject = ['$scope', '$sce', 'mediaFactory', 'progressFactory', 'sampleFactory'];
 	
 	function HomeController($scope, $sce, mediaFactory, progressFactory, sampleFactory) {
+		window.onbeforeunload = null;   //Remove before unload listener (set in ReportController)
+        
 		var vm = this;
 		document.body.scrollTop = 0;
 		

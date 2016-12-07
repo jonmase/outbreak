@@ -24,7 +24,9 @@
 	ResultsController.$inject = ['$scope', '$sce', '$uibModal', 'modalFactory', 'sectionFactory', 'progressFactory', 'lockFactory', 'techniqueFactory', 'siteFactory', 'schoolFactory', 'sampleFactory', 'resultFactory', 'assayFactory'];
 		
 	function ResultsController($scope, $sce, $uibModal, modalFactory, sectionFactory, progressFactory, lockFactory, techniqueFactory, siteFactory, schoolFactory, sampleFactory, resultFactory, assayFactory) {
-		var vm = this;
+		window.onbeforeunload = null;   //Remove before unload listener (set in ReportController)
+        
+        var vm = this;
 		var sectionId = 'results';
 
 		//Check whether the section is locked

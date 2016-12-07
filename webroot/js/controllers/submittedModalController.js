@@ -24,6 +24,8 @@
 	SubmittedModalController.$inject = ['$scope', '$uibModalInstance', '$location', '$controller'];
 	
 	function SubmittedModalController($scope, $uibModalInstance, $location, $controller) {
+		window.onbeforeunload = null;   //Remove before unload listener (set in ReportController)
+
 		var vm = this;
 		
 		//Bindable Members - values

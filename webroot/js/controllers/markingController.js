@@ -24,6 +24,8 @@
 	MarkingController.$inject = ['$q', '$window', '$uibModal', 'markingFactory', 'modalFactory', 'techniqueFactory', 'sampleFactory', 'schoolFactory', 'siteFactory', 'assayFactory'];
 	
 	function MarkingController($q, $window, $uibModal, markingFactory, modalFactory, techniqueFactory, sampleFactory, schoolFactory, siteFactory, assayFactory) {
+		window.onbeforeunload = null;   //Remove before unload listener (set in ReportController)
+        
 		var vm = this;
 		
 		vm.me = MY_ID;

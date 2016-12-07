@@ -24,6 +24,8 @@
 	SamplesController.$inject = ['$scope', '$sce', '$uibModal', 'sectionFactory', 'progressFactory', 'lockFactory', 'siteFactory', 'schoolFactory', 'sampleFactory', '$q'];
 		
 	function SamplesController($scope, $sce, $uibModal, sectionFactory, progressFactory, lockFactory, siteFactory, schoolFactory, sampleFactory, $q) {
+		window.onbeforeunload = null;   //Remove before unload listener (set in ReportController)
+        
 		var vm = this;
 		var sectionId = 'sampling';
 

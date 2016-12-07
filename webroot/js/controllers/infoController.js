@@ -23,6 +23,8 @@
 
 	InfoController.$inject = ['$scope', 'sectionFactory'];
 	function InfoController($scope, sectionFactory) {
+		window.onbeforeunload = null;   //Remove before unload listener (set in ReportController)
+        
 		var vm = this;
 		document.body.scrollTop = 0;
 		var sectionId = 'info';

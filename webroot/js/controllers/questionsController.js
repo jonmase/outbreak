@@ -24,6 +24,8 @@
 	QuestionsController.$inject = ['$scope', '$sce', '$uibModal', 'sectionFactory', 'lockFactory', 'modalFactory', 'questionFactory', '$q'];
 	
 	function QuestionsController($scope, $sce, $uibModal, sectionFactory, lockFactory, modalFactory, questionFactory, $q) {
+		window.onbeforeunload = null;   //Remove before unload listener (set in ReportController)
+        
 		var vm = this;
 		var sectionId = 'questions';
 		

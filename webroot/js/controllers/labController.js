@@ -24,6 +24,8 @@
 	LabController.$inject = ['$scope', '$sce', '$location', '$uibModal', 'sectionFactory', 'progressFactory', 'lockFactory', 'mediaFactory', 'modalFactory', 'techniqueFactory', 'siteFactory', 'schoolFactory', 'sampleFactory', 'resultFactory', 'assayFactory', 'moneyCutoff', 'timeCutoff'];
 	
 	function LabController($scope, $sce, $location, $uibModal, sectionFactory, progressFactory, lockFactory, mediaFactory, modalFactory, techniqueFactory, siteFactory, schoolFactory, sampleFactory, resultFactory, assayFactory, moneyCutoff, timeCutoff) {
+		window.onbeforeunload = null;   //Remove before unload listener (set in ReportController)
+        
 		var vm = this;
 		var sectionId = 'lab';
 

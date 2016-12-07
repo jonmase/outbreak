@@ -23,6 +23,8 @@
 
 	FeedbackController.$inject = ['$scope', 'sectionFactory', 'lockFactory'];
 	function FeedbackController($scope, sectionFactory, lockFactory) {
+		window.onbeforeunload = null;   //Remove before unload listener (set in ReportController)
+        
 		var vm = this;
 		var sectionId = 'feedback';
 		
