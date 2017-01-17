@@ -171,7 +171,7 @@ class MarksTable extends Table
 		
 		//Get all the marks
 		$marksQuery = $this->find('all', [
-			'conditions' => ['lti_resource_id' => $ltiResourceId, 'revision' => 0],
+			'conditions' => ['lti_resource_id' => $ltiResourceId, 'revision' => 0, 'archived' => 0],
 			'order' => ['Marks.created' => 'DESC'],
 			'contain' => ['Marker', 'Locker'],
 		]);
