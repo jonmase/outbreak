@@ -167,6 +167,9 @@
 									savedAssayCounts[techniqueId].sites[siteId].schools[schoolId].total++;
 									savedAssayCounts[techniqueId].sites[siteId].schools[schoolId].children[childId]++;
 									savedAssayCounts[techniqueId].sites[siteId].schools[schoolId].types[typeId]++;
+
+                                    //Update the required tests array
+                                    updateRequiredTest(techniqueId, siteId, schoolId, childId, typeId);
 								}
 							}
 							firstChild = 0;
@@ -473,14 +476,8 @@
 										if(assays.temp.samples[techniqueId][siteId][schoolId][childId][typeId] === 1) {
 											assays.saved.samples[techniqueId][siteId][schoolId][childId][typeId] = 1;
 											
-											//Check whether this test is required, and if so, mark the required test as done
-											var requiredKey = "" + siteId + schoolId + childId + typeId;
-											if(typeof(requiredTests.h[techniqueId]) !== "undefined" && requiredTests.h[techniqueId].hasOwnProperty(requiredKey)) {
-												requiredTests.h[techniqueId][requiredKey] = 1;
-											}
-											if(typeof(requiredTests.n[techniqueId]) !== "undefined" && requiredTests.n[techniqueId].hasOwnProperty(requiredKey)) {
-												requiredTests.n[techniqueId][requiredKey] = 1;
-											}
+                                            //Update the required tests array
+                                            updateRequiredTest(techniqueId, siteId, schoolId, childId, typeId);
 										}
 									}
 								}
@@ -572,7 +569,18 @@
 			});
 			activeTabs[techniqueId][tab] = true;
 		}
-	};
+        
+        function updateRequiredTest(techniqueId, siteId, schoolId, childId, typeId) {
+            //Check whether this test is required, and if so, mark the required test as done
+            var requiredKey = "" + siteId + schoolId + childId + typeId;
+            if(typeof(requiredTests.h[techniqueId]) !== "undefined" && requiredTests.h[techniqueId].hasOwnProperty(requiredKey)) {
+                requiredTests.h[techniqueId][requiredKey] = 1;
+            }
+            if(typeof(requiredTests.n[techniqueId]) !== "undefined" && requiredTests.n[techniqueId].hasOwnProperty(requiredKey)) {
+                requiredTests.n[techniqueId][requiredKey] = 1;
+            }
+        }
+  	};
 	
 		/*function initializeAssays() {
 			var savedAssays = readSavedAssays();
