@@ -154,7 +154,13 @@
 			//API: Save notes to DB. Called on blur
 			var deferred = $q.defer();
 			var NotesCall = $resource(URL_MODIFIER + 'notes/save', {});
-			NotesCall.save({}, {attemptId: ATTEMPT_ID, token: ATTEMPT_TOKEN, techniqueId: techniqueId, note: notes[techniqueId].note},
+            
+            var note = "";
+            if(typeof(notes[techniqueId]) !== "undefined"){
+                note = notes[techniqueId].note;
+            }
+            
+			NotesCall.save({}, {attemptId: ATTEMPT_ID, token: ATTEMPT_TOKEN, techniqueId: techniqueId, note: note},
 				function(result) {
 					if(typeof(result.status) !== "undefined" && result.status === 'success') {
 						deferred.resolve('Notes saved');
