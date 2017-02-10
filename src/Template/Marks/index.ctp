@@ -36,7 +36,7 @@
 			</div>
 			<div class="col-xs-6 col-sm-3">
 				<label for="status_filter">Mark</label>
-				<select class="form-control" id="mark_filter" name="mark_filter" ng-model="markingCtrl.markToShow" ng-options="mark for mark in markingCtrl.markOptions"></select>
+				<select class="form-control" id="mark_filter" name="mark_filter" ng-model="markingCtrl.markToShow" ng-options="mark for mark in markingCtrl.markOptionsForFilter"></select>
 			</div>
 			<div class="col-xs-6 col-sm-3">
 				<label for="role_filter">Order By</label>

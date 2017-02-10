@@ -67,7 +67,7 @@
 		vm.submitStatusToShow = vm.submitStatusesForFilter[2];
 		
 		vm.markOptions = ['Satis plus', 'Satis', 'Fail'];
-		vm.markOptionsForFilter = vm.markOptions;
+		vm.markOptionsForFilter = vm.markOptions.slice();
 		vm.markOptionsForFilter.unshift('All', 'Unmarked', 'Marked');
 		vm.markToShow = vm.markOptionsForFilter[0];
 		
