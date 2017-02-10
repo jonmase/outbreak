@@ -64,4 +64,64 @@
 			</uib-tabset>
 		</div>
 	</div>
+    
+    <script type="text/ng-template" id="error-modal.html">
+        <div class="modal-header">
+            <h4 class="modal-title">Someting's gone wrong</h4>
+        </div>
+        <div class="modal-body">
+            <p>Sorry about this, there seems to have been a problem. You may have lost connection, or your session may have timed out. It could also be caused by having multiple instances of this attempt open at once. Please check your internet connection, ensure you don't have this attempt open in multiple tabs, and then try refreshing the page. </p>
+            <p>Unfortunately, this means that your most recent actions/inputs may be lost. This may include any unchecked questions, uncollected samples or assays that you haven't yet carried out. Reports are automatically saved every minute, but you may lose any text you have entered since the last save. Apologies for any inconvenience or annoyance this causes.</p>
+            <p>If you continue to experience problems, <email-msdlt></email-msdlt></p>
+        </div>
+        <div class="modal-footer">
+            <div>
+                <button type="button" class="btn btn-primary" ng-click="ErrorModalCtrl.confirm()">Reload</button>
+            </div>
+        </div>
+    </script>
+    
+    <script type="text/ng-template" id="outbreak-alert-modal.html">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Cancel" ng-click="OutbreakAlertModalCtrl.cancel()"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Alert: Email from the Boss</h4>
+        </div>
+        <div class="modal-body">
+            <outbreak-alert></outbreak-alert>
+            <info-on-home></info-on-home>
+        </div>
+        <div class="modal-footer">
+            <div ng-hide="OutbreakAlertModalCtrl.saving">
+                <button type="button" class="btn btn-primary" ng-click="OutbreakAlertModalCtrl.confirm()">Continue</button>
+            </div>
+            <div ng-show="OutbreakAlertModalCtrl.saving">
+                <loader></loader> Saving Progress
+            </div>
+        </div>
+    </script>
+
+    <script type="text/ng-template" id="intro-modal.html">
+        <div class="modal-header">
+            <h4 class="modal-title">Introduction</h4>
+        </div>
+        <div class="modal-body">
+            <p>Watch this brief introductory video, explaining what you have to do. When you are ready, click Start.</p> 
+            <div style="margin-bottom: 10px;">
+                <div class="video-container">
+                    <iframe width="100%" ng-src="{{IntroModalCtrl.introVideo}}" frameborder="0" allowfullscreen></iframe>
+                </div>
+                <!--div id="introModalPlayer" ng-init="IntroModalCtrl.loadVideo()">Loading video player...</div-->
+            </div>
+            <info-on-home type="'video'"></info-on-home>
+        </div>
+        <div class="modal-footer">
+            <div ng-hide="IntroModalCtrl.saving">
+                <button type="button" class="btn btn-primary" ng-click="IntroModalCtrl.start()">Start</button>
+            </div>
+            <div ng-show="IntroModalCtrl.saving">
+                <loader></loader> Saving Progress
+            </div>
+        </div>
+    </script>
+
 </div>

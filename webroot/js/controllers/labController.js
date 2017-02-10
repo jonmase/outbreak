@@ -65,14 +65,7 @@
 
 		//If this is the user's first visit (i.e. lab hasn't been set to complete yet), show the flu alert and set lab to complete
 		if(!progressFactory.checkProgress('lab')) {
-			$uibModal.open({
-				animation: true,
-				backdrop: 'static',
-				size: 'lg',
-				templateUrl: '../../partials/modals/flu-alert-modal.html',
-				controller: 'FluAlertModalController',
-				controllerAs: 'FluAlertModalCtrl',
-			});
+            $uibModal.open(modalFactory.getFluAlertModalOptions());
 			//lockFactory.setComplete('lab');
 		}
 
@@ -88,29 +81,11 @@
 			if(vm.assays.temp.counts[vm.currentTechniqueId].total > 0) {
 				//If user has run out of time or money, make them beg for more
 				if(vm.resources.money < moneyCutoff || vm.resources.time < timeCutoff) {
-					$uibModal.open({
-						animation: true,
-						size: 'md',
-						backdrop: 'static',
-						templateUrl: '../../partials/modals/begging-modal.html',
-						controller: 'BeggingModalController',
-						controllerAs: 'BeggingModalCtrl',
-					});
+					$uibModal.open(modalFactory.getBeggingModalOptions());
 				}
 				//Show modal with summary of samples to be included in the assay, and cost, and get user to confirm
 				else {
-					$uibModal.open({
-						animation: true,
-						size: 'lg',
-						templateUrl: '../../partials/modals/lab-modal.html',
-						controller: 'LabModalController',
-						controllerAs: 'LabModalCtrl',
-						resolve: { 
-							currentTechniqueId: function () { 
-								return vm.currentTechniqueId; 
-							} 
-						}
-					});
+					$uibModal.open(modalFactory.getLabModalOptions(vm.currentTechniqueId));
 				}
 			}
 			else {	//No samples have been selected for this technique, so we should not be able to collect samples (button should be disabled anyway)

@@ -539,14 +539,7 @@
 						schools[schoolId].acuteDisabled = true;
 						console.log('Too late saved');
 						//deferred.resolve('Too late saved');
-						$uibModal.open({
-							animation: true,
-							size: 'md',
-							backdrop: 'static',
-							templateUrl: '../../partials/modals/too-late-modal.html',
-							controller: 'tooLateModalController',
-							controllerAs: 'tooLateModalCtrl',
-						});
+						$uibModal.open(modalFactory.getTooLateModalOptions());
 					}
 					else {
 						console.log('Too late save failed (' + result.status + ")");

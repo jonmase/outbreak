@@ -73,13 +73,7 @@
 								
 								//If both H and N have been identified, show modal saying they have sufficient info to write report
 								if(progressFactory.checkProgress('hidentified') && progressFactory.checkProgress('nidentified')) {
-									$uibModal.open({
-										animation: true,
-										size: 'lg',
-										templateUrl: '../../partials/modals/research-alert-modal.html',
-										controller: 'ResearchAlertModalController',
-										controllerAs: 'ResearchAlertModalCtrl',
-									});
+                                    $uibModal.open(modalFactory.getResearchAlertModalOptions());
 								}
 							}, 
 							function(reason) {

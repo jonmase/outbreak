@@ -112,4 +112,39 @@
 			</div>
 		</div>
 	</div>
+    
+    <script type="text/ng-template" id="samples-modal.html">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Cancel" ng-click="SamplesModalCtrl.cancel()"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Collect Samples</h4>
+        </div>
+        <div class="modal-body">
+            <p>The samples you have selected are shown below. If you wish to go ahead and collect these samples, please select Confirm to continue.</p><p>Alternatively, please select Cancel and you can add or remove samples before collecting. You can also return later and collect more samples if you need to.<!--You do have the opportunity to return to collect more samples, but this may affect the happiness of the children.--></p>
+            <show-samples status="'temp'"></show-samples>
+            <div class="alert alert-danger no-margin" role="alert" ng-if="SamplesModalCtrl.samples.temp.counts.sites[SamplesModalCtrl.siteIds['csf']] > 0">You are about to collect CSF samples, which is particularly intrusive and painful for the children. Consider whether this is really necessary before continuing.</div>
+        </div>
+        <div class="modal-footer">
+            <div ng-hide="SamplesModalCtrl.saving">
+                <button type="button" class="btn btn-default" ng-click="SamplesModalCtrl.cancel()">Cancel</button>
+                <button type="button" class="btn btn-primary" ng-click="SamplesModalCtrl.confirm()">Confirm</button>
+            </div>
+            <div ng-show="SamplesModalCtrl.saving">
+                <loader></loader>
+                Collecting Samples
+            </div>
+        </div>
+    </script>
+    
+    <script type="text/ng-template" id="too-late-modal.html">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Cancel" ng-click="tooLateModalCtrl.cancel()"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">You're Too Late!</h4>
+        </div>
+        <div class="modal-body">
+            <p>You are too late to get acute samples for children at this school. They have recovered from the infection, and so only convalescent samples are available.</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" ng-click="tooLateModalCtrl.confirm()">Continue</button>
+        </div>
+    </script>
 </div>

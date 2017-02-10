@@ -59,10 +59,10 @@
 			);
 		}
 		
-		function fail() {
+		function fail(reason) {
 			$uibModalInstance.close();
 			console.log("Error: " + reason);
-			uibModal.open(modalFactory.getReportErrorModalOptions());
+			$uibModal.open(modalFactory.getReportErrorModalOptions());
 			vm.saving = false;
 		}
 		

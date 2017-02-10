@@ -22,15 +22,6 @@
 		.factory('modalFactory', modalFactory);
 	
 	function modalFactory() {
-		var beggingModalOptions = setBeggingModalOptions();
-		var errorModalOptions = setErrorModalOptions();
-		var fluAlertModalOptions = setFluAlertModalOptions();
-		var introModalOptions = setIntroModalOptions();
-		var labModalOptions = setLabModalOptions();
-		var markingLockedModalOptions = setMarkingLockedModalOptions();
-		var outbreakAlertModalOptions = setOutbreakAlertModalOptions();
-		var reportErrorModalOptions = setReportErrorModalOptions();
-		
 		var factory = {
 			getBeggingModalOptions: getBeggingModalOptions,
 			getErrorModalOptions: getErrorModalOptions,
@@ -40,212 +31,178 @@
 			getMarkingLockedModalOptions: getMarkingLockedModalOptions,
 			getOutbreakAlertModalOptions: getOutbreakAlertModalOptions,
 			getReportErrorModalOptions: getReportErrorModalOptions,
+            getResearchAlertModalOptions: getResearchAlertModalOptions,
+            getSamplesModalOptions: getSamplesModalOptions,
+            getSubmitModalOptions: getSubmitModalOptions,
+            getSubmittedModalOptions: getSubmittedModalOptions,
+            getTooLateModalOptions: getTooLateModalOptions,
 		}
 		return factory;
 		
 		function getBeggingModalOptions() {
+			var beggingModalOptions = {
+				animation: true,
+				backdrop: 'static',
+				controller: 'BeggingModalController',
+				controllerAs: 'BeggingModalCtrl',
+				size: 'md',
+				templateUrl: 'begging-modal.html',
+			};
+			
 			return beggingModalOptions;
 		}
 		
 		function getErrorModalOptions() {
+			var errorModalOptions = {
+				animation: true,
+				backdrop: 'static',
+				controller: 'ErrorModalController',
+				controllerAs: 'ErrorModalCtrl',
+				size: 'md',
+                templateUrl: 'error-modal.html',
+			};
+			
 			return errorModalOptions;
 		}
 		
 		function getFluAlertModalOptions() {
+			var fluAlertModalOptions = {
+				animation: true,
+				backdrop: 'static',
+				controller: 'FluAlertModalController',
+				controllerAs: 'FluAlertModalCtrl',
+				size: 'lg',
+				templateUrl: 'flu-alert-modal.html',
+			};
+			
 			return fluAlertModalOptions;
 		}
 		
 		function getIntroModalOptions() {
-			return introModalOptions;
-		}
-		
-		function getLabModalOptions() {
-			return labModalOptions;
-		}
-		
-		function getMarkingLockedModalOptions() {
-			return markingLockedModalOptions;
-		}
-		
-		function getOutbreakAlertModalOptions() {
-			return outbreakAlertModalOptions;
-		}
-		
-		function getReportErrorModalOptions() {
-			return reportErrorModalOptions;
-		}
-		
-		
-		function setBeggingModalOptions() {
-			var beggingModalOptions = {
-				animation: true,
-				size: 'lg',
-				backdrop: 'static',
-				templateUrl: '../../partials/modals/begging-modal.html',
-				controller: 'BeggingModalController',
-				controllerAs: 'BeggingModalCtrl',
-			};
-			
-			return beggingModalOptions;
-		}
-
-		function setErrorModalOptions() {
-			var errorModalOptions = {
-				animation: true,
-				size: 'md',
-				backdrop: 'static',
-				//templateUrl: '../../partials/modals/error-modal.html',
-				template: '<div class="modal-header"><h4 class="modal-title">Someting\'s gone wrong</h4></div><div class="modal-body"><p>Sorry about this, there seems to have been a problem. You may have lost connection, or your session may have timed out. It could also be caused by having multiple instances of this attempt open at once. Please check your internet connection, ensure you don\'t have this attempt open in multiple tabs, and then try refreshing the page. </p><p>Unfortunately, this means that your most recent actions/inputs may be lost. This may include any unchecked questions, uncollected samples or assays that you haven\'t yet carried out. Reports are automatically saved every minute, but you may lose any text you have entered since the last save. Apologies for any inconvenience or annoyance this causes.</p><p>If you continue to experience problems, <email-msdlt></email-msdlt></p></div><div class="modal-footer"><div><button type="button" class="btn btn-primary" ng-click="ErrorModalCtrl.confirm()">Reload</button></div></div>',
-				controller: 'ErrorModalController',
-				controllerAs: 'ErrorModalCtrl',
-			};
-			
-			return errorModalOptions;
-		}
-
-		function setMarkingLockedModalOptions() {
-			var errorModalOptions = {
-				animation: true,
-				size: 'md',
-				backdrop: 'static',
-				//templateUrl: '../../partials/modals/error-modal.html',
-				template: '<div class="modal-header"><h4 class="modal-title">Locked</h4></div><div class="modal-body"><p>Sorry, this user has been locked for marking by someone else since you loaded the page. Please use the button below to refresh the list of users and update their current statuses.</p></div><div class="modal-footer"><div><button type="button" class="btn btn-primary" ng-click="MarkingLockedModalCtrl.confirm()">Refresh</button></div></div>',
-				controller: 'MarkingLockedModalController',
-				controllerAs: 'MarkingLockedModalCtrl',
-			};
-			
-			return errorModalOptions;
-		}
-
-		function setFluAlertModalOptions() {
-			var fluAlertModalOptions = {
-				animation: true,
-				backdrop: 'static',
-				size: 'lg',
-				templateUrl: '../../partials/modals/flu-alert-modal.html',
-				controller: 'FluAlertModalController',
-				controllerAs: 'FluAlertModalCtrl',
-			};
-			
-			return fluAlertModalOptions;
-		}
-
-		function setIntroModalOptions() {
 			var introModalOptions = {
 				animation: true,
 				backdrop: 'static',
-				size: 'lg',
-				templateUrl: '../../partials/modals/intro-modal.html',
 				controller: 'IntroModalController',
 				controllerAs: 'IntroModalCtrl',
+				size: 'lg',
+				templateUrl: 'intro-modal.html',
 			};
 			
 			return introModalOptions;
 		}
 		
-		function setLabModalOptions() {
+		function getLabModalOptions(currentTechniqueId) {
 			var labModalOptions = {
 				animation: true,
-				size: 'lg',
-				templateUrl: '../../partials/modals/lab-modal.html',
 				controller: 'LabModalController',
 				controllerAs: 'LabModalCtrl',
 				resolve: { 
 					currentTechniqueId: function () { 
-						return vm.currentTechniqueId; 
+						return currentTechniqueId; 
 					} 
-				}
+				},
+				size: 'lg',
+				templateUrl: 'lab-modal.html',
 			};
 			
 			return labModalOptions;
 		}
 		
-		function setOutbreakAlertModalOptions() {
+		function getMarkingLockedModalOptions() {
+			var errorModalOptions = {
+				animation: true,
+				backdrop: 'static',
+				controller: 'MarkingLockedModalController',
+				controllerAs: 'MarkingLockedModalCtrl',
+				size: 'md',
+				templateUrl: 'marking-locked-modal.html',
+			};
+			
+			return errorModalOptions;
+		}
+		
+		function getOutbreakAlertModalOptions() {
 			var outbreakAlertModalOptions = {
 				animation: true,
 				backdrop: 'static',
-				size: 'lg',
-				templateUrl: '../../partials/modals/outbreak-alert-modal.html',
 				controller: 'OutbreakAlertModalController',
 				controllerAs: 'OutbreakAlertModalCtrl',
+				size: 'lg',
+				templateUrl: 'outbreak-alert-modal.html',
 			};
 			
 			return outbreakAlertModalOptions;
 		}
-        
-		function setReportErrorModalOptions() {
+		
+		function getReportErrorModalOptions() {
 			var beggingModalOptions = {
 				animation: true,
-				size: 'lg',
 				backdrop: 'static',
-				template: '<div class="modal-header"><h4 class="modal-title">Someting\'s gone wrong</h4></div><div class="modal-body"><p>Sorry about this, there seems to have been a problem. You may have lost connection, or your session may have timed out. It could also be caused by having multiple instances of this attempt open at once. Please check your internet connection, ensure you don\'t have this attempt open in multiple tabs, and then try refreshing the page. </p><p>Unfortunately, this means that any changes you have made since the last save, at {{ReportErrorModalCtrl.lastSaved | date: \'H:mm:ss on d MMM yyyy\' }}<span ng-show="ReportErrorModalCtrl.lastSaveType === \'auto\'"> (Auto save)</span><span ng-show="ReportErrorModalCtrl.lastSaveType === \'save\'"> (Manual save)</span><span ng-show="ReportErrorModalCtrl.lastSaveType === \'leave\'"> (Saved on page exit)</span>, will not be saved. However, your current report is shown below, so you can copy this and paste it somewhere else, so you do not lose any changes.</p><p>Apologies for any inconvenience or annoyance this causes. If you continue to experience problems, <email-msdlt></email-msdlt></p><div><h4 style="margin-top: 20px">Report</h4><p class="alert alert-danger" role="alert">If you have made changes that may not have been saved, please copy your report and paste it somewhere else, so that you can paste it back in after reloading the page.</p><div ng-repeat="box in ReportErrorModalCtrl.boxes"><h6 style="margin-top: 20px">{{box.label}}</h6><div ng-bind-html="ReportErrorModalCtrl.report.reports_sections[box.id] | unsafe"></div></div></div></div><div class="modal-footer"><button type="button" class="btn btn-primary" ng-click="ReportErrorModalCtrl.confirm()">Reload</button></div>',
 				controller: 'ReportErrorModalController',
 				controllerAs: 'ReportErrorModalCtrl',
+				size: 'lg',
+                templateUrl: 'report-error-modal.html',
 			};
 			
 			return beggingModalOptions;
 		}
-	}
-	
-	/*
-	//OLD Modal Factory
-	function modalFactory() {
-		var modal = {
-			backdrop: true,
-			closable: true,
-			content: 'Default content',
-			template: false,
-			title: 'Default Title',
-			width: '90%',
-			buttons: {
-				primary: {
-					text: 'Next',
-					show: true,
-				},
-				dismiss: {
-					text: 'Close'
-				},
+        
+		function getResearchAlertModalOptions() {
+			var researchAlertModalOptions = {
+                animation: true,
+                controller: 'ResearchAlertModalController',
+                controllerAs: 'ResearchAlertModalCtrl',
+                size: 'lg',
+                templateUrl: 'research-alert-modal.html',
+            }
+			return researchAlertModalOptions;
+        }
+        
+		function getSamplesModalOptions() {
+			var samplesModalOptions = {
+                animation: true,
+                controller: 'SamplesModalController',
+                controllerAs: 'SamplesModalCtrl',
+                size: 'lg',
+                templateUrl: 'samples-modal.html',
+            }
+			return samplesModalOptions;
+        }
+        
+		function getSubmitModalOptions() {
+			var submitModalOptions = {
+				animation: true,
+				backdrop: 'static',
+				controller: 'SubmitModalController',
+				controllerAs: 'SubmitModalCtrl',
+				size: 'md',
+				templateUrl: 'submit-modal.html',
 			}
-		};
-		
-		var factory = {
-			getModal: getModal,
-			setClosable: setClosable,
-			setContent: setContent,
-			setTemplate: setTemplate,
-			setTitle: setTitle,
-			setWidth: setWidth,
-			showModal: showModal,
-		}
-		return factory;
-		
-		function getModal() {
-			return modal;
-		}
-
-		function setClosable(closable) {
-			modal.closable = closable;
-		}
-
-		function setContent(content) {
-			modal.content = content;
-		}
-		
-		function setTemplate(template) {
-			modal.template = template;
-		}
-
-		function setTitle(title) {
-			modal.title = title;
-		}
-		
-		function setWidth(width) {
-			modal.width = width;
-		}
-
-		function showModal(options) {
-			$('#influenzaModal').modal(options);
-		}
+			return submitModalOptions;
+        }
+        
+		function getSubmittedModalOptions() {
+			var submittedModalOptions = {
+                animation: true,
+                backdrop: 'static',
+                controller: 'SubmittedModalController',
+                controllerAs: 'SubmittedModalCtrl',
+                size: 'md',
+                templateUrl: 'submitted-modal.html',
+            }
+			return submittedModalOptions;
+        }
+        
+		function getTooLateModalOptions() {
+			var tooLateModalOptions = {
+                animation: true,
+                backdrop: 'static',
+                controller: 'tooLateModalController',
+                controllerAs: 'tooLateModalCtrl',
+                size: 'md',
+                templateUrl: 'too-late-modal.html',
+            }
+			return tooLateModalOptions;
+        }
 	}
-	*/
 })();

@@ -142,14 +142,7 @@
 				console.log('Report already saved');
 				return false;
 			}
-			var modalInstance = $uibModal.open({
-				animation: true,
-				size: 'md',
-				backdrop: 'static',
-				templateUrl: '../../partials/modals/submit-modal.html',
-				controller: 'SubmitModalController',
-				controllerAs: 'SubmitModalCtrl',
-			});
+			var modalInstance = $uibModal.open(modalFactory.getSubmitModalOptions());
 			
 			modalInstance.result.then(function () {
 				vm.lastSaved = reportFactory.getLastSaved();
@@ -159,14 +152,7 @@
 					cancelAutosaveTimeout();
 				}
 				if(vm.submitted) {
-					$uibModal.open({
-						animation: true,
-						size: 'md',
-						backdrop: 'static',
-						templateUrl: '../../partials/modals/submitted-modal.html',
-						controller: 'SubmittedModalController',
-						controllerAs: 'SubmittedModalCtrl',
-					});
+                    var modalInstance = $uibModal.open(modalFactory.getSubmittedModalOptions());
 				}
 			});
 		}

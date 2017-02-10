@@ -21,9 +21,9 @@
 	angular.module('flu.samples')
 		.controller('SamplesController', SamplesController);
 
-	SamplesController.$inject = ['$scope', '$sce', '$uibModal', 'sectionFactory', 'progressFactory', 'lockFactory', 'siteFactory', 'schoolFactory', 'sampleFactory', '$q'];
+	SamplesController.$inject = ['$scope', '$sce', '$uibModal', 'sectionFactory', 'progressFactory', 'lockFactory', 'modalFactory', 'siteFactory', 'schoolFactory', 'sampleFactory', '$q'];
 		
-	function SamplesController($scope, $sce, $uibModal, sectionFactory, progressFactory, lockFactory, siteFactory, schoolFactory, sampleFactory, $q) {
+	function SamplesController($scope, $sce, $uibModal, sectionFactory, progressFactory, lockFactory, modalFactory, siteFactory, schoolFactory, sampleFactory, $q) {
 		window.onbeforeunload = null;   //Remove before unload listener (set in ReportController)
         
 		var vm = this;
@@ -72,13 +72,7 @@
 		//Uses Angular UI Botstrap modal component: https://angular-ui.github.io/bootstrap/
 		function confirmSamples() {
 			if(vm.samples.temp.counts.total > 0) {
-				$uibModal.open({
-					animation: true,
-					size: 'lg',
-					templateUrl: '../../partials/modals/samples-modal.html',
-					controller: 'SamplesModalController',
-					controllerAs: 'SamplesModalCtrl',
-				});
+                $uibModal.open(modalFactory.getSamplesModalOptions());
 			}
 			else {	//No samples have been selected, so we should not be able to collect samples (button should be disabled anyway)
 				alert("Please select some samples to collect");
