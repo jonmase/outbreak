@@ -91,6 +91,7 @@
 <?= $this->Html->script('services/progressServices.js', ['block' => true]) ?>
 <?= $this->Html->script('services/lockServices.js', ['block' => true]) ?>
 <?= $this->Html->script('services/mediaServices.js', ['block' => true]) ?>
+<?= $this->Html->script('services/interceptorServices.js', ['block' => true]) ?>
 <?= $this->Html->script('services/modalServices.js', ['block' => true]) ?>
 <?= $this->Html->script('directives.js', ['block' => true]) ?>
 <?= $this->Html->script('filters.js', ['block' => true]) ?>

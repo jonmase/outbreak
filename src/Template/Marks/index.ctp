@@ -392,6 +392,7 @@
 <?= $this->Html->script('services/sampleServices.js', ['block' => true]) ?>
 <?= $this->Html->script('services/assayServices.js', ['block' => true]) ?>
 <?= $this->Html->script('services/markingServices.js', ['block' => true]) ?>
+<?= $this->Html->script('services/interceptorServices.js', ['block' => true]) ?>
 <?= $this->Html->script('services/modalServices.js', ['block' => true]) ?>
 <?= $this->Html->script('filters.js', ['block' => true]) ?>
 <?= $this->Html->script('directives.js', ['block' => true]) ?>

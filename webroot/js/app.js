@@ -14,8 +14,8 @@
 		//.module('flu', ['ngRoute', 'ngSanitize', 'ui.bootstrap', 'textAngular', 'flu.techniques', 'flu.questions', 'flu.samples', 'flu.lab', 'flu.results', 'flu.report', 'flu.directives', 'flu.filters'])	//With textangular
 		.config(config);
 		
-	config.$inject = ['$routeProvider', 'sectionsConstant'];
-	function config($routeProvider, sectionsConstant) {
+	config.$inject = ['$routeProvider', '$httpProvider', 'sectionsConstant'];
+	function config($routeProvider, $httpProvider, sectionsConstant) {
 		var sections = sectionsConstant();
 		
 		$routeProvider.when('/home', {	//Home route
@@ -33,5 +33,7 @@
 		$routeProvider.otherwise( {	//Default route - go home
 			redirectTo: "/home",
 		});
+        
+        $httpProvider.interceptors.push('failedRequestInterceptor');
 	};
 })();
