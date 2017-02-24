@@ -18,7 +18,7 @@
 */
 
 (function() {
-	angular.module('flu.marking')
+	angular.module('flu')
 		.factory('markingFactory', markingFactory);
 		
 	markingFactory.$inject = ['$resource', '$q'];

@@ -18,7 +18,7 @@
 */
 
 (function() {
-	angular.module('flu.marking')
+	angular.module('flu')
 		.controller('MarkingController', MarkingController);
 
 	MarkingController.$inject = ['$q', '$window', '$uibModal', 'markingFactory', 'modalFactory', 'techniqueFactory', 'sampleFactory', 'schoolFactory', 'siteFactory', 'assayFactory'];

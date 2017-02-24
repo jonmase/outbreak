@@ -19,7 +19,7 @@
 */
 ?>
 
-<div ng-app="flu.marking" class="col-xs-12">
+<div ng-app="flu" class="col-xs-12">
 	<div ng-controller="MarkingController as markingCtrl">
 		<h2 class="page-title">
 			<div class="pull-right" ng-show="markingCtrl.status === 'index' || markingCtrl.status === 'loading'"><?= $this->Html->link('<i class="fa fa-arrow-left"></i>&nbsp; Back to Your Attempts', ['controller' => 'attempts', 'action' => 'index'], ['class' => 'btn btn-primary', 'role' => 'button', 'escape' => false]) ?></div>

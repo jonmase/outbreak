@@ -190,7 +190,7 @@ class MarksController extends AppController
 							$attempts = $attemptsQuery->all();
 
 							foreach($attempts as $attempt) {
-								list($status, $logMessage) = $this->Marks->LtiResources->Attempts->Reports->reopen($attempt->id);
+								list($status, $logMessage) = $this->Marks->LtiResources->Attempts->Reports->reopen($attempt->id, 'fail');
 								$this->infolog($logMessage);
 								if($status === 'failed') {
 									$this->infolog("Mark Save failed (error reopening reports). User: " . $user->id . "; Lti Resource ID: " . $ltiResourceId);

@@ -99,7 +99,7 @@ class ReportsTable extends Table
         return $rules;
     }
 	
-	public function reopen($attemptId) {
+	public function reopen($attemptId = null, $type = null) {
 		$reportQuery = $this->find('all', [
 			'conditions' => ['Reports.attempt_id' => $attemptId, 'Reports.type' => 'submit', 'Reports.revision' => 0],
 			'order' => ['created' => 'DESC'],
@@ -114,7 +114,13 @@ class ReportsTable extends Table
 			
 			$reportData->attempt_id = $attemptId;
 			$reportData->revision = false;
-			$reportData->type = 'reopen';
+            
+            if($type) {
+                $reportData->type = $type;
+            }
+            else {
+                $reportData->type = 'reopen';
+            }
 			
 			if(!$this->save($reportData)) {
 				$status = 'failed';

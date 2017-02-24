@@ -124,8 +124,8 @@ class MarksTable extends Table
 				//'StandardAssays',
 				'Reports' => function ($q) {
 				   return $q
-						->select(['id', 'type', 'attempt_id', 'modified'])
-						->where(['Reports.type' => 'submit', 'Reports.revision' => 0])
+						->select(['id', 'type', 'attempt_id', 'modified', 'revision'])
+						->where(['OR' => [['Reports.type' => 'submit'], ['Reports.type' => 'fail']], 'Reports.revision' => 0])
 						//->contain(['ReportsSections' => ['Sections']])
 						->order(['Reports.modified' => 'DESC']);
 				},
@@ -143,6 +143,7 @@ class MarksTable extends Table
 			$techniques[$technique['id']] = $technique;
 		}
 		
+        //pr($attempts);
 		$users = [];
 		foreach($attempts as $attempt) {
 			$userId = $attempt['lti_user_id'];
@@ -168,6 +169,7 @@ class MarksTable extends Table
 				}
 			}
 		}
+        //pr($users);
 		
 		//Get all the marks
 		$marksQuery = $this->find('all', [
@@ -226,8 +228,8 @@ class MarksTable extends Table
 				'StandardAssays',
 				'Reports' => function ($q) {
 				   return $q
-						->select(['id', 'type', 'attempt_id', 'modified'])
-						->where(['Reports.type' => 'submit', 'Reports.revision' => 0])
+						->select(['id', 'type', 'attempt_id', 'modified', 'revision'])
+						->where(['OR' => [['Reports.type' => 'submit'], ['Reports.type' => 'fail']], 'Reports.revision' => 0])
 						->contain(['ReportsSections' => ['Sections']])
 						->order(['Reports.modified' => 'DESC']);
 				},
