@@ -222,6 +222,7 @@ CREATE TABLE IF NOT EXISTS `marks` (
   `revision` tinyint(1) NOT NULL DEFAULT '0',
   `locked` datetime DEFAULT NULL,
   `locker_id` int(11) DEFAULT NULL,
+  `archived` tinyint(1) NOT NULL DEFAULT '0',
   `created` datetime DEFAULT NULL,
   `modified` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
