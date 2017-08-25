@@ -38,7 +38,7 @@ class LtiKeysController extends AppController
 	//LTI Login
 	public function login() {
 		if(isset($_REQUEST['lti_message_type']) && isset($_REQUEST['oauth_consumer_key'])) {	//Is this an LTI request
-			require_once(ROOT . DS . 'vendor' . DS  . 'blti' . DS . 'blti.php');	//Load the BLTI class
+			require_once(ROOT . DS . 'blti' . DS . 'blti.php');	//Load the BLTI class
 			$session = $this->request->session();	//Set Session to variable
 			$session->delete('LtiContext');
 			$session->delete('LtiResource');
