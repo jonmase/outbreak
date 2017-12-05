@@ -52,6 +52,7 @@
 		vm.activeTabs = assayFactory.getActiveTabs();
 		
 		//Bindable Members - methods
+		vm.help = help;
 		vm.isStandardChecked = isStandardChecked;
 		vm.setAssayCount = setAssayCount;
 		vm.setSubsection = setSubsection;
@@ -70,6 +71,10 @@
 		}
 
 		//Functions
+		function help() {
+            $uibModal.open(modalFactory.getHelpModalOptions());
+		}
+		
 		function isStandardChecked(standardId) {
 			var isChecked = vm.assays.saved.standards[vm.currentTechniqueId][standardId] === 1 || vm.assays.temp.standards[vm.currentTechniqueId][standardId] === 1;
 			return isChecked;

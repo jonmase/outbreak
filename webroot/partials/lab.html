@@ -20,14 +20,15 @@
 <div class="row">
 	<div class="col-xs-12 col-sm-12">
 		<page-title section="labCtrl.section"></page-title>
-		<p>In the lab, you can use the available techniques to perform assays on the samples you have collected in order to investigate the virus. You have a limited amount of time and money, so pick the assays you perform and the samples you include carefully, so you don't run out. You will be told when you have gathered enough information to determine the viral serotype that is causing the current epidemic.</p>
+        <div>
+            <div>
+                <div class="icon-button icon-button-small pull-right"><a href="" title="Help, I'm Stuck!" ng-click="labCtrl.help()"><i class="fa fa-life-ring"></i><br />I'm Stuck!</a></div>
+            </div>
+            <p style="margin-right: 100px">In the lab, you can use the available techniques to perform assays on the samples you have collected in order to investigate the virus. You have a limited amount of time and money, so pick the assays you perform and the samples you include carefully, so you don't run out. You will be told when you have gathered enough information to determine the viral serotype that is causing the current epidemic.</p>
+        </div>
 		<page-menu items="labCtrl.subsections" on-click="labCtrl.setSubsection(subsectionId)"></page-menu>
 
 		<div>
-			<div ng-if="technique.infoOnly">
-				<technique-info technique="technique"></technique-info>
-			</div>
-
 			<div>
 				<uib-tabset id="lab-tabs">
 					<uib-tab heading="Assay" ng-repeat-start="technique in labCtrl.subsections" ng-show="labCtrl.currentTechniqueId === technique.id" ng-if="!technique.infoOnly" active="labCtrl.activeTabs[technique.id].assay">
@@ -203,6 +204,20 @@
             <div ng-show="BeggingModalCtrl.saving">
                 <loader></loader>Resetting {{BeggingModalCtrl.resourceTitle}}
             </div>
+        </div>
+    </script>
+    
+    <script type="text/ng-template" id="help-modal.html">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Cancel" ng-click="HelpModalCtrl.cancel()"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Help, I'm Stuck!</h4>
+        </div>
+        <div class="modal-body">
+            <p>If you believe you have performed sufficient assays to identify the virus, but are not able to progress, please carefully recheck the assays you have performed and ensure that you have carried out the necessary assays on all of the relevant, available samples.</p>
+            <p>If you need further help, please come along to one of the drop-in sessions in 1st week of Hilary Term, or contact <a href="mailto:kenny.moore@path.ox.ac.uk">Dr Kenny Moore</a>. If you believe there is a technical issue with the iCase, please contact <a href="mailto:msdlt@medsci.ox.ac.uk">MSD Learning Technologies</a>.</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" ng-click="HelpModalCtrl.cancel()">Close</button>
         </div>
     </script>
     

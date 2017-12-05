@@ -69,8 +69,9 @@
 <?= $this->Html->script('services/schoolServices.js', ['block' => true]) ?>
 <?= $this->Html->script('services/sampleServices.js', ['block' => true]) ?>
 <?= $this->Html->script('controllers/labController.js', ['block' => true]) ?>
-<?= $this->Html->script('controllers/labModalController.js', ['block' => true]) ?>
 <?= $this->Html->script('controllers/beggingModalController.js', ['block' => true]) ?>
+<?= $this->Html->script('controllers/helpModalController.js', ['block' => true]) ?>
+<?= $this->Html->script('controllers/labModalController.js', ['block' => true]) ?>
 <?= $this->Html->script('controllers/researchAlertModalController.js', ['block' => true]) ?>
 <?= $this->Html->script('services/assayServices.js', ['block' => true]) ?>
 <?= $this->Html->script('controllers/resultsController.js', ['block' => true]) ?>

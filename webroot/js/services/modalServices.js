@@ -26,6 +26,7 @@
 			getBeggingModalOptions: getBeggingModalOptions,
 			getErrorModalOptions: getErrorModalOptions,
 			getFluAlertModalOptions: getFluAlertModalOptions,
+			getHelpModalOptions: getHelpModalOptions,
 			getIntroModalOptions: getIntroModalOptions,
 			getLabModalOptions: getLabModalOptions,
 			getMarkingLockedModalOptions: getMarkingLockedModalOptions,
@@ -76,6 +77,19 @@
 			};
 			
 			return fluAlertModalOptions;
+		}
+		
+		function getHelpModalOptions() {
+			var helpModalOptions = {
+				animation: true,
+				backdrop: 'static',
+				controller: 'HelpModalController',
+				controllerAs: 'HelpModalCtrl',
+				size: 'md',
+				templateUrl: 'help-modal.html',
+			};
+			
+			return helpModalOptions;
 		}
 		
 		function getIntroModalOptions() {

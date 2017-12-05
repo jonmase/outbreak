@@ -411,21 +411,31 @@ li.home-block.locked  a {
 .icon-button {
 	margin: 5px;
 }
-.icon-button  a {
+.icon-button  a  {
 	display: block;
-	height: 115px;
-	width: 115px;
 	border: 3px solid #337ab7;
 	border-radius: 10px;
+	height: 115px;
+	width: 115px;
 	text-align: center;
 	text-decoration: none;
+}
+.icon-button-small  a {
+	height: 75px;
+	width: 75px;
+	border-radius: 7px;
+    border-width: 2px;
 }
 .icon-button  a:hover, .icon-button  a:focus {
 	border-color: #23527c
 }
-.icon-button a  i.fa{
+.icon-button a  i.fa {
 	padding: 5px;
 	font-size: 70px;
+}
+.icon-button-small a  i.fa {
+	padding: 5px;
+	font-size: 35px;
 }
 .icon-button.disabled  a {
 	color: grey;
