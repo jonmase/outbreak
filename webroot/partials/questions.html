@@ -66,7 +66,7 @@
 						<tr ng-hide="questionsCtrl.responses.scores[question.id] > -1 || questionsCtrl.saving[question.id]">
 							<td></td>
 							<td>
-								<button type="button" class="btn btn-primary" ng-click="questionsCtrl.check(question.id)" ng-class="{disabled: !questionsCtrl.responses.answered[question.id]}">Check</button>
+								<button type="button" class="btn btn-primary" ng-click="questionsCtrl.check(question.id)" ng-disabled="!questionsCtrl.responses.answered[question.id]" >Check</button>
 							</td>
 							<td>
 								<button type="button" class="btn btn-default" ng-click="questionsCtrl.clear(question.id)">Clear</button>
