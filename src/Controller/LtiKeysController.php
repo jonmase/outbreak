@@ -37,13 +37,14 @@ class LtiKeysController extends AppController
 	
 	//LTI Login
 	public function login() {
+        $denied = ['controller' => 'pages', 'action' => 'display', 'denied'];	//Denied redirect
+        
 		if(isset($_REQUEST['lti_message_type']) && isset($_REQUEST['oauth_consumer_key'])) {	//Is this an LTI request
 			require_once(ROOT . DS . 'blti' . DS . 'blti.php');	//Load the BLTI class
 			$session = $this->request->session();	//Set Session to variable
 			$session->delete('LtiContext');
 			$session->delete('LtiResource');
 
-			$denied = ['controller' => 'pages', 'action' => 'display', 'denied'];	//Denied redirect
 			$this->autoRender = false;	//Do not render a page
 
 			//Find the key for the oauth_consumer_key, so we can get the secret
