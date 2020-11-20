@@ -37,8 +37,8 @@ class LtiKeysController extends AppController
 	
 	//LTI Login
 	public function login() {
-        $denied = ['controller' => 'pages', 'action' => 'display', 'denied'];	//Denied redirect
-        
+		$denied = ['controller' => 'pages', 'action' => 'display', 'denied'];	//Denied redirect
+		
 		if(isset($_REQUEST['lti_message_type']) && isset($_REQUEST['oauth_consumer_key'])) {	//Is this an LTI request
 			require_once(ROOT . DS . 'blti' . DS . 'blti.php');	//Load the BLTI class
 			$session = $this->request->session();	//Set Session to variable
@@ -186,7 +186,16 @@ class LtiKeysController extends AppController
 			}
 
 			//Do not save roles here, as this can change for each launch. Instead, role that they user had when they start each attempt will be saved
-			$session->write('User.role', $context->info['roles']);
+			$roles = explode(",",$context->info['roles']);
+			$instructorRoles = ["Instructor", "urn:lti:role:ims/lis/TeachingAssistant", "urn:lti:instrole:ims/lis/Administrator"];
+			if(!empty(array_intersect($instructorRoles, $roles))) {
+				$role = "Instructor";
+			}
+			else {
+				$role = "Learner";
+			}
+			
+			$session->write('User.role', $role);
 			
 			//Save user details
 			if(isset($context->info['lis_person_contact_email_primary'])) {
