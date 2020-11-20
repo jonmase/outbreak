@@ -159,8 +159,9 @@ class ReportsController extends AppController
 							$session = $this->request->session();	//Set Session to variable
 							$ltiResourceId = $session->read('LtiResource.id');
 							
+							$conditions = ['Marks.lti_resource_id' => $ltiResourceId, 'Marks.lti_user_id' => $userId, 'Marks.mark' => 'Fail', 'Marks.revision' => 0, 'Marks.archived' => 0];
 							$markQuery = $this->Reports->Attempts->LtiResources->Marks->find('all', [
-								'conditions' => ['Marks.lti_resource_id' => $ltiResourceId, 'Marks.lti_user_id' => $userId, 'Marks.mark' === 'Fail', 'Marks.revision' => 0, 'Marks.archived' => 0],
+								'conditions' => $conditions,
 								'order' => ['Marks.modified' => 'DESC'],
 								'contain' => ['Marker', 'LtiUsers'],
 							]);

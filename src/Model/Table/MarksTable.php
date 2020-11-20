@@ -278,8 +278,8 @@ class MarksTable extends Table
 			$assayCounts = [
 				'total' => 0,
 			];
-			//$attempt['timeSpent'] = 0;
-			//$attempt['moneySpent'] = 0;
+			$attempt['timeSpent'] = 0;
+			$attempt['moneySpent'] = 0;
 			foreach($attempt['assays'] as $assay) {
 				$assays[$assay->technique_id][$assay->site_id][$assay->school_id][$assay->child_id][$assay->sample_stage_id] = 1;
 				
@@ -288,6 +288,7 @@ class MarksTable extends Table
 						'total' => 0,
 						'sites' => [],
 					];
+					$attempt['timeSpent'] += $techniques[$assay->technique_id]['time'];	//Add the time for this technique to the time spent
 				}
 				if(!isset($assayCounts[$assay->technique_id]['sites'][$assay->site_id])) {
 					$assayCounts[$assay->technique_id]['sites'][$assay->site_id] = [
@@ -302,8 +303,7 @@ class MarksTable extends Table
 				$assayCounts[$assay->technique_id]['total']++;
 				$assayCounts[$assay->technique_id]['sites'][$assay->site_id]['total']++;
 				$assayCounts[$assay->technique_id]['sites'][$assay->site_id]['schools'][$assay->school_id]++;
-				//$attempt['timeSpent'] += $techniques[$assay->technique_id]['time'];
-				//$attempt['moneySpent'] += $techniques[$assay->technique_id]['money'];
+				$attempt['moneySpent'] += $techniques[$assay->technique_id]['money'];
 			}
 			
 			//Process standards assays
@@ -319,12 +319,12 @@ class MarksTable extends Table
 					$assayCounts[$standardAssay->technique_id] = [
 						'total' => 0,
 					];
+					$attempt['timeSpent'] += $techniques[$assay->technique_id]['time'];	//Add the time for this technique to the time spent
 				}
 				$assayCounts['total']++;	//Increment the total assay count (for idenitfying whether to show Assays section)
 				$assayCounts[$standardAssay->technique_id]['total']++;	//Increment the total assay count for this technique (for idenitfying whether to show the technique section)
 				$standardAssayCounts[$standardAssay->technique_id]++;
-				//$attempt['timeSpent'] += $techniques[$standardAssay->technique_id]['time'];
-				//$attempt['moneySpent'] += $techniques[$standardAssay->technique_id]['money'];
+				$attempt['moneySpent'] += $techniques[$standardAssay->technique_id]['money'];
 			}
 			unset($attempt['standard_assays']);
 			$attempt['assays'] = $assays;
@@ -333,6 +333,14 @@ class MarksTable extends Table
 			$attempt['standardAssayCounts'] = $standardAssayCounts;
 			$attempt['assaysHidden'] = false;
 			
+			//timeSpent based on adding up time for all assays performed is minimum time that must have been spent
+			//If time spent from adding up assay time is less than time spent based on subtracting time left from starting time (448 hours)...
+			//...then one or more techniques must have been used mutliple times, so use the timeSpentBasedOnAttemptTime as timeSpent
+			//Otherwise, have to just assume they only used each technique once
+			$timeSpentBasedOnAttemptTime = 48 - $attempt['time'];
+			if($attempt['timeSpent'] < $timeSpentBasedOnAttemptTime) {
+				$attempt['timeSpent'] = $timeSpentBasedOnAttemptTime;
+			}
 			//$attempt['timeSpent'] = 48 - $attempt['time'];
 			
 			//Work out whether the attempt should be shown or not
